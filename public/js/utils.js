@@ -109,19 +109,49 @@ window.Utils = {
     return 364 * (1 - pct);
   },
 
-  // ── WAQI API (PM2.5 from nearest station) ─────────────
+  // ── HAVERSINE DISTANCE (km) ───────────────────────────
+  haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) ** 2 +
+              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+              Math.sin(dLon/2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  },
+
+  // ── BROWSER GEOLOCATION (fallback Jakarta) ────────────
+  getGeoLocation() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) {
+        return resolve({ lat: -6.2088, lon: 106.8456, source: 'default' });
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude, source: 'gps' }),
+        ()  => resolve({ lat: -6.2088, lon: 106.8456, source: 'default' }),
+        { timeout: 5000, maximumAge: 60000 }
+      );
+    });
+  },
+
+  // ── WAQI API — nearest monitoring station ─────────────
   async fetchAQI(lat, lon) {
     try {
-      const token = 'demo'; // Free demo token
-      const res = await fetch(`https://api.waqi.info/feed/geo:${lat};${lon}/?token=${token}`);
+      const token = 'demo';
+      const res  = await fetch(`https://api.waqi.info/feed/geo:${lat};${lon}/?token=${token}`);
       const data = await res.json();
       if (data.status === 'ok') {
+        const stationGeo = data.data.city?.geo; // [lat, lon]
+        const distKm = stationGeo
+          ? +Utils.haversine(lat, lon, stationGeo[0], stationGeo[1]).toFixed(1)
+          : null;
         return {
-          aqi: data.data.aqi,
-          pm25: data.data.iaqi?.pm25?.v ?? null,
-          pm10: data.data.iaqi?.pm10?.v ?? null,
-          city: data.data.city?.name ?? 'Unknown',
-          time: data.data.time?.s ?? null
+          aqi:    data.data.aqi,
+          pm25:   data.data.iaqi?.pm25?.v ?? null,
+          pm10:   data.data.iaqi?.pm10?.v ?? null,
+          city:   data.data.city?.name ?? 'Stasiun Terdekat',
+          distKm,
+          time:   data.data.time?.s ?? null
         };
       }
     } catch { /* silent fail */ }
@@ -132,9 +162,9 @@ window.Utils = {
   async fetchWeather(lat, lon) {
     try {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,uv_index,wind_speed_10m&timezone=auto`;
-      const res = await fetch(url);
+      const res  = await fetch(url);
       const data = await res.json();
-      const c = data.current;
+      const c    = data.current;
       return {
         temp:     c.temperature_2m,
         humidity: c.relative_humidity_2m,

@@ -9,23 +9,31 @@
   let restHR       = 68;
   let tickCount    = 0;
 
-  // ── ENV DATA (Open-Meteo + WAQI) ─────────────────────
+  // ── ENV DATA — geospatial nearest-station fusion ──────
   async function fetchEnv() {
-    const lat = -6.2088, lon = 106.8456; // Jakarta default
+    const geo = await Utils.getGeoLocation();
+    const lat = geo.lat, lon = geo.lon;
+
     const [weather, aqi] = await Promise.all([
       Utils.fetchWeather(lat, lon),
       Utils.fetchAQI(lat, lon)
     ]);
+
     if (weather) {
       envData.temp     = weather.temp;
       envData.humidity = weather.humidity;
       envData.uvi      = weather.uvIndex || envData.uvi;
-      envData.source   = 'Open-Meteo';
     }
     if (aqi && aqi.pm25 !== null) {
-      envData.pm25   = aqi.pm25;
-      envData.source = 'WAQI + Open-Meteo';
+      envData.pm25 = aqi.pm25;
     }
+
+    const geoTag         = geo.source === 'gps' ? '📍 GPS Aktual' : '📍 Lokasi Default';
+    const stName         = aqi?.city   ?? 'Open-Meteo';
+    const distTag        = aqi?.distKm != null ? ` · ${aqi.distKm} km` : '';
+    envData.source       = stName + distTag;
+    envData.geoLabel     = geoTag;
+
     renderEnvBar();
   }
 
@@ -42,7 +50,7 @@
       <span class="env-item"><span>💨</span><span class="env-val" style="color:${pm25s.color}">${Utils.fmt(envData.pm25,1)}</span><span class="env-lbl">PM2.5 μg/m³</span></span>
       <div class="env-divider"></div>
       <span class="env-item"><span>☀️</span><span class="env-val" style="color:${uvs.color}">${envData.uvi}</span><span class="env-lbl">UV Index</span></span>
-      <div class="env-source">📡 ${envData.source}</div>`;
+      <div class="env-source">${envData.geoLabel || '📡'} · Stasiun: ${envData.source}</div>`;
   }
 
   // ── TICK (every 3s) ──────────────────────────────────

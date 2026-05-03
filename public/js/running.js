@@ -315,16 +315,17 @@
     }
   }
 
-  // ── ENV FETCH ────────────────────────────────────────
-  async function fetchEnv() {
-    const lat = SensorSim.gps.lat, lon = SensorSim.gps.lon;
+  // ── ENV FETCH — geospatial nearest-station ───────────
+  async function fetchEnv(lat, lon) {
+    lat = lat ?? SensorSim.gps.lat;
+    lon = lon ?? SensorSim.gps.lon;
     const [w, a] = await Promise.all([Utils.fetchWeather(lat, lon), Utils.fetchAQI(lat, lon)]);
     if (w) { envData.temp = w.temp; envData.uvi = w.uvIndex || envData.uvi; }
     if (a && a.pm25 !== null) envData.pm25 = a.pm25;
-    envData.source = (w || a) ? 'Live' : 'Simulasi';
-    // Update env display
+    const stLabel = a?.city ? `${a.city}${a.distKm != null ? ' · ' + a.distKm + ' km' : ''}` : 'Open-Meteo';
+    envData.source = stLabel;
     const el = document.getElementById('run-env-bar');
-    if (el) el.innerHTML = `<span>🌡️ ${Utils.fmt(envData.temp)}°C</span><span>💨 PM2.5: ${envData.pm25} μg/m³</span><span>☀️ UV: ${envData.uvi}</span><span class="env-source">📡 ${envData.source}</span>`;
+    if (el) el.innerHTML = `<span>🌡️ ${Utils.fmt(envData.temp)}°C</span><span>💨 PM2.5: ${envData.pm25} μg/m³</span><span>☀️ UV: ${envData.uvi}</span><span class="env-source">📍 Stasiun: ${envData.source}</span>`;
   }
 
   // ── LIFECYCLE ────────────────────────────────────────
@@ -335,7 +336,16 @@
       restHR  = 60 + Math.round(Math.random()*12);
       SensorSim.setAge(userAge);
       initMap();
-      fetchEnv().catch(()=>{});
+      // Use actual GPS position for both map start and nearest-station env fetch
+      Utils.getGeoLocation().then(geo => {
+        SensorSim.gps.lat = geo.lat;
+        SensorSim.gps.lon = geo.lon;
+        if (map && userMarker) {
+          map.setView([geo.lat, geo.lon], 15);
+          userMarker.setLatLng([geo.lat, geo.lon]);
+        }
+        fetchEnv(geo.lat, geo.lon).catch(()=>{});
+      }).catch(() => fetchEnv().catch(()=>{}));
 
       // Show setup panel
       document.getElementById('run-setup').classList.remove('hidden');
