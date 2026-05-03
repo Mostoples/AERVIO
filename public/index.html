@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AERVIO — From Detection to Action</title>
+<meta name="description" content="AERVIO adalah smartwatch berbasis AI & multi-sensor untuk monitoring kesehatan dan perlindungan saat aktivitas fisik.">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  LANDING / COMPANY PAGE (unauthenticated)                             -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="view-landing">
+
+  <!-- Navbar -->
+  <nav class="land-nav">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <span>AERVIO</span>
+    </div>
+    <div class="nav-ctas">
+      <button class="btn btn-secondary btn-sm" onclick="App.openModal('modal-auth')">Masuk</button>
+      <button class="btn btn-primary btn-sm" onclick="openRegister()">Mulai Gratis</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content anim-in">
+      <div class="hero-badge">🌿 Smartwatch · AI · Multi-Sensor · Real-Time</div>
+      <h1>From <span>Detection</span><br>to Action</h1>
+      <p class="hero-sub">AERVIO memantau tubuh dan lingkungan Anda secara real-time menggunakan 5 sensor canggih dan AI — melindungi Anda dari risiko kesehatan saat lari maupun aktivitas harian.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" onclick="openRegister()">Mulai Monitoring</button>
+        <a href="#fitur" class="btn btn-secondary btn-lg">Lihat Fitur</a>
+      </div>
+      <!-- Sensor chips -->
+      <div class="sensor-strip">
+        <span class="sensor-chip"><span class="dot"></span> MAX30102 (PPG)</span>
+        <span class="sensor-chip"><span class="dot"></span> MLX90614 (IR Temp)</span>
+        <span class="sensor-chip"><span class="dot"></span> EDA / GSR</span>
+        <span class="sensor-chip"><span class="dot"></span> GPS</span>
+        <span class="sensor-chip"><span class="dot"></span> IMU 9-DOF</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div style="padding:0 40px;max-width:1100px;margin:0 auto;">
+    <div class="stats-bar">
+      <div class="stat-block"><div class="stat-block-val">5</div><div class="stat-block-lbl">Sensor Terintegrasi</div></div>
+      <div class="stat-block"><div class="stat-block-val">18+</div><div class="stat-block-lbl">Fitur Turunan AI</div></div>
+      <div class="stat-block"><div class="stat-block-val">WHO</div><div class="stat-block-lbl">Standar Kesehatan Global</div></div>
+      <div class="stat-block"><div class="stat-block-val">Real-Time</div><div class="stat-block-lbl">Adaptive Closed-Loop</div></div>
+    </div>
+  </div>
+
+  <!-- Sensor Features -->
+  <section class="lsec" id="fitur">
+    <div class="eyebrow">Sensor → Fitur Canggih</div>
+    <h2 class="sec-h">5 Sensor, <span>18+ Fitur</span> Turunan</h2>
+    <div class="sfeat-grid">
+
+      <div class="sfeat-card">
+        <div class="sfeat-head">
+          <div class="sfeat-icon">💓</div>
+          <div><div class="sfeat-sensor">MAX30102 — PPG</div><div class="sfeat-name">Heart Rate & Oksigen</div></div>
+        </div>
+        <div class="sfeat-list">
+          <div class="sfeat-item"><strong>Heart Rate</strong> — Beat per menit real-time</div>
+          <div class="sfeat-item"><strong>SpO₂</strong> — Saturasi oksigen darah</div>
+          <div class="sfeat-item"><strong>HRV (RMSSD, SDNN, pNN50)</strong> — Variabilitas detak jantung</div>
+          <div class="sfeat-item"><strong>Stress Index</strong> — Dari rasio LF/HF & HRV</div>
+          <div class="sfeat-item"><strong>Respiration Rate</strong> — Laju napas dari drift PPG</div>
+          <div class="sfeat-item"><strong>Lactate Threshold</strong> — Deteksi real-time mendekati ambang laktat</div>
+          <div class="sfeat-item"><strong>Recovery Readiness</strong> — HRV + HR istirahat = skor kesiapan</div>
+        </div>
+      </div>
+
+      <div class="sfeat-card">
+        <div class="sfeat-head">
+          <div class="sfeat-icon">🌡️</div>
+          <div><div class="sfeat-sensor">MLX90614 — IR Thermal</div><div class="sfeat-name">Suhu Kulit & Inti</div></div>
+        </div>
+        <div class="sfeat-list">
+          <div class="sfeat-item"><strong>Skin Temperature</strong> — Non-contact, real-time</div>
+          <div class="sfeat-item"><strong>Core Temp Estimate</strong> — Tskin + offset aktivitas</div>
+          <div class="sfeat-item"><strong>Sweat Onset Marker</strong> — Penurunan suhu = mulai berkeringat</div>
+          <div class="sfeat-item"><strong>Heat Stress Index</strong> — Suhu + HR + lingkungan</div>
+          <div class="sfeat-item"><strong>Thermoregulation Efficiency</strong> — Kecepatan pendinginan tubuh</div>
+          <div class="sfeat-item"><strong>Heatstroke Early Warning</strong> — Alert >38.5°C core</div>
+        </div>
+      </div>
+
+      <div class="sfeat-card">
+        <div class="sfeat-head">
+          <div class="sfeat-icon">⚡</div>
+          <div><div class="sfeat-sensor">EDA / GSR</div><div class="sfeat-name">Aktivitas Elektrodermal</div></div>
+        </div>
+        <div class="sfeat-list">
+          <div class="sfeat-item"><strong>Sympathetic Activation Score</strong> — Aktivasi saraf simpatis 0–100</div>
+          <div class="sfeat-item"><strong>Stress Event Detection</strong> — Lonjakan EDA phasik = stres akut</div>
+          <div class="sfeat-item"><strong>Composite Stress Score (CSS)</strong> — EDA + HRV + HR zone</div>
+          <div class="sfeat-item"><strong>Dehydration Risk Signal</strong> — EDA drop + HR naik = dehidrasi</div>
+          <div class="sfeat-item"><strong>Autonomic Balance Score</strong> — Parasimpatis vs Simpatis</div>
+          <div class="sfeat-item"><strong>Mental Load Index</strong> — EDA sustained tinggi = beban kognitif</div>
+        </div>
+      </div>
+
+      <div class="sfeat-card">
+        <div class="sfeat-head">
+          <div class="sfeat-icon">🗺️</div>
+          <div><div class="sfeat-sensor">GPS</div><div class="sfeat-name">Navigasi & Rute Aman</div></div>
+        </div>
+        <div class="sfeat-list">
+          <div class="sfeat-item"><strong>Real Map (OpenStreetMap)</strong> — Rute lari dengan peta nyata</div>
+          <div class="sfeat-item"><strong>Elevation Profile</strong> — Profil ketinggian & tanjakan</div>
+          <div class="sfeat-item"><strong>Grade-Adjusted Pace</strong> — Pace yang dikoreksi tanjakan</div>
+          <div class="sfeat-item"><strong>Pollution Exposure Map</strong> — Overlay PM2.5 pada jalur GPS</div>
+          <div class="sfeat-item"><strong>Safe Corridor Detection</strong> — Jalur udara terbersih</div>
+          <div class="sfeat-item"><strong>Dead Reckoning</strong> — Backup posisi dari IMU saat GPS lemah</div>
+        </div>
+      </div>
+
+      <div class="sfeat-card" style="grid-column:span 1">
+        <div class="sfeat-head">
+          <div class="sfeat-icon">🏃</div>
+          <div><div class="sfeat-sensor">IMU 9-DOF (Gyro + Accel + Magneto)</div><div class="sfeat-name">Analisis Gait & Biomekanik</div></div>
+        </div>
+        <div class="sfeat-list">
+          <div class="sfeat-item"><strong>Cadence</strong> — Langkah/menit (optimal: 170–185 spm)</div>
+          <div class="sfeat-item"><strong>Vertical Oscillation</strong> — Pantulan vertikal (ideal &lt;8 cm)</div>
+          <div class="sfeat-item"><strong>Ground Contact Time</strong> — Waktu kaki di tanah (elite &lt;200ms)</div>
+          <div class="sfeat-item"><strong>Gait Symmetry Index</strong> — Keseimbangan kiri/kanan (&gt;95% baik)</div>
+          <div class="sfeat-item"><strong>Impact Force</strong> — Estimasi G-force saat pendaratan</div>
+          <div class="sfeat-item"><strong>Neuromuscular Fatigue Index</strong> — Deteksi kelelahan otot dari perubahan gait</div>
+          <div class="sfeat-item"><strong>Body Lean Angle</strong> — Sudut tubuh (optimal 5–8°)</div>
+          <div class="sfeat-item"><strong>Gait Efficiency Score</strong> — Skor 0–100 efisiensi lari</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Fusion Features -->
+  <section class="lsec-full">
+    <div class="lsec-full-inner">
+      <div class="eyebrow">Multi-Sensor Fusion</div>
+      <h2 class="sec-h">Fitur <span>Gabungan</span> Paling Canggih</h2>
+      <div class="fusion-grid">
+        <div class="fusion-card"><div class="fusion-num">01</div><div class="fusion-name">Composite Stress Score (CSS)</div><div class="fusion-desc">EDA (35%) + HRV inverse (35%) + HR zone (30%) → skor stres terpadu 0–100</div></div>
+        <div class="fusion-card"><div class="fusion-num">02</div><div class="fusion-name">TRIMP (Training Impulse)</div><div class="fusion-desc">Beban latihan harian: HR zone × durasi × faktor personal. Lacak progres fitness mingguan.</div></div>
+        <div class="fusion-card"><div class="fusion-num">03</div><div class="fusion-name">VO₂max Estimate</div><div class="fusion-desc">15 × (MHR / HRrest) — estimasi kapasitas aerobik dari sensor HR.</div></div>
+        <div class="fusion-card"><div class="fusion-num">04</div><div class="fusion-name">Lactate Threshold Detection</div><div class="fusion-desc">HR drift + cadence drop + EDA spike → "Mendekati ambang laktat" secara real-time.</div></div>
+        <div class="fusion-card"><div class="fusion-num">05</div><div class="fusion-name">Heat Stress Index</div><div class="fusion-desc">Core temp + HR% + suhu lingkungan → risiko heatstroke, peringatan dini.</div></div>
+        <div class="fusion-card"><div class="fusion-num">06</div><div class="fusion-name">Dehydration Risk Signal</div><div class="fusion-desc">EDA drop + HR naik + hydration level → "Minum sekarang" sebelum terlambat.</div></div>
+        <div class="fusion-card"><div class="fusion-num">07</div><div class="fusion-name">Recovery Readiness (1–10)</div><div class="fusion-desc">HRV pagi + HR istirahat + suhu inti → skor kesiapan latihan hari ini.</div></div>
+        <div class="fusion-card"><div class="fusion-num">08</div><div class="fusion-name">Neuromuscular Fatigue Index</div><div class="fusion-desc">GCT naik + cadence drop + asimetri → "Kurangi pace, otot kelelahan."</div></div>
+        <div class="fusion-card"><div class="fusion-num">09</div><div class="fusion-name">Environmental Training Rec</div><div class="fusion-desc">PM2.5 + UV + temp + CSS + fatigue → Go / Moderate / Light / Stay Indoors.</div></div>
+        <div class="fusion-card"><div class="fusion-num">10</div><div class="fusion-name">Respiratory Stress Index (RSI)</div><div class="fusion-desc">PM2.5 (40%) + HR% (40%) + SpO₂ dip (20%) → risiko gangguan pernapasan 0–100.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO Thresholds -->
+  <section class="lsec">
+    <div class="eyebrow">Standar WHO</div>
+    <h2 class="sec-h">Berbasis <span>Data Kesehatan Internasional</span></h2>
+    <div class="thresh-grid">
+      <div class="thresh-card">
+        <h4>💨 PM2.5 (WHO 2021)</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Aman tahunan</span><span class="thresh-val tv-safe">≤5 μg/m³</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Ambang 24 jam</span><span class="thresh-val tv-warn">≤15 μg/m³</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Berbahaya</span><span class="thresh-val tv-danger">&gt;15 μg/m³</span></div>
+      </div>
+      <div class="thresh-card">
+        <h4>☀️ UV Index (WHO)</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Rendah</span><span class="thresh-val tv-safe">0–2</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Sedang–Tinggi</span><span class="thresh-val tv-warn">3–7</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Sangat Tinggi–Ekstrem</span><span class="thresh-val tv-danger">8–11+</span></div>
+      </div>
+      <div class="thresh-card">
+        <h4>🩸 SpO₂</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Normal</span><span class="thresh-val tv-safe">95–100%</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Pantau</span><span class="thresh-val tv-warn">90–94%</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Hipoksia</span><span class="thresh-val tv-danger">&lt;90%</span></div>
+      </div>
+      <div class="thresh-card">
+        <h4>💓 Detak Jantung (Usia 25)</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Istirahat</span><span class="thresh-val tv-safe">60–80 bpm</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Zona Lari Aman</span><span class="thresh-val tv-warn">117–166 bpm</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Risiko Jantung</span><span class="thresh-val tv-danger">&gt;175 bpm</span></div>
+      </div>
+      <div class="thresh-card">
+        <h4>🌡️ Suhu Inti (WHO/ACSM)</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Normal</span><span class="thresh-val tv-safe">36.1–37.5°C</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Panas tinggi</span><span class="thresh-val tv-warn">37.5–38.5°C</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Heatstroke</span><span class="thresh-val tv-danger">&gt;40°C</span></div>
+      </div>
+      <div class="thresh-card">
+        <h4>🏃 IMU Gait (Elite)</h4>
+        <div class="thresh-row"><span class="thresh-lbl">Cadence optimal</span><span class="thresh-val tv-safe">170–185 spm</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">GCT elite</span><span class="thresh-val tv-safe">&lt;200 ms</span></div>
+        <div class="thresh-row"><span class="thresh-lbl">Vert. Oscillation</span><span class="thresh-val tv-warn">&lt;8 cm</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-sec">
+    <div class="cta-inner">
+      <h2>Siap Berlari Lebih Aman & Cerdas?</h2>
+      <p>Mulai monitoring kesehatan real-time Anda dengan AERVIO — gratis, berbasis WHO, didukung AI.</p>
+      <button class="btn btn-primary btn-lg" onclick="openRegister()">Buat Akun Gratis</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="land-footer">
+    <div class="logo" style="display:flex;align-items:center;gap:8px">
+      <div class="logo-mark" style="width:28px;height:28px;font-size:.8rem">A</div>
+      <span style="font-family:'Space Grotesk',sans-serif;font-weight:700">AERVIO</span>
+    </div>
+    <p>From Detection to Action · Berbasis standar WHO</p>
+    <p>© 2025 AERVIO · Powered by Firebase</p>
+  </footer>
+
+</div><!-- /view-landing -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  APP SHELL (authenticated)                                            -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div id="app-shell" style="display:none">
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">A</div>
+      <span class="logo-text">AERVIO</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item" data-view="dashboard">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="running">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
+        Running Mode
+      </button>
+      <button class="nav-item" data-view="recovery">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+        Recovery
+      </button>
+      <button class="nav-item" data-view="history">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
+        Riwayat
+      </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" id="btn-logout">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+        Keluar
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">?</div>
+      <div>
+        <div class="user-name" id="sidebar-name">User</div>
+        <div class="user-sub">AERVIO Member</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content area -->
+  <main class="main-content">
+    <!-- Mobile hamburger -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <button class="ham-btn" id="ham-btn">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+    </div>
+
+    <!-- ── DASHBOARD VIEW ──────────────────────────────────────────────────── -->
+    <div id="view-dashboard" class="view-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="db-greeting">Selamat Datang</h1>
+          <p class="page-sub" id="db-date"></p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+          <button class="btn btn-primary btn-sm" onclick="App.navigate('running')">▶ Mulai Lari</button>
+        </div>
+      </div>
+
+      <!-- Env bar -->
+      <div class="env-bar" id="db-env-bar">
+        <span style="color:var(--t3);font-size:.8rem">Memuat data lingkungan…</span>
+      </div>
+
+      <!-- Health Metrics -->
+      <div class="section">
+        <div class="section-hdr">
+          <span class="section-title">Metrik Kesehatan Real-Time</span>
+          <span class="text-xs text-muted" id="db-timestamp">–</span>
+        </div>
+        <div class="metrics-grid">
+          <!-- HR -->
+          <div class="metric-card s-safe" id="db-card-hr">
+            <div class="metric-glow mg-safe"></div>
+            <div class="metric-label"><span class="metric-icon">💓</span>Detak Jantung</div>
+            <div><span class="metric-value" id="db-val-hr">--</span><span class="metric-unit">bpm</span></div>
+            <span class="metric-badge b-safe" id="db-badge-hr">Normal</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-hr" style="width:40%;background:var(--safe)"></div></div>
+          </div>
+          <!-- SpO2 -->
+          <div class="metric-card s-safe" id="db-card-spo2">
+            <div class="metric-glow mg-safe"></div>
+            <div class="metric-label"><span class="metric-icon">🩸</span>SpO₂</div>
+            <div><span class="metric-value" id="db-val-spo2">--</span><span class="metric-unit">%</span></div>
+            <span class="metric-badge b-safe" id="db-badge-spo2">Normal</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-spo2" style="width:97%;background:var(--safe)"></div></div>
+          </div>
+          <!-- Hydration -->
+          <div class="metric-card s-safe" id="db-card-hydration">
+            <div class="metric-glow mg-safe"></div>
+            <div class="metric-label"><span class="metric-icon">💧</span>Hidrasi</div>
+            <div><span class="metric-value" id="db-val-hydration">--</span><span class="metric-unit">%</span></div>
+            <span class="metric-badge b-safe" id="db-badge-hydration">Optimal</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-hydration" style="width:90%;background:var(--safe)"></div></div>
+          </div>
+          <!-- PM2.5 -->
+          <div class="metric-card s-warn" id="db-card-pm25">
+            <div class="metric-glow mg-warn"></div>
+            <div class="metric-label"><span class="metric-icon">💨</span>PM2.5</div>
+            <div><span class="metric-value" id="db-val-pm25">--</span><span class="metric-unit">μg/m³</span></div>
+            <span class="metric-badge b-warn" id="db-badge-pm25">Sedang</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-pm25" style="width:50%;background:var(--warn)"></div></div>
+          </div>
+          <!-- UV -->
+          <div class="metric-card s-safe" id="db-card-uvi">
+            <div class="metric-glow mg-safe"></div>
+            <div class="metric-label"><span class="metric-icon">☀️</span>UV Index</div>
+            <div><span class="metric-value" id="db-val-uvi">--</span><span class="metric-unit"></span></div>
+            <span class="metric-badge b-safe" id="db-badge-uvi">Rendah</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-uvi" style="width:20%;background:var(--safe)"></div></div>
+          </div>
+          <!-- Core Temp -->
+          <div class="metric-card s-safe" id="db-card-temp">
+            <div class="metric-glow mg-safe"></div>
+            <div class="metric-label"><span class="metric-icon">🌡️</span>Suhu Inti</div>
+            <div><span class="metric-value" id="db-val-temp">--</span><span class="metric-unit">°C</span></div>
+            <span class="metric-badge b-safe" id="db-badge-temp">Normal</span>
+            <div class="progress-bar"><div class="progress-fill" id="db-bar-temp" style="width:55%;background:var(--safe)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HRV + EDA Row -->
+      <div class="grid-2 section">
+        <!-- HRV Panel -->
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">HRV — MAX30102 PPG</span><span class="metric-badge b-blue">Parasimpatis</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--t1)" id="db-rmssd">--</div>
+              <div class="text-xs text-muted">RMSSD (ms)</div>
+            </div>
+            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--t1)" id="db-sdnn">--</div>
+              <div class="text-xs text-muted">SDNN (ms)</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span class="text-sm text-muted">HRV Score</span>
+            <span style="font-weight:700;color:var(--green)" id="db-hrv-score">--</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="db-hrv-bar" style="width:65%;background:var(--safe)"></div></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
+              <div style="font-weight:700;color:var(--t1)" id="db-resprate">--</div>
+              <div class="text-xs text-muted">Resp Rate /min</div>
+            </div>
+            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
+              <div style="font-weight:700;color:var(--t1)" id="db-vo2max">--</div>
+              <div class="text-xs text-muted">VO₂max est.</div>
+            </div>
+            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
+              <div style="font-weight:700;color:var(--t1)" id="db-autonom">--</div>
+              <div class="text-xs text-muted">Autonom Balance</div>
+            </div>
+          </div>
+        </div>
+        <!-- EDA / Stress Panel -->
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">EDA / GSR — Stres & Simpatis</span><span class="metric-badge b-purple">Simpatik</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--purple)" id="db-eda">--</div>
+              <div class="text-xs text-muted">EDA (μS)</div>
+            </div>
+            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--warn)" id="db-css">--</div>
+              <div class="text-xs text-muted">CSS Score</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span class="text-sm text-muted">Stress Index</span>
+            <span style="font-weight:700;color:var(--warn)" id="db-stress">--</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="db-stress-bar" style="width:30%;background:var(--warn)"></div></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
+              <div style="font-weight:700;color:var(--green)" id="db-readiness">--</div>
+              <div class="text-xs text-muted">Readiness /10</div>
+            </div>
+            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
+              <div style="font-weight:700;color:var(--t1)" id="db-core-temp">--</div>
+              <div class="text-xs text-muted">Core Temp °C</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RSI + Health Risk Gauges -->
+      <div class="grid-2 section">
+        <div class="card text-center">
+          <div class="section-hdr"><span class="section-title">Respiratory Stress Index</span></div>
+          <div class="gauge-wrap">
+            <div class="gauge">
+              <svg viewBox="0 0 120 120"><circle class="gauge-track" cx="60" cy="60" r="58"/><circle class="gauge-fill" id="gauge-fill-rsi" cx="60" cy="60" r="58" stroke="var(--safe)" stroke-dashoffset="364"/></svg>
+              <div class="gauge-center"><span class="gauge-val" id="gauge-val-rsi" style="color:var(--safe)">0</span><span class="gauge-lbl">/ 100</span></div>
+            </div>
+            <p class="text-sm text-muted" style="max-width:200px">PM2.5 + HR% + SpO₂ dip → risiko gangguan napas</p>
+          </div>
+        </div>
+        <div class="card text-center">
+          <div class="section-hdr"><span class="section-title">Overall Health Risk</span></div>
+          <div class="gauge-wrap">
+            <div class="gauge">
+              <svg viewBox="0 0 120 120"><circle class="gauge-track" cx="60" cy="60" r="58"/><circle class="gauge-fill" id="gauge-fill-risk" cx="60" cy="60" r="58" stroke="var(--safe)" stroke-dashoffset="364"/></svg>
+              <div class="gauge-center"><span class="gauge-val" id="gauge-val-risk" style="color:var(--safe)">0</span><span class="gauge-lbl">/ 100</span></div>
+            </div>
+            <p class="text-sm text-muted" style="max-width:200px">HR + SpO₂ + PM2.5 + UV + Hidrasi</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts + Rec -->
+      <div class="grid-2 section">
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">Peringatan Aktif</span><span class="metric-badge b-safe" id="db-alert-count">0 alert</span></div>
+          <div id="db-alerts"></div>
+        </div>
+        <div class="card">
+          <div class="section-hdr"><span class="section-title">Rekomendasi AI</span></div>
+          <div id="db-rec-banner" style="display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:var(--rsm);border:1px solid transparent;background:var(--safe-d)">
+            <span style="font-size:1.4rem">🟢</span>
+            <div><strong style="color:var(--safe)">Memuat…</strong><br><small style="color:var(--t2)">Menganalisis kondisi…</small></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /view-dashboard -->
+
+
+    <!-- ── RUNNING VIEW ────────────────────────────────────────────────────── -->
+    <div id="view-running" class="view-content">
+      <div class="page-header">
+        <div><h1 class="page-title">Running Mode 🏃</h1><p class="page-sub">Smart Distance · Phase · Gait Analysis · GPS Map</p></div>
+        <span class="live-badge"><span class="live-dot"></span>SENSOR ACTIVE</span>
+      </div>
+
+      <!-- Setup Panel -->
+      <div id="run-setup" class="card card-lg" style="max-width:480px;margin:0 auto">
+        <h3 style="margin-bottom:20px">⚙️ Konfigurasi Sesi Lari</h3>
+        <div class="form-group">
+          <label class="form-label">Target Jarak (km)</label>
+          <input type="number" class="form-input" id="run-target-dist" value="5" min="1" max="50" step="0.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Pace (menit/km)</label>
+          <input type="number" class="form-input" id="run-target-pace" value="6" min="3" max="15" step="0.5">
+        </div>
+        <button class="btn btn-primary w-full btn-lg" id="btn-run-start" style="margin-top:8px">▶ Mulai Lari</button>
+        <p class="text-sm text-muted text-center mt-3">Sistem akan membagi fase otomatis: Warm-Up → Steady → Push → Cooldown</p>
+      </div>
+
+      <!-- Active Session -->
+      <div id="run-session" class="hidden">
+        <!-- Phase bar -->
+        <div>
+          <div class="phase-info">
+            <span class="phase-name ph-idle" id="run-phase-name">--</span>
+            <div style="display:flex;gap:12px">
+              <span class="text-sm text-muted" id="run-phase-pct">0%</span>
+              <span class="text-sm text-muted" id="run-dist-rem">--</span>
+            </div>
+          </div>
+          <div class="phase-bar">
+            <div class="phase-seg" id="pseg-warmup"></div>
+            <div class="phase-seg" id="pseg-steady"></div>
+            <div class="phase-seg" id="pseg-push"></div>
+            <div class="phase-seg" id="pseg-cooldown"></div>
+          </div>
+        </div>
+
+        <!-- Env bar -->
+        <div class="env-bar" id="run-env-bar" style="margin-bottom:16px">
+          <span style="color:var(--t3);font-size:.8rem">Memuat data lingkungan…</span>
+        </div>
+
+        <div class="run-layout">
+          <!-- LEFT: Stats + Map -->
+          <div class="run-left">
+            <!-- Big Stats -->
+            <div class="run-stats">
+              <div class="run-stat"><div class="run-stat-lbl">Jarak</div><div class="run-stat-val" id="rs-dist">0.00</div><div class="run-stat-sub">km</div></div>
+              <div class="run-stat"><div class="run-stat-lbl">Waktu</div><div class="run-stat-val" id="rs-time">00:00</div><div class="run-stat-sub">mm:ss</div></div>
+              <div class="run-stat"><div class="run-stat-lbl">Pace</div><div class="run-stat-val" id="rs-pace">--:--</div><div class="run-stat-sub">/km</div></div>
+              <div class="run-stat"><div class="run-stat-lbl">HR</div><div class="run-stat-val" id="rs-hr" style="color:var(--safe)">--</div><div class="run-stat-sub">bpm</div></div>
+            </div>
+
+            <!-- Pace recommendation -->
+            <div class="pace-rec" id="run-pace-rec">
+              <span class="pace-rec-icon">🟢</span>
+              <span>Memuat rekomendasi…</span>
+            </div>
+
+            <!-- Map -->
+            <div class="map-container" id="run-map"></div>
+          </div>
+
+          <!-- RIGHT: Sensors + Gait + Alerts -->
+          <div class="run-right">
+            <!-- Body Sensors -->
+            <div class="card card-sm">
+              <div class="section-hdr"><span class="section-title">Sensor Tubuh</span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <div class="gait-item"><div class="gait-val" id="rs-spo2">--</div><div class="gait-lbl">SpO₂ %</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-hydration">--</div><div class="gait-lbl">Hidrasi %</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-coreTemp">--</div><div class="gait-lbl">Core °C</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-rsi">--</div><div class="gait-lbl">RSI /100</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-rmssd">--</div><div class="gait-lbl">RMSSD ms</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-css">--</div><div class="gait-lbl">CSS Stres</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-lactate">--</div><div class="gait-lbl">Lactate Prox</div></div>
+                <div class="gait-item"><div class="gait-val" id="rs-vo2">--</div><div class="gait-lbl">VO₂max est</div></div>
+              </div>
+            </div>
+
+            <!-- Gait Analysis (IMU) -->
+            <div class="card card-sm">
+              <div class="section-hdr"><span class="section-title">Gait Analysis — IMU</span></div>
+              <div class="gait-grid">
+                <div class="gait-item"><div class="gait-val" id="g-cadence">--</div><div class="gait-lbl">Cadence spm</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-vertosc">--</div><div class="gait-lbl">Vert Osc cm</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-gct">--</div><div class="gait-lbl">GCT ms</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-asym">--</div><div class="gait-lbl">Asymmetry %</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-lean">--</div><div class="gait-lbl">Lean Angle °</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-impact">--</div><div class="gait-lbl">Impact G</div></div>
+                <div class="gait-item"><div class="gait-val text-green" id="g-eff">--</div><div class="gait-lbl">Gait Eff /100</div></div>
+                <div class="gait-item"><div class="gait-val" id="g-nmf">--</div><div class="gait-lbl">NMF Index</div></div>
+              </div>
+            </div>
+
+            <!-- Alerts -->
+            <div class="card card-sm">
+              <div class="section-hdr"><span class="section-title">Peringatan Real-Time</span></div>
+              <div id="run-alerts"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="run-controls">
+              <button class="ctrl-btn ctrl-stop" id="btn-run-stop" title="Stop">⏹️</button>
+              <button class="ctrl-btn ctrl-start ctrl-pause" id="btn-run-pause" title="Jeda">⏸️</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /run-session -->
+
+      <!-- Session Summary -->
+      <div id="run-summary" class="hidden">
+        <div class="card card-lg" style="max-width:600px;margin:0 auto;text-align:center">
+          <div style="font-size:3rem;margin-bottom:12px">🎉</div>
+          <h3 style="margin-bottom:20px;color:var(--green)">Sesi Selesai!</h3>
+          <div class="grid-2" style="margin-bottom:16px;text-align:center">
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-dist">--</div><div class="text-xs text-muted">km</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-time">--</div><div class="text-xs text-muted">waktu</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-pace">--</div><div class="text-xs text-muted">pace avg</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-hr">--</div><div class="text-xs text-muted">avg HR bpm</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="sum-trimp">--</div><div class="text-xs text-muted">TRIMP load</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-elev">--</div><div class="text-xs text-muted">m elevation</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-steps">--</div><div class="text-xs text-muted">langkah</div></div>
+            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-cad">--</div><div class="text-xs text-muted">cadence avg</div></div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="btn btn-primary" id="btn-run-new">Sesi Baru</button>
+            <button class="btn btn-secondary" onclick="App.navigate('history')">Lihat Riwayat</button>
+          </div>
+        </div>
+      </div><!-- /run-summary -->
+    </div><!-- /view-running -->
+
+
+    <!-- ── RECOVERY VIEW ──────────────────────────────────────────────────── -->
+    <div id="view-recovery" class="view-content">
+      <div class="page-header">
+        <div><h1 class="page-title">Recovery & Readiness ❤️</h1><p class="page-sub">HRV · CSS · Autonomic Balance · Training Recommendation</p></div>
+      </div>
+
+      <!-- Readiness Banner -->
+      <div class="readiness-banner">
+        <div class="readiness-score rs-high" id="rec-readiness-score">–</div>
+        <div>
+          <div class="readiness-label" id="rec-readiness-label">Menganalisis…</div>
+          <div class="readiness-sub" id="rec-readiness-sub">Memuat data sensor…</div>
+          <div style="margin-top:10px" id="rec-training-rec"></div>
+        </div>
+      </div>
+
+      <!-- HRV Metrics Grid -->
+      <div class="grid-3 section">
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-rmssd">--</div>
+          <div class="text-xs text-muted mt-1">RMSSD</div>
+        </div>
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-sdnn">--</div>
+          <div class="text-xs text-muted mt-1">SDNN</div>
+        </div>
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-hrv-score">--</div>
+          <div class="text-xs text-muted mt-1">HRV Score /100</div>
+        </div>
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="rec-css">--</div>
+          <div class="text-xs text-muted mt-1">CSS Score</div>
+        </div>
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="rec-stress">--</div>
+          <div class="text-xs text-muted mt-1">Stress Index</div>
+        </div>
+        <div class="card card-sm text-center">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--blue)" id="rec-autonom">--</div>
+          <div class="text-xs text-muted mt-1">Autonomic Balance</div>
+        </div>
+      </div>
+
+      <!-- HRV Chart -->
+      <div class="card section">
+        <div class="section-hdr"><span class="section-title">HRV & Stress Trend (Real-Time)</span></div>
+        <div style="height:200px"><canvas id="rec-hrv-chart"></canvas></div>
+      </div>
+
+      <!-- More Metrics -->
+      <div class="grid-3 section">
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">Resting HR</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-rhr">--</div>
+        </div>
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">Core Temp (MLX)</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-core">--</div>
+        </div>
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">EDA Level</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--purple)" id="rec-eda">--</div>
+        </div>
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">Sympathetic Score</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-symp">--</div>
+        </div>
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">Thermoreg Eff.</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-thermoeff">--</div>
+        </div>
+        <div class="card card-sm">
+          <div class="text-xs text-muted mb-2">Resp. Rate (/min)</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-resp">--</div>
+        </div>
+      </div>
+
+      <div class="card section" style="text-align:center">
+        <div class="text-xs text-muted mb-2">VO₂max Estimate (Uth-Sørensen)</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--blue)" id="rec-vo2max">--</div>
+        <div class="text-sm text-muted mt-1">ml/kg/min — kapasitas aerobik estimasi</div>
+      </div>
+    </div><!-- /view-recovery -->
+
+
+    <!-- ── HISTORY VIEW ────────────────────────────────────────────────────── -->
+    <div id="view-history" class="view-content">
+      <div class="page-header">
+        <div><h1 class="page-title">Riwayat & Analitik 📊</h1><p class="page-sub">Riwayat sesi lari, TRIMP, PM2.5 exposure</p></div>
+      </div>
+
+      <!-- Loading -->
+      <div id="hist-loading" style="display:none;justify-content:center;padding:30px"><span class="text-muted">Memuat data…</span></div>
+
+      <!-- Summary Stats -->
+      <div class="grid-4 section" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+        <div class="hist-stat"><div class="hist-stat-val" id="h-total-dist">--</div><div class="hist-stat-lbl">Total Jarak</div></div>
+        <div class="hist-stat"><div class="hist-stat-val" id="h-total-time">--</div><div class="hist-stat-lbl">Total Waktu</div></div>
+        <div class="hist-stat"><div class="hist-stat-val" id="h-sessions">--</div><div class="hist-stat-lbl">Sesi</div></div>
+        <div class="hist-stat"><div class="hist-stat-val" id="h-avg-hr">--</div><div class="hist-stat-lbl">Avg HR</div></div>
+        <div class="hist-stat"><div class="hist-stat-val" id="h-avg-pm25">--</div><div class="hist-stat-lbl">Avg PM2.5</div></div>
+        <div class="hist-stat"><div class="hist-stat-val" id="h-trimp-total">--</div><div class="hist-stat-lbl">Total TRIMP</div></div>
+      </div>
+
+      <!-- Charts -->
+      <div class="grid-2 section">
+        <div class="card"><div class="section-hdr"><span class="section-title">HR & Training Load per Sesi</span></div><div style="height:220px"><canvas id="hist-hr-chart"></canvas></div></div>
+        <div class="card"><div class="section-hdr"><span class="section-title">Jarak & Paparan PM2.5</span></div><div style="height:220px"><canvas id="hist-load-chart"></canvas></div></div>
+      </div>
+
+      <!-- Sessions Table -->
+      <div class="card">
+        <div class="section-hdr"><span class="section-title">Riwayat Sesi</span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Tanggal</th><th>Jarak</th><th>Waktu</th><th>Pace Avg</th><th>HR Avg</th><th>PM2.5</th><th>TRIMP</th></tr></thead>
+            <tbody id="hist-tbody"><tr><td colspan="7" style="text-align:center;color:var(--t3);padding:24px">Belum ada sesi. Mulai berlari!</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /view-history -->
+
+  </main>
+</div><!-- /app-shell -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  AUTH MODAL                                                           -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal">
+    <div class="modal-tabs">
+      <div class="modal-tab active" id="tab-login" onclick="switchTab('login')">Masuk</div>
+      <div class="modal-tab" id="tab-register" onclick="switchTab('register')">Daftar</div>
+    </div>
+
+    <!-- Login Form -->
+    <div id="form-login">
+      <div class="modal-title">Selamat Datang</div>
+      <p class="modal-sub">Masuk ke akun AERVIO Anda</p>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="li-email" placeholder="anda@email.com" required></div>
+        <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="li-pass" placeholder="••••••••" required></div>
+        <div class="form-error" id="li-err"></div>
+        <button type="submit" class="btn btn-primary w-full" id="li-btn" style="margin-top:8px">Masuk</button>
+      </form>
+    </div>
+
+    <!-- Register Form -->
+    <div id="form-register" style="display:none">
+      <div class="modal-title">Buat Akun</div>
+      <p class="modal-sub">Mulai monitoring kesehatan dengan AERVIO</p>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" class="form-input" id="re-name" placeholder="Nama Anda" required></div>
+        <div class="form-group"><label class="form-label">Usia</label><input type="number" class="form-input" id="re-age" placeholder="25" min="10" max="99" required></div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="re-email" placeholder="anda@email.com" required></div>
+        <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="re-pass" placeholder="Min. 6 karakter" minlength="6" required></div>
+        <div class="form-error" id="re-err"></div>
+        <button type="submit" class="btn btn-primary w-full" id="re-btn" style="margin-top:8px">Buat Akun</button>
+      </form>
+    </div>
+
+    <div class="modal-footer"><a href="#" onclick="App.closeModals()" style="color:var(--t3)">Batal</a></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!--  SCRIPTS                                                              -->
+<!-- ══════════════════════════════════════════════════════════════════════ -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<!-- Leaflet Map -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- AERVIO Scripts (order matters) -->
+<script src="/js/firebase-config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/sensor-sim.js"></script>
+<script src="/js/health-engine.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/running.js"></script>
+<script src="/js/recovery.js"></script>
+<script src="/js/history.js"></script>
+
+<script>
+// ── AUTH FORMS ─────────────────────────────────────────────────────────
+function switchTab(to) {
+  document.getElementById('form-login').style.display    = to==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = to==='register' ? 'block' : 'none';
+  document.getElementById('tab-login').className    = 'modal-tab' + (to==='login'    ? ' active' : '');
+  document.getElementById('tab-register').className = 'modal-tab' + (to==='register' ? ' active' : '');
+}
+
+function openRegister() {
+  App.openModal('modal-auth');
+  switchTab('register');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn=document.getElementById('li-btn'), err=document.getElementById('li-err');
+  btn.disabled=true; btn.textContent='Masuk…'; err.style.display='none';
+  try {
+    await auth.signInWithEmailAndPassword(document.getElementById('li-email').value, document.getElementById('li-pass').value);
+    App.closeModals();
+  } catch(ex) {
+    err.textContent=AervioAuth.friendlyError(ex.code); err.style.display='block';
+    btn.disabled=false; btn.textContent='Masuk';
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn=document.getElementById('re-btn'), err=document.getElementById('re-err');
+  btn.disabled=true; btn.textContent='Mendaftar…'; err.style.display='none';
+  try {
+    const name=document.getElementById('re-name').value;
+    const age=parseInt(document.getElementById('re-age').value)||25;
+    const email=document.getElementById('re-email').value;
+    const pass=document.getElementById('re-pass').value;
+    const cred=await auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: name });
+    await db.collection('users').doc(cred.user.uid).set({
+      name, age, email, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    App.closeModals();
+  } catch(ex) {
+    err.textContent=AervioAuth.friendlyError(ex.code); err.style.display='block';
+    btn.disabled=false; btn.textContent='Buat Akun';
+  }
+}
+</script>
+</body>
+</html>
