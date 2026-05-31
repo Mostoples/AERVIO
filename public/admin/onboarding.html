@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Onboarding Flow — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .step-card {
+      padding: 18px;
+      border: 1.5px solid transparent;
+      transition: all 0.2s;
+      cursor: grab;
+    }
+    .step-card:hover { border-color: rgba(0,229,212,0.3); }
+    .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%; background: var(--accent); color: #06222a;
+      font-weight: 800; font-size: 13px;
+    }
+  </style>
+</head>
+<body class="theme-dark" data-page="onboarding">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Onboarding Flow</h1><p>Konfigurasi alur pendaftaran user baru</p></div></div>
+      <div class="admin-header-actions"><button class="btn-pill primary" id="btnSaveFlow"><svg viewBox="0 0 24 24" class="ico"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/></svg><span>Save Flow</span></button><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">👤</div><span class="kpi-trend up">+12%</span></div><div class="kpi-value">82%</div><div class="kpi-label">Signup Completion</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">⌚</div></div><div class="kpi-value">68%</div><div class="kpi-label">Pair Device</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">⏱️</div></div><div class="kpi-value">4:12</div><div class="kpi-label">Avg Onboard Time</div></div>
+      <div class="card aura-violet kpi-card"><div class="kpi-head"><div class="kpi-icon">📈</div></div><div class="kpi-value">D1 74%</div><div class="kpi-label">D1 Activation</div></div>
+    </section>
+
+    <div class="admin-cols cols-2-1">
+      <section class="card">
+        <h3 class="section-title">Flow Steps (drag to reorder)</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+          <div class="card aura-cyan step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">1</span><div style="flex:1"><div style="font-weight:700">Welcome Splash</div><div style="font-size:11px;color:var(--text-muted)">Brand intro + value prop · 2 layar swipe</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-blue step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">2</span><div style="flex:1"><div style="font-weight:700">Sign up / Login</div><div style="font-size:11px;color:var(--text-muted)">Email + Google + Guest options</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-violet step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">3</span><div style="flex:1"><div style="font-weight:700">Profil Dasar</div><div style="font-size:11px;color:var(--text-muted)">Nama, umur, jenis kelamin, BB, TB</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-amber step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">4</span><div style="flex:1"><div style="font-weight:700">Target Aktivitas</div><div style="font-size:11px;color:var(--text-muted)">Tipe user: pelari / komuter / both</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-coral step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">5</span><div style="flex:1"><div style="font-weight:700">Permission Request</div><div style="font-size:11px;color:var(--text-muted)">Location · Bluetooth · Notifications · Health</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-green step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">6</span><div style="flex:1"><div style="font-weight:700">Pair Device</div><div style="font-size:11px;color:var(--text-muted)">BLE scan + connect AERVINEX Watch</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-pink step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">7</span><div style="flex:1"><div style="font-weight:700">First Calibration</div><div style="font-size:11px;color:var(--text-muted)">Baseline HR &amp; resting metrics (5 menit)</div></div><label class="toggle"><input type="checkbox" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+          <div class="card aura-cyan step-card">
+            <div style="display:flex;align-items:center;gap:14px"><span class="step-num">8</span><div style="flex:1"><div style="font-weight:700">Tour Dashboard</div><div style="font-size:11px;color:var(--text-muted)">Interactive walkthrough fitur utama</div></div><label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card aura-coral">
+        <h3 class="section-title">Funnel Conversion</h3>
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:14px">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>1. Welcome</span><span style="font-weight:700">100%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:100%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>2. Sign up</span><span style="font-weight:700">92%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:92%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>3. Profile</span><span style="font-weight:700">88%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:88%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>4. Target</span><span style="font-weight:700">85%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:85%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>5. Permission</span><span style="font-weight:700;color:rgb(255,181,71)">76%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:76%;background:linear-gradient(90deg,rgb(255,181,71),rgb(255,210,120))"></div></div><div style="font-size:10px;color:var(--text-dim);margin-top:2px">Drop point — BLE permission denied</div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>6. Pair Device</span><span style="font-weight:700">68%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:68%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>7. Calibration</span><span style="font-weight:700">54%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:54%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>8. Tour Done</span><span style="font-weight:700">48%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:48%"></div></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnSaveFlow').addEventListener('click', () => {
+    const active = document.querySelectorAll('.step-card .toggle input:checked').length;
+    AervinexToast(`Flow tersimpan · ${active} step aktif · rollout 100%`, 'success');
+  });
+  document.querySelectorAll('.step-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.toggle')) return;
+      const name = card.querySelector('div[style*="font-weight:700"]')?.textContent || 'step';
+      AervinexToast(`Edit "${name}" · drag handle untuk reorder`, 'info');
+    });
+  });
+</script>
+</body>
+</html>

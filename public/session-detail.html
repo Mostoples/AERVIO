@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Sesi Detail — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <style>
+    .session-map { width: 100%; height: 220px; border-radius: 18px; overflow: hidden; }
+    .splits-row { display: grid; grid-template-columns: 32px 1fr 60px 60px; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+    body.theme-light .splits-row { border-bottom-color: rgba(0,0,0,0.05); }
+    .splits-row:last-child { border-bottom: 0; }
+    .splits-num { color: var(--text-dim); font-weight: 700; font-size: 11px; }
+    .splits-bar { height: 6px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; }
+    .splits-bar-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+  </style>
+</head>
+<body class="theme-dark" data-page="session-detail">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/history.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2 id="sessTitle">Morning Run</h2>
+        <p id="sessSub">28 Mei 2026 · 06:14</p>
+      </div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="card aura-cyan" style="padding:6px">
+      <div id="sessMap" class="session-map"></div>
+    </section>
+
+    <section class="card hero-card aura-amber">
+      <div class="hero-left">
+        <p class="hero-label">Distance</p>
+        <div class="hero-value"><span class="hero-num" id="sessDist">5.20</span><span class="hero-unit">km</span></div>
+        <p class="hero-desc"><span id="sessTime">28:14</span> · pace <span id="sessPace">5:25</span> /km</p>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:62"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">80%</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">Z2</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=hr" style="text-decoration:none;color:inherit">
+        <div class="metric-head"><div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><span class="metric-trend up">+12</span></div>
+        <p class="metric-label">Avg HR</p>
+        <div class="metric-value"><span>142</span><span class="metric-unit">bpm</span></div>
+      </a>
+      <a class="card metric-card aura-violet" href="/metric-detail.html?id=heat" style="text-decoration:none;color:inherit">
+        <div class="metric-head"><div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><span class="metric-trend">428</span></div>
+        <p class="metric-label">Calories</p>
+        <div class="metric-value"><span>428</span><span class="metric-unit">kcal</span></div>
+      </a>
+      <a class="card metric-card aura-blue" href="/metric-detail.html?id=spo2" style="text-decoration:none;color:inherit">
+        <div class="metric-head"><div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></div><span class="metric-trend">PEAK</span></div>
+        <p class="metric-label">Avg SpO₂</p>
+        <div class="metric-value"><span>96.8</span><span class="metric-unit">%</span></div>
+      </a>
+      <a class="card metric-card aura-green" href="/metric-detail.html?id=rmssd" style="text-decoration:none;color:inherit">
+        <div class="metric-head"><div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg></div><span class="metric-trend up">+12</span></div>
+        <p class="metric-label">RRSS Earned</p>
+        <div class="metric-value"><span>+12</span></div>
+      </a>
+    </section>
+
+    <section class="card chart-card aura-coral">
+      <div class="chart-head">
+        <div>
+          <p class="chart-label">Heart Rate over time</p>
+          <p class="chart-sub"><span class="dot-cyan"></span>HR <span class="dot-muted"></span>Zone target</p>
+        </div>
+        <div class="chart-figure"><span class="chart-num">142</span><span class="chart-delta up">Z3 max</span></div>
+      </div>
+      <div class="chart-area">
+        <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+          <defs><linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ff5470" stop-opacity="0.4"/><stop offset="100%" stop-color="#ff5470" stop-opacity="0"/></linearGradient></defs>
+          <polyline class="chart-line-muted" points="0,68 320,68"/>
+          <polyline class="chart-line" id="hrLine" points=""/>
+          <polygon class="chart-fill" id="hrFill" points="" style="fill:url(#chartGrad)"/>
+        </svg>
+      </div>
+    </section>
+
+    <h3 class="section-title">Splits</h3>
+    <section class="card list-card">
+      <div class="splits-row" style="border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;font-weight:700;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">
+        <div>KM</div><div>Pace</div><div style="text-align:right">HR</div><div style="text-align:right">Δ</div>
+      </div>
+      <div id="splitsList"></div>
+    </section>
+
+    <section class="card aura-cyan">
+      <h3 class="section-title">Environment saat sesi</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;font-size:13px">
+        <div><div style="color:var(--text-dim);font-size:11px">PM2.5</div><div style="font-weight:700">38 μg/m³ · sedang</div></div>
+        <div><div style="color:var(--text-dim);font-size:11px">Heat Index</div><div style="font-weight:700">29°C · nyaman</div></div>
+        <div><div style="color:var(--text-dim);font-size:11px">UV Index</div><div style="font-weight:700">3 · rendah</div></div>
+        <div><div style="color:var(--text-dim);font-size:11px">Stasiun</div><div style="font-weight:700">Kemayoran (2.3 km)</div></div>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+
+    const SESSIONS = {
+      'morn-528': { title: 'Morning Run',     date: '28 Mei 2026 · 06:14', dist: 5.20, time: '28:14', pace: '5:25', center: [-6.21, 106.83] },
+      'rec-527':  { title: 'Recovery Session', date: '27 Mei 2026 · 21:30', dist: 0,    time: '15:00', pace: '—',    center: [-6.21, 106.83] },
+      'tempo-526':{ title: 'Tempo Run',       date: '26 Mei 2026 · 06:08', dist: 7.80, time: '36:42', pace: '4:42', center: [-6.22, 106.84] },
+    };
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || 'morn-528';
+    const S = SESSIONS[id] || SESSIONS['morn-528'];
+    document.getElementById('sessTitle').textContent = S.title;
+    document.getElementById('sessSub').textContent   = S.date;
+    document.getElementById('sessDist').textContent  = S.dist.toFixed(2);
+    document.getElementById('sessTime').textContent  = S.time;
+    document.getElementById('sessPace').textContent  = S.pace;
+
+    // Map with simulated route
+    const map = L.map('sessMap', { zoomControl: false, attributionControl: false }).setView(S.center, 15);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png').addTo(map);
+    let route = [S.center];
+    for (let i = 0; i < 30; i++) {
+      const last = route[route.length - 1];
+      route.push([last[0] + (Math.random() - 0.4) * 0.0006, last[1] + (Math.random() - 0.35) * 0.0008]);
+    }
+    L.polyline(route, { color: '#00e5d4', weight: 4, opacity: 0.9 }).addTo(map);
+    L.circleMarker(route[0],            { radius: 7, color: '#fff', weight: 2, fillColor: '#4ade80', fillOpacity: 1 }).addTo(map).bindTooltip('Start');
+    L.circleMarker(route[route.length-1], { radius: 7, color: '#fff', weight: 2, fillColor: '#ff5470', fillOpacity: 1 }).addTo(map).bindTooltip('Finish');
+    map.fitBounds(L.latLngBounds(route), { padding: [20, 20] });
+
+    // HR chart
+    const hrData = [];
+    let hr = 110;
+    for (let i = 0; i < 20; i++) {
+      hr += (Math.random() - 0.4) * 8;
+      hr = Math.max(95, Math.min(165, hr));
+      hrData.push(hr);
+    }
+    const VB_W = 320, VB_H = 120;
+    const pts = arr => arr.map((v, i) => `${(i / (arr.length - 1)) * VB_W},${VB_H - 10 - ((v - 80) / 100) * 100}`).join(' ');
+    const fill = arr => pts(arr) + ` ${VB_W},${VB_H} 0,${VB_H}`;
+    document.getElementById('hrLine').setAttribute('points', pts(hrData));
+    document.getElementById('hrLine').style.stroke = 'rgb(255,92,124)';
+    document.getElementById('hrLine').style.filter = 'drop-shadow(0 0 6px rgb(255,92,124))';
+    document.getElementById('hrFill').setAttribute('points', fill(hrData));
+
+    // Splits
+    const sl = document.getElementById('splitsList');
+    const splits = [
+      { km: 1, pace: '5:42', hr: 132, delta: '+0:17' },
+      { km: 2, pace: '5:28', hr: 138, delta: '+0:03' },
+      { km: 3, pace: '5:21', hr: 144, delta: '-0:04' },
+      { km: 4, pace: '5:18', hr: 148, delta: '-0:07' },
+      { km: 5, pace: '5:14', hr: 152, delta: '-0:11' },
+    ];
+    if (S.dist === 0) {
+      sl.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:20px;font-size:12px">Sesi recovery — tidak ada splits jarak</p>';
+    } else {
+      sl.innerHTML = splits.slice(0, Math.floor(S.dist)).map(s => `
+        <div class="splits-row">
+          <div class="splits-num">${s.km}</div>
+          <div><div class="splits-bar"><div class="splits-bar-fill" style="width:${(s.km/5)*100}%"></div></div></div>
+          <div style="text-align:right;font-weight:600">${s.pace}</div>
+          <div style="text-align:right;color:var(--text-muted)">${s.delta}</div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

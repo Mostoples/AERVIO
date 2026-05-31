@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pengguna — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="users">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <div class="admin-page-title"><h1>Pengguna</h1><p>12,438 total · 8,219 aktif 24 jam</p></div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="btn-pill primary" id="btnInvite"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg><span>Invite User</span></button>
+        <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="userSearch" type="text" placeholder="Cari nama, email, atau ID..." />
+      </div>
+      <select class="filter-select" id="filterRole">
+        <option value="">Semua role</option>
+        <option value="user">User</option>
+        <option value="premium">Premium</option>
+        <option value="athlete">Athlete</option>
+        <option value="admin">Admin</option>
+      </select>
+      <select class="filter-select" id="filterStatus">
+        <option value="">Semua status</option>
+        <option value="ok">Active</option>
+        <option value="warn">Idle</option>
+        <option value="danger">Suspended</option>
+      </select>
+    </div>
+
+    <section class="card">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Pengguna</th>
+              <th>Role</th>
+              <th>Device</th>
+              <th>Last Active</th>
+              <th>TEPRS</th>
+              <th>Status</th>
+              <th style="width:80px"></th>
+            </tr>
+          </thead>
+          <tbody id="userTbody"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 4px;font-size:12px;color:var(--text-muted)">
+        <span id="userCount">Menampilkan 12 dari 12,438 user</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span id="pageLabel" style="font-size:11px">Halaman 1 / 1,037</span>
+          <button class="tbl-action" id="pagePrev"><svg viewBox="0 0 24 24" class="ico"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <button class="tbl-action" id="pageNext"><svg viewBox="0 0 24 24" class="ico"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/admin.js"></script>
+<script>
+  const USERS = [
+    { id: 'u_8a1b', name: 'Adia Amaranta',    email: 'adia@gmail.com',          role: 'premium',  device: 'AVX-W1 · 4f72', last: '2 mnt lalu',  teprs: 34, status: 'ok',     init: 'AA' },
+    { id: 'u_8a1c', name: 'Budi Santoso',     email: 'budi.s@gmail.com',        role: 'user',     device: 'AVX-W1 · 2a91', last: '12 mnt lalu', teprs: 48, status: 'ok',     init: 'BS' },
+    { id: 'u_8a1d', name: 'Citra Wulandari',  email: 'citra.w@outlook.com',     role: 'athlete',  device: 'AVX-W1 · 8b34', last: '34 mnt lalu', teprs: 22, status: 'ok',     init: 'CW' },
+    { id: 'u_8a1e', name: 'Dimas Pratama',    email: 'dpratama@yahoo.com',      role: 'user',     device: '—',             last: '4 jam lalu',  teprs: 56, status: 'warn',   init: 'DP' },
+    { id: 'u_8a1f', name: 'Eka Putri',        email: 'eka.putri@gmail.com',     role: 'premium',  device: 'AVX-W1 · 1c08', last: '1 jam lalu',  teprs: 41, status: 'ok',     init: 'EP' },
+    { id: 'u_8a20', name: 'Fadli Rahman',     email: 'fadli.r@gmail.com',       role: 'admin',    device: 'AVX-W1 · 6e22', last: '5 mnt lalu',  teprs: 28, status: 'ok',     init: 'FR' },
+    { id: 'u_8a21', name: 'Gita Lestari',     email: 'gita.lest@gmail.com',     role: 'user',     device: 'AVX-W1 · 9d15', last: '2 hari lalu', teprs: 62, status: 'warn',   init: 'GL' },
+    { id: 'u_8a22', name: 'Hendra Wijaya',    email: 'hendra.wj@aervi.id',      role: 'athlete',  device: 'AVX-W1 · 3f88', last: '8 mnt lalu',  teprs: 38, status: 'ok',     init: 'HW' },
+    { id: 'u_8a23', name: 'Indah Kusuma',     email: 'indah.kus@gmail.com',     role: 'user',     device: 'AVX-W1 · 7a44', last: '45 mnt lalu', teprs: 44, status: 'ok',     init: 'IK' },
+    { id: 'u_8a24', name: 'Joko Saputro',     email: 'joko.sap@hotmail.com',    role: 'user',     device: '—',             last: '5 hari lalu', teprs: 0,  status: 'danger', init: 'JS' },
+    { id: 'u_8a25', name: 'Kartika Dewi',     email: 'kartika.d@gmail.com',     role: 'premium',  device: 'AVX-W1 · 5c91', last: '18 mnt lalu', teprs: 31, status: 'ok',     init: 'KD' },
+    { id: 'u_8a26', name: 'Lukman Hadi',      email: 'lukman.h@aervi.id',       role: 'admin',    device: 'AVX-W1 · 0a17', last: '1 jam lalu',  teprs: 26, status: 'ok',     init: 'LH' },
+  ];
+
+  function statusLabel(s) {
+    return s === 'ok' ? 'Active' : s === 'warn' ? 'Idle' : 'Suspended';
+  }
+  function roleLabel(r) {
+    const m = { user: 'User', premium: 'Premium', athlete: 'Athlete', admin: 'Admin' };
+    return m[r] || r;
+  }
+
+  function render(filtered) {
+    const tbody = document.getElementById('userTbody');
+    tbody.innerHTML = filtered.map(u => `
+      <tr>
+        <td>
+          <a class="tbl-avatar" href="/admin/user-detail.html?id=${u.id}" style="text-decoration:none;color:inherit">
+            <span class="tbl-avatar-circle">${u.init}</span>
+            <span><div class="tbl-name">${u.name}</div><div class="tbl-sub">${u.email}</div></span>
+          </a>
+        </td>
+        <td><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted)">${roleLabel(u.role)}</span></td>
+        <td><span class="mono" style="color:var(--text-muted)">${u.device}</span></td>
+        <td style="color:var(--text-muted)">${u.last}</td>
+        <td><strong>${u.teprs || '—'}</strong>${u.teprs ? '%' : ''}</td>
+        <td><span class="tbl-status ${u.status}">${statusLabel(u.status)}</span></td>
+        <td><button class="tbl-action" onclick="location.href='/admin/user-detail.html?id=${u.id}'"><svg viewBox="0 0 24 24" class="ico"><path d="M9 6l6 6-6 6"/></svg></button></td>
+      </tr>
+    `).join('');
+    document.getElementById('userCount').textContent = `Menampilkan ${filtered.length} dari 12,438 user`;
+  }
+
+  function filter() {
+    const q = document.getElementById('userSearch').value.toLowerCase();
+    const r = document.getElementById('filterRole').value;
+    const s = document.getElementById('filterStatus').value;
+    let list = USERS;
+    if (q) list = list.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.id.includes(q));
+    if (r) list = list.filter(u => u.role === r);
+    if (s) list = list.filter(u => u.status === s);
+    render(list);
+  }
+  document.getElementById('userSearch').addEventListener('input', filter);
+  document.getElementById('filterRole').addEventListener('change', filter);
+  document.getElementById('filterStatus').addEventListener('change', filter);
+  document.getElementById('btnInvite').addEventListener('click', () => AervinexToast('Invite link akan dikirim via email', 'success'));
+
+  let currentPage = 1;
+  const TOTAL_PAGES = 1037;
+  function updatePageLabel() { document.getElementById('pageLabel').textContent = `Halaman ${currentPage} / ${TOTAL_PAGES.toLocaleString()}`; }
+  document.getElementById('pagePrev').addEventListener('click', () => {
+    if (currentPage <= 1) { AervinexToast('Sudah di halaman pertama', 'info'); return; }
+    currentPage--; updatePageLabel(); AervinexToast(`Halaman ${currentPage}`, 'info', 1500);
+  });
+  document.getElementById('pageNext').addEventListener('click', () => {
+    if (currentPage >= TOTAL_PAGES) { AervinexToast('Sudah di halaman terakhir', 'info'); return; }
+    currentPage++; updatePageLabel(); AervinexToast(`Halaman ${currentPage}`, 'info', 1500);
+  });
+
+  render(USERS);
+</script>
+</body>
+</html>

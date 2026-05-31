@@ -1,5 +1,5 @@
 /**
- * AERVIO SPA Router & App Shell
+ * AERVINEX SPA Router & App Shell
  */
 window.App = {
   currentView: null,
@@ -43,7 +43,7 @@ window.App = {
         this.closeSidebar();
       });
     });
-    document.getElementById('btn-logout')?.addEventListener('click', () => AervioAuth.logout());
+    document.getElementById('btn-logout')?.addEventListener('click', () => AERVINEXAuth.logout());
     // Mobile
     document.getElementById('ham-btn')?.addEventListener('click', () => this.toggleSidebar());
     document.getElementById('sidebar-overlay')?.addEventListener('click', () => this.closeSidebar());
@@ -60,6 +60,8 @@ window.App = {
   },
 
   // ── TOAST ────────────────────────────────────────────
+  // Security: build with createElement/textContent to neutralize any HTML in `msg`.
+  // (Was: innerHTML with template string — vulnerable if msg ever carried user data.)
   toast(msg, type = 'info', duration = 4000) {
     const wrap = document.getElementById('toast-wrap');
     if (!wrap) return;
@@ -67,7 +69,12 @@ window.App = {
     const cls   = { warn: 'tw', danger: 'td', success: 'ts', info: '' };
     const t = document.createElement('div');
     t.className = `toast ${cls[type] || ''}`;
-    t.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+    const iconSpan = document.createElement('span');
+    iconSpan.textContent = icons[type] || 'ℹ️';
+    const msgSpan = document.createElement('span');
+    msgSpan.textContent = String(msg == null ? '' : msg);
+    t.appendChild(iconSpan);
+    t.appendChild(msgSpan);
     wrap.appendChild(t);
     setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(110%)'; t.style.transition = '.3s'; setTimeout(() => t.remove(), 300); }, duration);
   },
@@ -81,9 +88,41 @@ window.App = {
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
   },
 
+  // ── AARC — Adaptive Alert & Response Chain ───────────
+  // level 1: toast (warn)  |  level 2: modal  |  level 3: full-screen overlay
+  escalate(level, context = {}) {
+    const { title = 'Peringatan', msg = '', icon = '⚠️' } = context;
+    if (level === 1) {
+      this.toast(`${icon} ${title}: ${msg}`, 'warn', 6000);
+    } else if (level === 2) {
+      const l2Icon  = document.getElementById('aarc-l2-icon');
+      const l2Title = document.getElementById('aarc-l2-title');
+      const l2Msg   = document.getElementById('aarc-l2-msg');
+      if (l2Icon)  l2Icon.textContent  = icon;
+      if (l2Title) l2Title.textContent = title;
+      if (l2Msg)   l2Msg.textContent   = msg;
+      this.openModal('aarc-modal-l2');
+    } else if (level >= 3) {
+      const overlay = document.getElementById('aarc-overlay');
+      const titleEl = document.getElementById('aarc-title');
+      const msgEl   = document.getElementById('aarc-msg');
+      const pulse   = document.getElementById('aarc-pulse-icon');
+      if (overlay) {
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl)   msgEl.textContent   = msg;
+        if (pulse)   pulse.textContent   = icon;
+        overlay.classList.add('active');
+      }
+    }
+  },
+
+  closeAARC() {
+    document.getElementById('aarc-overlay')?.classList.remove('active');
+  },
+
   // ── USER INFO ────────────────────────────────────────
   updateUserUI(profile) {
-    const initials = AervioAuth.getInitials(profile?.name || 'U');
+    const initials = AERVINEXAuth.getInitials(profile?.name || 'U');
     const name = profile?.name || 'User';
     document.getElementById('sidebar-avatar').textContent = initials;
     document.getElementById('sidebar-name').textContent = name;
@@ -92,7 +131,7 @@ window.App = {
 
   // ── MAIN INIT ────────────────────────────────────────
   init() {
-    AervioAuth.init(
+    AERVINEXAuth.init(
       (user, profile) => {
         // Authenticated
         document.getElementById('view-landing').style.display = 'none';

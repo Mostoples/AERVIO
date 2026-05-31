@@ -1,0 +1,247 @@
+{
+  "asma": {
+    "threshold": 0.25999999999999995,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.8832,
+    "expected_f1": 0.9033112582781458
+  },
+  "ispa": {
+    "threshold": 0.27999999999999997,
+    "platt_a": 0.3,
+    "platt_b": -1.2000000000000002,
+    "expected_acc": 0.5816,
+    "expected_f1": 0.6492287055667337
+  },
+  "copd": {
+    "threshold": 0.4200000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.6000000000000003,
+    "expected_acc": 0.623,
+    "expected_f1": 0.7120818695585766
+  },
+  "hipoksia": {
+    "threshold": 0.27999999999999997,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.857,
+    "expected_f1": 0.8155790559711116
+  },
+  "heatstroke": {
+    "threshold": 0.38000000000000006,
+    "platt_a": 0.3,
+    "platt_b": -0.6000000000000003,
+    "expected_acc": 0.6912,
+    "expected_f1": 0.552463768115942
+  },
+  "kelelahan-panas": {
+    "threshold": 0.4000000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.8000000000000003,
+    "expected_acc": 0.8534,
+    "expected_f1": 0.7524484971293481
+  },
+  "dehidrasi": {
+    "threshold": 0.38000000000000006,
+    "platt_a": 0.3,
+    "platt_b": -0.8000000000000003,
+    "expected_acc": 0.8634,
+    "expected_f1": 0.8448079981822312
+  },
+  "afib": {
+    "threshold": 0.19999999999999998,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.697,
+    "expected_f1": 0.3129251700680272
+  },
+  "sunburn": {
+    "threshold": 0.27999999999999997,
+    "platt_a": 0.3,
+    "platt_b": -1.0000000000000002,
+    "expected_acc": 0.8914,
+    "expected_f1": 0.8555466879489225
+  },
+  "pneumonia": {
+    "threshold": 0.36000000000000004,
+    "platt_a": 0.3,
+    "platt_b": -1.0000000000000002,
+    "expected_acc": 0.7732,
+    "expected_f1": 0.6654867256637167
+  },
+  "bronchitis": {
+    "threshold": 0.23999999999999996,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.7614,
+    "expected_f1": 0.80661371372994
+  },
+  "asma-exacerbation": {
+    "threshold": 0.27999999999999997,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.8704,
+    "expected_f1": 0.7732680195941217
+  },
+  "copd-exacerbation": {
+    "threshold": 0.25999999999999995,
+    "platt_a": 0.3,
+    "platt_b": -1.6,
+    "expected_acc": 0.9494,
+    "expected_f1": 0.7334035827186511
+  },
+  "sleep-apnea": {
+    "threshold": 0.19999999999999998,
+    "platt_a": 0.3,
+    "platt_b": -1.6,
+    "expected_acc": 0.7556,
+    "expected_f1": 0.8231548480463098
+  },
+  "bradikardia": {
+    "threshold": 0.25999999999999995,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.959,
+    "expected_f1": 0.7218453188602444
+  },
+  "takikardia": {
+    "threshold": 0.16,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.9266,
+    "expected_f1": 0.905387986594483
+  },
+  "ektopik-beat": {
+    "threshold": 0.36000000000000004,
+    "platt_a": 0.3,
+    "platt_b": -1.0000000000000002,
+    "expected_acc": 0.858,
+    "expected_f1": 0.8092423428264374
+  },
+  "hipertensi": {
+    "threshold": 0.5400000000000001,
+    "platt_a": 0.3,
+    "platt_b": -2.7755575615628914e-16,
+    "expected_acc": 0.8108,
+    "expected_f1": 0.8148003132341426
+  },
+  "vasovagal": {
+    "threshold": 0.19999999999999998,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.895,
+    "expected_f1": 0.6645367412140575
+  },
+  "cv-fitness": {
+    "threshold": 0.4000000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.4000000000000003,
+    "expected_acc": 0.7454,
+    "expected_f1": 0.743087790110999
+  },
+  "heat-cramps": {
+    "threshold": 0.23999999999999996,
+    "platt_a": 0.3,
+    "platt_b": -1.6,
+    "expected_acc": 0.9596,
+    "expected_f1": 0.6688524590163935
+  },
+  "hyponatremia": {
+    "threshold": 0.19999999999999998,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.9696,
+    "expected_f1": 0.6122448979591837
+  },
+  "photokeratitis": {
+    "threshold": 0.4200000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.6000000000000003,
+    "expected_acc": 0.8782,
+    "expected_f1": 0.8356275303643725
+  },
+  "vitamin-d": {
+    "threshold": 0.5400000000000001,
+    "platt_a": 0.3,
+    "platt_b": -2.7755575615628914e-16,
+    "expected_acc": 0.8918,
+    "expected_f1": 0.8103750438135298
+  },
+  "skin-cancer": {
+    "threshold": 0.4000000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.6000000000000003,
+    "expected_acc": 0.8192,
+    "expected_f1": 0.7980339588918678
+  },
+  "demam": {
+    "threshold": 0.18,
+    "platt_a": 0.3,
+    "platt_b": -1.4000000000000001,
+    "expected_acc": 0.9444,
+    "expected_f1": 0.9495645863570392
+  },
+  "hipotermia": {
+    "threshold": 0.5800000000000002,
+    "platt_a": 0.3,
+    "platt_b": 0.19999999999999973,
+    "expected_acc": 0.951,
+    "expected_f1": 0.9657869012707724
+  },
+  "stress-kronik": {
+    "threshold": 0.19999999999999998,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.9704,
+    "expected_f1": 0.5747126436781609
+  },
+  "burnout": {
+    "threshold": 0.18,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.9412,
+    "expected_f1": 0.6297229219143577
+  },
+  "anxiety-panic": {
+    "threshold": 0.23999999999999996,
+    "platt_a": 0.3,
+    "platt_b": -1.6,
+    "expected_acc": 0.9518,
+    "expected_f1": 0.7141162514827996
+  },
+  "sleep-deprivation": {
+    "threshold": 0.4200000000000001,
+    "platt_a": 0.3,
+    "platt_b": -0.6000000000000003,
+    "expected_acc": 0.8614,
+    "expected_f1": 0.6772240335351654
+  },
+  "overtraining": {
+    "threshold": 0.36000000000000004,
+    "platt_a": 0.3,
+    "platt_b": -1.0000000000000002,
+    "expected_acc": 0.9872,
+    "expected_f1": 0.627906976744186
+  },
+  "sedentary": {
+    "threshold": 0.48000000000000015,
+    "platt_a": 0.3,
+    "platt_b": -0.4000000000000003,
+    "expected_acc": 0.9734,
+    "expected_f1": 0.6376021798365122
+  },
+  "migraine-trigger": {
+    "threshold": 0.18,
+    "platt_a": 0.3,
+    "platt_b": -1.8,
+    "expected_acc": 0.8634,
+    "expected_f1": 0.7886103373568555
+  },
+  "cardiac-event": {
+    "threshold": 0.38000000000000006,
+    "platt_a": 0.3,
+    "platt_b": -0.8000000000000003,
+    "expected_acc": 0.863,
+    "expected_f1": 0.7950942267424469
+  }
+}

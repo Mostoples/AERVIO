@@ -1,854 +1,1457 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AERVIO — From Detection to Action</title>
-<meta name="description" content="AERVIO adalah smartwatch berbasis AI & multi-sensor untuk monitoring kesehatan dan perlindungan saat aktivitas fisik.">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>AERVINEX — Smart Wearable untuk Pelari & Warga Urban Indonesia</title>
+  <meta name="description" content="AERVINEX: smartwatch berbasis AI yang melindungi Anda dari polusi udara, panas ekstrem, dan UV. Real-time monitoring HR, SpO2, PM2.5. Dipercaya ribuan pelari & komuter di Jakarta, Surabaya, Bandung." />
+  <meta property="og:title" content="AERVINEX — From Detection to Action" />
+  <meta property="og:description" content="Smartwatch AI untuk monitoring kesehatan & perlindungan lingkungan. 35 model ML, 5 sensor, 1 ekosistem." />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:image:width" content="512" />
+  <meta property="og:image:height" content="512" />
+  <meta property="og:image:alt" content="AERVINEX logo — gradient cyan to violet" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AERVINEX" />
+  <meta property="og:url" content="https://aervinex.web.app/" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AERVINEX — From Detection to Action" />
+  <meta name="twitter:description" content="Smartwatch AI untuk monitoring kesehatan & perlindungan lingkungan." />
+  <meta name="twitter:image" content="https://aervinex.web.app/icon-512.svg" />
+
+  <!-- Canonical + hreflang -->
+  <link rel="canonical" href="https://aervinex.web.app/" />
+  <link rel="alternate" hreflang="id" href="https://aervinex.web.app/" />
+  <link rel="alternate" hreflang="en" href="https://aervinex.web.app/?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://aervinex.web.app/" />
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
+
+  <!-- Resource hints: warm up Google Fonts + Firebase endpoints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+  <link rel="dns-prefetch" href="https://firebaseinstallations.googleapis.com" />
+  <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
+  <link rel="dns-prefetch" href="https://aervinex.firebaseapp.com" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+
+  <!-- Schema.org WebApplication / HealthApplication JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "HealthApplication"],
+        "@id": "https://aervinex.web.app/#webapp",
+        "name": "AERVINEX",
+        "alternateName": "AERVINEX Smart Wearable",
+        "url": "https://aervinex.web.app/",
+        "description": "Smartwatch berbasis AI yang melindungi pengguna dari polusi udara, panas ekstrem, dan UV - real-time monitoring HR, SpO2, PM2.5, dengan 35 model machine learning yang diuji terhadap clinical ground truth.",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Wellness, Wearable, Environmental Health",
+        "operatingSystem": "Web, Android, iOS",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "inLanguage": ["id-ID", "en-US"],
+        "isAccessibleForFree": true,
+        "audience": {
+          "@type": "PeopleAudience",
+          "audienceType": "Pelari urban, komuter, lansia, penderita asma dan ISPA, atlet rekreasi"
+        },
+        "featureList": [
+          "Real-time TEPRS environmental health risk score",
+          "35 ML-based risk detectors (respiratory, cardio, heat, UV, mental)",
+          "Geospatial nearest-station data fusion (DLSFA)",
+          "Bilingual ID / EN interface",
+          "PWA - works offline"
+        ],
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Free Plan",
+            "price": "0",
+            "priceCurrency": "IDR",
+            "category": "Free"
+          },
+          {
+            "@type": "Offer",
+            "name": "Pro Plan",
+            "price": "49000",
+            "priceCurrency": "IDR",
+            "billingDuration": "P1M",
+            "category": "Subscription"
+          }
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://aervinex.web.app/#org",
+        "name": "AERVINEX",
+        "url": "https://aervinex.web.app/",
+        "logo": "https://aervinex.web.app/icon-512.svg",
+        "email": "hello@aervinex.id",
+        "areaServed": "ID",
+        "slogan": "From Detection to Action"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://aervinex.web.app/#site",
+        "url": "https://aervinex.web.app/",
+        "name": "AERVINEX",
+        "inLanguage": "id-ID",
+        "publisher": { "@id": "https://aervinex.web.app/#org" }
+      }
+    ]
+  }
+  </script>
+  <style>
+    /* ============ Landing Page Startup-Grade ============ */
+    :root {
+      --hero-grad: linear-gradient(135deg, #00e5d4 0%, #06b6d4 30%, #a78bfa 60%, #ff5470 100%);
+    }
+    body { overflow-x: hidden; }
+
+    /* Nav */
+    .lp-nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      background: rgba(15, 25, 35, 0.7);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 24px;
+    }
+    .theme-light .lp-nav { background: rgba(255,255,255,0.75); border-color: rgba(0,0,0,0.06); }
+    .lp-nav-inner {
+      max-width: 1180px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .lp-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 14px; letter-spacing: 4px;
+      text-decoration: none; color: var(--text);
+    }
+    .lp-logo .lp-dot {
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--hero-grad);
+      box-shadow: 0 0 14px #00e5d4;
+      animation: lpPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes lpPulse { 0%,100% { box-shadow: 0 0 14px #00e5d4 } 50% { box-shadow: 0 0 22px #a78bfa, 0 0 8px #00e5d4 } }
+
+    .lp-nav-links {
+      display: flex; gap: 4px; align-items: center;
+    }
+    .lp-nav-links a {
+      padding: 8px 14px; font-size: 13.5px; font-weight: 500;
+      color: var(--text-muted); text-decoration: none;
+      border-radius: 10px; transition: all 0.2s;
+    }
+    .lp-nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .theme-light .lp-nav-links a:hover { background: rgba(0,0,0,0.04); }
+
+    .lp-nav-cta { display: flex; gap: 8px; align-items: center; }
+    .lp-btn {
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .lp-btn.ghost {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .lp-btn.ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+    .theme-light .lp-btn.ghost { border-color: rgba(0,0,0,0.1); }
+    .lp-btn.primary {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      box-shadow: 0 4px 14px rgba(0,229,212,0.3);
+    }
+    .lp-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,229,212,0.45); }
+    .lp-burger { display: none; background: none; border: none; color: var(--text); padding: 6px; cursor: pointer; }
+    .lp-burger svg { width: 22px; height: 22px; }
+    @media (max-width: 880px) {
+      .lp-nav-links { display: none; }
+      .lp-burger { display: block; }
+      .lp-nav-cta .lp-btn.ghost { display: none; }
+    }
+
+    /* Mobile menu drawer */
+    .lp-drawer {
+      position: fixed; top: 0; right: -100%;
+      width: 280px; max-width: 85vw; height: 100vh;
+      background: var(--bg);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      padding: 80px 20px 20px;
+      z-index: 100;
+      transition: right 0.3s;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .lp-drawer.open { right: 0; }
+    .lp-drawer a {
+      padding: 12px 14px; color: var(--text);
+      text-decoration: none; font-size: 14px; font-weight: 500;
+      border-radius: 10px;
+    }
+    .lp-drawer a:hover { background: rgba(255,255,255,0.05); }
+    .lp-drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 99; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lp-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    /* Container */
+    .lp-container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero */
+    .lp-hero {
+      position: relative;
+      padding: 70px 0 80px;
+      overflow: hidden;
+    }
+    .lp-hero::before {
+      content: '';
+      position: absolute; top: -10%; left: 50%;
+      width: 800px; height: 800px;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(0,229,212,0.15) 0%, transparent 60%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .lp-hero::after {
+      content: '';
+      position: absolute; top: 20%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 60%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .lp-hero-grid {
+      display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 50px; align-items: center;
+      position: relative;
+    }
+    @media (max-width: 960px) { .lp-hero-grid { grid-template-columns: 1fr; gap: 30px; padding: 0 0 30px; } }
+
+    .lp-pill-launch {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(0,229,212,0.1);
+      border: 1px solid rgba(0,229,212,0.25);
+      color: #00e5d4;
+      padding: 6px 6px 6px 14px;
+      border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .lp-pill-launch::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: #00e5d4; box-shadow: 0 0 10px #00e5d4;
+      animation: lpPulse 1.4s infinite;
+    }
+    .lp-pill-launch .pill-tag {
+      background: #00e5d4; color: #0f1923;
+      padding: 2px 9px; border-radius: 999px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+      margin-left: 4px;
+    }
+
+    .lp-h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900; letter-spacing: -1.5px;
+      line-height: 1.02;
+      margin: 0 0 22px;
+    }
+    .lp-h1 .grad {
+      background: var(--hero-grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lp-lead {
+      font-size: clamp(15px, 1.8vw, 17px);
+      line-height: 1.65; opacity: 0.88;
+      max-width: 560px; margin: 0 0 28px;
+    }
+    .lp-hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+    .lp-hero-cta .lp-btn {
+      padding: 14px 22px; font-size: 14px; border-radius: 14px;
+    }
+    .lp-hero-trust {
+      display: flex; gap: 22px; flex-wrap: wrap;
+      font-size: 12.5px; opacity: 0.75;
+    }
+    .lp-hero-trust strong { color: var(--text); font-weight: 700; }
+
+    /* Phone mockup with floating UI elements */
+    .lp-phone-wrap {
+      position: relative;
+      perspective: 1200px;
+    }
+    .lp-phone {
+      position: relative;
+      width: 100%; max-width: 320px;
+      aspect-ratio: 9/19.5;
+      background: #0a121b;
+      border-radius: 42px;
+      padding: 12px;
+      margin: 0 auto;
+      box-shadow:
+        0 0 0 2px #1a2530,
+        0 30px 80px rgba(0,0,0,0.5),
+        0 0 60px rgba(0,229,212,0.2);
+      transform: rotateY(-8deg) rotateX(2deg);
+      animation: lpFloat 6s ease-in-out infinite;
+    }
+    @keyframes lpFloat {
+      0%,100% { transform: rotateY(-8deg) rotateX(2deg) translateY(0); }
+      50% { transform: rotateY(-6deg) rotateX(1deg) translateY(-12px); }
+    }
+    .lp-phone-screen {
+      width: 100%; height: 100%; border-radius: 32px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0f1923, #1a2530);
+      position: relative;
+    }
+    .lp-phone-screen iframe {
+      width: 100%; height: 100%; border: 0; background: transparent;
+    }
+    .lp-phone-notch {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 22px; background: #0a121b;
+      border-radius: 14px; z-index: 10;
+    }
+    .lp-phone-bezel-btn {
+      position: absolute; left: -2px; width: 4px;
+      background: #1a2530; border-radius: 4px;
+    }
+
+    .lp-float {
+      position: absolute;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+      animation: lpFloatCard 5s ease-in-out infinite;
+      z-index: 5;
+    }
+    .lp-float-1 { top: 10%; left: -10%; animation-delay: 0s; }
+    .lp-float-2 { top: 50%; right: -15%; animation-delay: 1.5s; }
+    .lp-float-3 { bottom: 12%; left: -8%; animation-delay: 3s; }
+    @keyframes lpFloatCard {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .lp-float-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: rgba(0,229,212,0.2); color: #00e5d4;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .lp-float .lbl { font-size: 10.5px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.04em; }
+    .lp-float .val { font-size: 16px; font-weight: 800; margin-top: 2px; }
+    .lp-float .delta { font-size: 11px; color: #00e5d4; margin-top: 2px; }
+
+    /* Trust strip */
+    .lp-trust-strip {
+      padding: 30px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.015);
+    }
+    .lp-trust-label {
+      text-align: center; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      opacity: 0.55; margin-bottom: 20px;
+    }
+    .lp-trust-logos {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 36px 50px; align-items: center;
+    }
+    .lp-trust-logo {
+      font-size: 14px; font-weight: 800;
+      opacity: 0.55;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+    }
+    .lp-trust-logo:hover { opacity: 1; }
+    .lp-trust-logo .sub { font-size: 9.5px; font-weight: 500; opacity: 0.7; display: block; letter-spacing: 0.05em; }
+
+    /* Stats band */
+    .lp-stats {
+      padding: 50px 0;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    @media (max-width: 700px) { .lp-stats { grid-template-columns: 1fr 1fr; } }
+    .lp-stat-card {
+      text-align: center;
+      padding: 24px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .lp-stat-card:hover { transform: translateY(-3px); border-color: rgba(0,229,212,0.25); }
+    .lp-stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--hero-grad);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .lp-stat-card:hover::before { opacity: 1; }
+    .lp-stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+      background: var(--hero-grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+    .lp-stat-lbl { font-size: 12px; opacity: 0.7; margin-top: 6px; font-weight: 500; }
+
+    /* Section */
+    .lp-section { padding: 70px 0; position: relative; }
+    .lp-section-head { text-align: center; margin-bottom: 50px; }
+    .lp-eyebrow {
+      display: inline-block;
+      font-size: 11.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: #00e5d4;
+      background: rgba(0,229,212,0.1);
+      border: 1px solid rgba(0,229,212,0.2);
+      padding: 5px 12px; border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .lp-section-title {
+      font-size: clamp(26px, 4vw, 40px); font-weight: 800; letter-spacing: -1px;
+      line-height: 1.15; margin: 0 0 14px;
+    }
+    .lp-section-title .grad {
+      background: var(--hero-grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lp-section-sub {
+      font-size: 15px; line-height: 1.65;
+      max-width: 640px; margin: 0 auto; opacity: 0.8;
+    }
+
+    /* How it works */
+    .lp-how {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+      position: relative;
+    }
+    @media (max-width: 880px) { .lp-how { grid-template-columns: 1fr; } }
+    .lp-how-step {
+      position: relative;
+      padding: 30px 26px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      transition: all 0.3s;
+    }
+    .lp-how-step:hover { transform: translateY(-4px); border-color: rgba(0,229,212,0.3); box-shadow: 0 20px 50px rgba(0,229,212,0.1); }
+    .lp-how-num {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 18px;
+      margin-bottom: 18px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .lp-how-title { font-size: 19px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.3px; }
+    .lp-how-desc { font-size: 14px; line-height: 1.6; opacity: 0.78; }
+    .lp-how-step .lp-how-arrow {
+      position: absolute; top: 50%; right: -32px;
+      transform: translateY(-50%);
+      width: 24px; color: rgba(0,229,212,0.4);
+    }
+    @media (max-width: 880px) { .lp-how-arrow { display: none; } }
+    .lp-how-step:last-child .lp-how-arrow { display: none; }
+
+    /* Features grid */
+    .lp-features {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 880px) { .lp-features { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .lp-features { grid-template-columns: 1fr; } }
+    .lp-feature {
+      padding: 26px 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .lp-feature:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,229,212,0.3);
+      box-shadow: 0 20px 40px rgba(0,229,212,0.1);
+    }
+    .lp-feature::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 70% -20%, var(--feature-aura, rgba(0,229,212,0.15)), transparent 50%);
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .lp-feature:hover::before { opacity: 1; }
+    .lp-feat-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      background: var(--feature-bg, rgba(0,229,212,0.15));
+      color: var(--feature-clr, #00e5d4);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .lp-feat-icon svg { width: 24px; height: 24px; }
+    .lp-feat-title { font-size: 17px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.3px; }
+    .lp-feat-desc { font-size: 13.5px; line-height: 1.6; opacity: 0.78; }
+
+    /* Persona section */
+    .lp-personas {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    @media (max-width: 800px) { .lp-personas { grid-template-columns: 1fr; } }
+    .lp-persona {
+      padding: 34px 30px;
+      background: linear-gradient(135deg, var(--persona-grad-1), var(--persona-grad-2));
+      border: 1px solid var(--persona-border);
+      border-radius: 24px;
+      position: relative; overflow: hidden;
+    }
+    .lp-persona-icon { font-size: 50px; margin-bottom: 14px; }
+    .lp-persona h3 { font-size: 24px; font-weight: 800; margin: 0 0 10px; }
+    .lp-persona p { font-size: 14px; line-height: 1.65; opacity: 0.85; margin-bottom: 18px; }
+    .lp-persona ul {
+      list-style: none; padding: 0; margin: 0 0 22px;
+      display: flex; flex-direction: column; gap: 8px;
+      font-size: 13px;
+    }
+    .lp-persona ul li { display: flex; gap: 8px; align-items: flex-start; }
+    .lp-persona ul li::before {
+      content: '✓'; color: #00e5d4; font-weight: 800; flex-shrink: 0;
+    }
+    .lp-persona-cta { color: #00e5d4; font-weight: 600; font-size: 13.5px; text-decoration: none; }
+
+    /* Comparison Table */
+    .lp-compare {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 26px;
+      overflow-x: auto;
+    }
+    .lp-compare table {
+      width: 100%; border-collapse: collapse;
+      min-width: 600px;
+    }
+    .lp-compare th, .lp-compare td {
+      padding: 14px 16px; text-align: left;
+      font-size: 13.5px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .lp-compare th {
+      font-size: 11.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      opacity: 0.7; padding-bottom: 16px;
+    }
+    .lp-compare th.us {
+      color: #00e5d4;
+      font-size: 13.5px; font-weight: 800;
+      text-transform: none; letter-spacing: 0;
+    }
+    .lp-compare th.us::before {
+      content: '★'; margin-right: 6px;
+    }
+    .lp-compare td.us { font-weight: 700; color: #00e5d4; }
+    .lp-compare .y { color: #00e5d4; font-size: 18px; }
+    .lp-compare .n { color: rgba(255,255,255,0.3); font-size: 18px; }
+    .lp-compare .partial { color: #fcd34d; font-size: 12px; }
+    .lp-compare tr:last-child td { border-bottom: none; }
+
+    /* Pricing */
+    .lp-pricing {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 880px) { .lp-pricing { grid-template-columns: 1fr; } }
+    .lp-plan {
+      padding: 30px 26px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .lp-plan:hover { transform: translateY(-4px); }
+    .lp-plan.featured {
+      border-color: rgba(0,229,212,0.4);
+      background: linear-gradient(180deg, rgba(0,229,212,0.05), rgba(167,139,250,0.05));
+      box-shadow: 0 20px 60px rgba(0,229,212,0.15);
+    }
+    .lp-plan-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, #00e5d4, #a78bfa); color: #0f1923;
+      padding: 4px 14px; border-radius: 999px;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.05em;
+    }
+    .lp-plan-name { font-size: 15px; font-weight: 700; opacity: 0.8; margin: 0 0 4px; }
+    .lp-plan-price {
+      font-size: 38px; font-weight: 800;
+      margin: 8px 0; letter-spacing: -1.5px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .lp-plan-price .currency { font-size: 18px; opacity: 0.7; vertical-align: super; margin-right: 2px; font-weight: 600; }
+    .lp-plan-price .per { font-size: 14px; opacity: 0.6; font-weight: 500; }
+    .lp-plan-desc { font-size: 13px; opacity: 0.75; margin-bottom: 18px; min-height: 36px; }
+    .lp-plan-features {
+      list-style: none; padding: 0; margin: 0 0 22px;
+      display: flex; flex-direction: column; gap: 9px;
+      font-size: 13px; flex: 1;
+    }
+    .lp-plan-features li {
+      display: flex; gap: 9px; align-items: flex-start;
+      line-height: 1.45;
+    }
+    .lp-plan-features li::before {
+      content: '✓'; color: #00e5d4; font-weight: 800;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .lp-plan-features li.muted { opacity: 0.45; }
+    .lp-plan-features li.muted::before { content: '−'; color: rgba(255,255,255,0.3); }
+    .lp-plan-cta {
+      display: block; padding: 12px;
+      text-align: center;
+      border-radius: 12px;
+      font-size: 13.5px; font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .lp-plan-cta.ghost {
+      background: rgba(255,255,255,0.06);
+      color: var(--text); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .lp-plan-cta.ghost:hover { background: rgba(255,255,255,0.1); }
+    .lp-plan-cta.primary {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa); color: #0f1923;
+      box-shadow: 0 8px 24px rgba(0,229,212,0.3);
+    }
+    .lp-plan-cta.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,229,212,0.4); }
+
+    /* Testimonials */
+    .lp-testimonials {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 880px) { .lp-testimonials { grid-template-columns: 1fr; } }
+    .lp-testimonial {
+      padding: 26px 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+    .lp-testimonial:hover { transform: translateY(-3px); border-color: rgba(0,229,212,0.2); }
+    .lp-test-stars { color: #fcd34d; margin-bottom: 14px; font-size: 14px; letter-spacing: 2px; }
+    .lp-test-quote { font-size: 14px; line-height: 1.65; opacity: 0.9; margin-bottom: 18px; }
+    .lp-test-quote::before { content: '"'; font-size: 28px; color: #00e5d4; font-weight: 800; vertical-align: -8px; margin-right: 4px; }
+    .lp-test-quote::after { content: '"'; font-size: 28px; color: #00e5d4; font-weight: 800; vertical-align: -8px; margin-left: 2px; }
+    .lp-test-author { display: flex; gap: 12px; align-items: center; }
+    .lp-test-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--avatar-1, #00e5d4), var(--avatar-2, #a78bfa));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: #0f1923; font-size: 14px;
+    }
+    .lp-test-author strong { font-size: 13.5px; display: block; }
+    .lp-test-author span { font-size: 11.5px; opacity: 0.7; }
+
+    /* FAQ */
+    .lp-faq { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .lp-faq-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+    .lp-faq-item[open] { border-color: rgba(0,229,212,0.25); }
+    .lp-faq-item summary {
+      padding: 16px 20px;
+      cursor: pointer; font-size: 14.5px; font-weight: 600;
+      display: flex; justify-content: space-between; align-items: center;
+      list-style: none;
+    }
+    .lp-faq-item summary::-webkit-details-marker { display: none; }
+    .lp-faq-item summary::after {
+      content: '+'; font-size: 22px; font-weight: 300;
+      transition: transform 0.25s;
+      color: #00e5d4;
+    }
+    .lp-faq-item[open] summary::after { transform: rotate(45deg); }
+    .lp-faq-item .lp-faq-body {
+      padding: 0 20px 18px;
+      font-size: 13.5px; line-height: 1.65; opacity: 0.85;
+    }
+
+    /* CTA Final */
+    .lp-cta-final {
+      padding: 70px 40px;
+      background: linear-gradient(135deg, rgba(0,229,212,0.1), rgba(167,139,250,0.1));
+      border: 1px solid rgba(0,229,212,0.25);
+      border-radius: 28px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .lp-cta-final::before {
+      content: '';
+      position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+      width: 80%; height: 200%;
+      background: radial-gradient(circle, rgba(0,229,212,0.15), transparent 50%);
+      pointer-events: none;
+    }
+    .lp-cta-final h2 {
+      font-size: clamp(28px, 4vw, 42px); font-weight: 800;
+      letter-spacing: -1px; margin: 0 0 14px; position: relative;
+    }
+    .lp-cta-final p {
+      font-size: 16px; line-height: 1.6; opacity: 0.85;
+      max-width: 520px; margin: 0 auto 26px; position: relative;
+    }
+    .lp-cta-final .lp-hero-cta { justify-content: center; }
+    .lp-cta-final .lp-hero-cta .lp-btn { padding: 14px 26px; font-size: 14px; }
+    .lp-cta-final .micro {
+      margin-top: 18px; font-size: 12px; opacity: 0.6; position: relative;
+    }
+
+    /* Footer */
+    .lp-footer {
+      padding: 60px 0 30px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 30px;
+    }
+    .lp-footer-top {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 800px) { .lp-footer-top { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .lp-footer-top { grid-template-columns: 1fr; } }
+    .lp-footer-brand p {
+      font-size: 13px; opacity: 0.7; line-height: 1.6;
+      margin: 12px 0 16px; max-width: 280px;
+    }
+    .lp-footer-social { display: flex; gap: 10px; }
+    .lp-footer-social a {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .lp-footer-social a:hover { color: #00e5d4; background: rgba(0,229,212,0.1); transform: translateY(-2px); }
+    .lp-footer-social svg { width: 16px; height: 16px; }
+    .lp-footer-col h4 {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin: 0 0 16px; opacity: 0.8;
+    }
+    .lp-footer-col a {
+      display: block; font-size: 13px;
+      color: var(--text-muted); text-decoration: none;
+      padding: 5px 0; transition: color 0.2s;
+    }
+    .lp-footer-col a:hover { color: #00e5d4; }
+    .lp-footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px; opacity: 0.65;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .lp-footer-bottom .links a {
+      color: inherit; text-decoration: none;
+      margin-left: 18px;
+    }
+    .lp-footer-bottom .links a:hover { color: #00e5d4; }
+
+    /* Sticky lang toggle */
+    .lp-lang-fab {
+      position: fixed; bottom: 24px; left: 24px;
+      z-index: 50;
+      display: flex; gap: 4px;
+      background: rgba(15, 25, 35, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 4px; border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .lp-lang-btn {
+      padding: 6px 12px;
+      background: transparent; border: none;
+      color: var(--text-muted);
+      font-size: 12px; font-weight: 700;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: all 0.2s;
+    }
+    .lp-lang-btn.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+    }
+  </style>
 </head>
-<body>
+<body class="theme-dark" data-page="home">
 
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<!--  LANDING / COMPANY PAGE (unauthenticated)                             -->
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<div id="view-landing">
+  <!-- Skip-to-content (a11y) -->
+  <a href="#main" class="sr-only-focusable">Lewati ke konten utama</a>
 
-  <!-- Navbar -->
-  <nav class="land-nav">
-    <div class="logo">
-      <div class="logo-mark">A</div>
-      <span>AERVIO</span>
-    </div>
-    <div class="nav-ctas">
-      <button class="btn btn-secondary btn-sm" onclick="App.openModal('modal-auth')">Masuk</button>
-      <button class="btn btn-primary btn-sm" onclick="openRegister()">Mulai Gratis</button>
+  <!-- ============ NAV ============ -->
+  <nav class="lp-nav" aria-label="Navigasi utama">
+    <div class="lp-nav-inner">
+      <a href="#top" class="lp-logo">
+        <span class="lp-dot"></span>
+        <span>AERVINEX</span>
+      </a>
+      <div class="lp-nav-links">
+        <a href="#features">Fitur</a>
+        <a href="#how">Cara Kerja</a>
+        <a href="#compare">Banding</a>
+        <a href="#pricing">Harga</a>
+        <a href="#faq">FAQ</a>
+        <a href="/evidence.html">Riset</a>
+        <a href="/ml-results-report.html">Tes Akurasi</a>
+      </div>
+      <div class="lp-nav-cta">
+        <button class="btn-icon theme-toggle" aria-label="Tema" style="margin-right:4px">
+          <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <a href="/login.html" class="lp-btn ghost">Masuk</a>
+        <a href="/register.html" class="lp-btn primary">
+          <span>Mulai Gratis</span>
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="lp-burger" id="lpBurger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
     </div>
   </nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-grid"></div>
-    <div class="hero-content anim-in">
-      <div class="hero-badge">🌿 Smartwatch · AI · Multi-Sensor · Real-Time</div>
-      <h1>From <span>Detection</span><br>to Action</h1>
-      <p class="hero-sub">AERVIO memantau tubuh Anda secara real-time dari 5 sensor wearable, lalu memfusikan data fisiologi tersebut dengan data lingkungan dari <strong>stasiun pemantauan terdekat</strong> yang dipilih otomatis berbasis GPS — satu platform untuk melindungi Anda dari risiko kesehatan di mana pun Anda berada.</p>
-      <div class="hero-actions">
-        <button class="btn btn-primary btn-lg" onclick="openRegister()">Mulai Monitoring</button>
-        <a href="#fitur" class="btn btn-secondary btn-lg">Lihat Fitur</a>
-      </div>
-      <!-- Sensor chips -->
-      <div class="sensor-strip">
-        <span class="sensor-chip"><span class="dot"></span> MAX30102 (PPG)</span>
-        <span class="sensor-chip"><span class="dot"></span> MLX90614 (IR Temp)</span>
-        <span class="sensor-chip"><span class="dot"></span> EDA / GSR</span>
-        <span class="sensor-chip"><span class="dot"></span> GPS</span>
-        <span class="sensor-chip"><span class="dot"></span> IMU 9-DOF</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats Bar -->
-  <div style="padding:0 40px;max-width:1100px;margin:0 auto;">
-    <div class="stats-bar">
-      <div class="stat-block"><div class="stat-block-val">5</div><div class="stat-block-lbl">Sensor Terintegrasi</div></div>
-      <div class="stat-block"><div class="stat-block-val">18+</div><div class="stat-block-lbl">Fitur Turunan AI</div></div>
-      <div class="stat-block"><div class="stat-block-val">WHO</div><div class="stat-block-lbl">Standar Kesehatan Global</div></div>
-      <div class="stat-block"><div class="stat-block-val">Real-Time</div><div class="stat-block-lbl">Adaptive Closed-Loop</div></div>
-    </div>
-  </div>
-
-  <!-- Sensor Features -->
-  <section class="lsec" id="fitur">
-    <div class="eyebrow">Sensor → Fitur Canggih</div>
-    <h2 class="sec-h">5 Sensor, <span>18+ Fitur</span> Turunan</h2>
-    <div class="sfeat-grid">
-
-      <div class="sfeat-card">
-        <div class="sfeat-head">
-          <div class="sfeat-icon">💓</div>
-          <div><div class="sfeat-sensor">MAX30102 — PPG</div><div class="sfeat-name">Heart Rate & Oksigen</div></div>
-        </div>
-        <div class="sfeat-list">
-          <div class="sfeat-item"><strong>Heart Rate</strong> — Beat per menit real-time</div>
-          <div class="sfeat-item"><strong>SpO₂</strong> — Saturasi oksigen darah</div>
-          <div class="sfeat-item"><strong>HRV (RMSSD, SDNN, pNN50)</strong> — Variabilitas detak jantung</div>
-          <div class="sfeat-item"><strong>Stress Index</strong> — Dari rasio LF/HF & HRV</div>
-          <div class="sfeat-item"><strong>Respiration Rate</strong> — Laju napas dari drift PPG</div>
-          <div class="sfeat-item"><strong>Lactate Threshold</strong> — Deteksi real-time mendekati ambang laktat</div>
-          <div class="sfeat-item"><strong>Recovery Readiness</strong> — HRV + HR istirahat = skor kesiapan</div>
-        </div>
-      </div>
-
-      <div class="sfeat-card">
-        <div class="sfeat-head">
-          <div class="sfeat-icon">🌡️</div>
-          <div><div class="sfeat-sensor">MLX90614 — IR Thermal</div><div class="sfeat-name">Suhu Kulit & Inti</div></div>
-        </div>
-        <div class="sfeat-list">
-          <div class="sfeat-item"><strong>Skin Temperature</strong> — Non-contact, real-time</div>
-          <div class="sfeat-item"><strong>Core Temp Estimate</strong> — Tskin + offset aktivitas</div>
-          <div class="sfeat-item"><strong>Sweat Onset Marker</strong> — Penurunan suhu = mulai berkeringat</div>
-          <div class="sfeat-item"><strong>Heat Stress Index</strong> — Suhu + HR + lingkungan</div>
-          <div class="sfeat-item"><strong>Thermoregulation Efficiency</strong> — Kecepatan pendinginan tubuh</div>
-          <div class="sfeat-item"><strong>Heatstroke Early Warning</strong> — Alert >38.5°C core</div>
-        </div>
-      </div>
-
-      <div class="sfeat-card">
-        <div class="sfeat-head">
-          <div class="sfeat-icon">⚡</div>
-          <div><div class="sfeat-sensor">EDA / GSR</div><div class="sfeat-name">Aktivitas Elektrodermal</div></div>
-        </div>
-        <div class="sfeat-list">
-          <div class="sfeat-item"><strong>Sympathetic Activation Score</strong> — Aktivasi saraf simpatis 0–100</div>
-          <div class="sfeat-item"><strong>Stress Event Detection</strong> — Lonjakan EDA phasik = stres akut</div>
-          <div class="sfeat-item"><strong>Composite Stress Score (CSS)</strong> — EDA + HRV + HR zone</div>
-          <div class="sfeat-item"><strong>Dehydration Risk Signal</strong> — EDA drop + HR naik = dehidrasi</div>
-          <div class="sfeat-item"><strong>Autonomic Balance Score</strong> — Parasimpatis vs Simpatis</div>
-          <div class="sfeat-item"><strong>Mental Load Index</strong> — EDA sustained tinggi = beban kognitif</div>
-        </div>
-      </div>
-
-      <div class="sfeat-card">
-        <div class="sfeat-head">
-          <div class="sfeat-icon">🗺️</div>
-          <div><div class="sfeat-sensor">GPS</div><div class="sfeat-name">Navigasi & Rute Aman</div></div>
-        </div>
-        <div class="sfeat-list">
-          <div class="sfeat-item"><strong>Real Map (OpenStreetMap)</strong> — Rute lari dengan peta nyata</div>
-          <div class="sfeat-item"><strong>Elevation Profile</strong> — Profil ketinggian & tanjakan</div>
-          <div class="sfeat-item"><strong>Grade-Adjusted Pace</strong> — Pace yang dikoreksi tanjakan</div>
-          <div class="sfeat-item"><strong>Pollution Exposure Map</strong> — Overlay PM2.5 pada jalur GPS</div>
-          <div class="sfeat-item"><strong>Safe Corridor Detection</strong> — Jalur udara terbersih</div>
-          <div class="sfeat-item"><strong>Dead Reckoning</strong> — Backup posisi dari IMU saat GPS lemah</div>
-        </div>
-      </div>
-
-      <div class="sfeat-card" style="grid-column:span 1">
-        <div class="sfeat-head">
-          <div class="sfeat-icon">🏃</div>
-          <div><div class="sfeat-sensor">IMU 9-DOF (Gyro + Accel + Magneto)</div><div class="sfeat-name">Analisis Gait & Biomekanik</div></div>
-        </div>
-        <div class="sfeat-list">
-          <div class="sfeat-item"><strong>Cadence</strong> — Langkah/menit (optimal: 170–185 spm)</div>
-          <div class="sfeat-item"><strong>Vertical Oscillation</strong> — Pantulan vertikal (ideal &lt;8 cm)</div>
-          <div class="sfeat-item"><strong>Ground Contact Time</strong> — Waktu kaki di tanah (elite &lt;200ms)</div>
-          <div class="sfeat-item"><strong>Gait Symmetry Index</strong> — Keseimbangan kiri/kanan (&gt;95% baik)</div>
-          <div class="sfeat-item"><strong>Impact Force</strong> — Estimasi G-force saat pendaratan</div>
-          <div class="sfeat-item"><strong>Neuromuscular Fatigue Index</strong> — Deteksi kelelahan otot dari perubahan gait</div>
-          <div class="sfeat-item"><strong>Body Lean Angle</strong> — Sudut tubuh (optimal 5–8°)</div>
-          <div class="sfeat-item"><strong>Gait Efficiency Score</strong> — Skor 0–100 efisiensi lari</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Fusion Features -->
-  <section class="lsec-full">
-    <div class="lsec-full-inner">
-      <div class="eyebrow">Multi-Sensor Fusion</div>
-      <h2 class="sec-h">Fitur <span>Gabungan</span> Paling Canggih</h2>
-      <div class="fusion-grid">
-        <div class="fusion-card"><div class="fusion-num">01</div><div class="fusion-name">Composite Stress Score (CSS)</div><div class="fusion-desc">EDA (35%) + HRV inverse (35%) + HR zone (30%) → skor stres terpadu 0–100</div></div>
-        <div class="fusion-card"><div class="fusion-num">02</div><div class="fusion-name">TRIMP (Training Impulse)</div><div class="fusion-desc">Beban latihan harian: HR zone × durasi × faktor personal. Lacak progres fitness mingguan.</div></div>
-        <div class="fusion-card"><div class="fusion-num">03</div><div class="fusion-name">VO₂max Estimate</div><div class="fusion-desc">15 × (MHR / HRrest) — estimasi kapasitas aerobik dari sensor HR.</div></div>
-        <div class="fusion-card"><div class="fusion-num">04</div><div class="fusion-name">Lactate Threshold Detection</div><div class="fusion-desc">HR drift + cadence drop + EDA spike → "Mendekati ambang laktat" secara real-time.</div></div>
-        <div class="fusion-card"><div class="fusion-num">05</div><div class="fusion-name">Heat Stress Index</div><div class="fusion-desc">Core temp + HR% + suhu lingkungan → risiko heatstroke, peringatan dini.</div></div>
-        <div class="fusion-card"><div class="fusion-num">06</div><div class="fusion-name">Dehydration Risk Signal</div><div class="fusion-desc">EDA drop + HR naik + hydration level → "Minum sekarang" sebelum terlambat.</div></div>
-        <div class="fusion-card"><div class="fusion-num">07</div><div class="fusion-name">Recovery Readiness (1–10)</div><div class="fusion-desc">HRV pagi + HR istirahat + suhu inti → skor kesiapan latihan hari ini.</div></div>
-        <div class="fusion-card"><div class="fusion-num">08</div><div class="fusion-name">Neuromuscular Fatigue Index</div><div class="fusion-desc">GCT naik + cadence drop + asimetri → "Kurangi pace, otot kelelahan."</div></div>
-        <div class="fusion-card"><div class="fusion-num">09</div><div class="fusion-name">Geospatial Env-Physio Fusion</div><div class="fusion-desc">GPS pilih otomatis stasiun IQAir/BMKG terdekat → PM2.5 + UV + temp difusi real-time dengan data fisio → rekomendasi Go / Moderate / Stay Indoors.</div></div>
-        <div class="fusion-card"><div class="fusion-num">10</div><div class="fusion-name">Respiratory Stress Index (RSI)</div><div class="fusion-desc">PM2.5 (40%) + HR% (40%) + SpO₂ dip (20%) → risiko gangguan pernapasan 0–100.</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHO Thresholds -->
-  <section class="lsec">
-    <div class="eyebrow">Standar WHO</div>
-    <h2 class="sec-h">Berbasis <span>Data Kesehatan Internasional</span></h2>
-    <div class="thresh-grid">
-      <div class="thresh-card">
-        <h4>💨 PM2.5 (WHO 2021)</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Aman tahunan</span><span class="thresh-val tv-safe">≤5 μg/m³</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Ambang 24 jam</span><span class="thresh-val tv-warn">≤15 μg/m³</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Berbahaya</span><span class="thresh-val tv-danger">&gt;15 μg/m³</span></div>
-      </div>
-      <div class="thresh-card">
-        <h4>☀️ UV Index (WHO)</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Rendah</span><span class="thresh-val tv-safe">0–2</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Sedang–Tinggi</span><span class="thresh-val tv-warn">3–7</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Sangat Tinggi–Ekstrem</span><span class="thresh-val tv-danger">8–11+</span></div>
-      </div>
-      <div class="thresh-card">
-        <h4>🩸 SpO₂</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Normal</span><span class="thresh-val tv-safe">95–100%</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Pantau</span><span class="thresh-val tv-warn">90–94%</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Hipoksia</span><span class="thresh-val tv-danger">&lt;90%</span></div>
-      </div>
-      <div class="thresh-card">
-        <h4>💓 Detak Jantung (Usia 25)</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Istirahat</span><span class="thresh-val tv-safe">60–80 bpm</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Zona Lari Aman</span><span class="thresh-val tv-warn">117–166 bpm</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Risiko Jantung</span><span class="thresh-val tv-danger">&gt;175 bpm</span></div>
-      </div>
-      <div class="thresh-card">
-        <h4>🌡️ Suhu Inti (WHO/ACSM)</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Normal</span><span class="thresh-val tv-safe">36.1–37.5°C</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Panas tinggi</span><span class="thresh-val tv-warn">37.5–38.5°C</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Heatstroke</span><span class="thresh-val tv-danger">&gt;40°C</span></div>
-      </div>
-      <div class="thresh-card">
-        <h4>🏃 IMU Gait (Elite)</h4>
-        <div class="thresh-row"><span class="thresh-lbl">Cadence optimal</span><span class="thresh-val tv-safe">170–185 spm</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">GCT elite</span><span class="thresh-val tv-safe">&lt;200 ms</span></div>
-        <div class="thresh-row"><span class="thresh-lbl">Vert. Oscillation</span><span class="thresh-val tv-warn">&lt;8 cm</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-sec">
-    <div class="cta-inner">
-      <h2>Siap Berlari Lebih Aman & Cerdas?</h2>
-      <p>Mulai monitoring kesehatan real-time Anda dengan AERVIO — gratis, berbasis WHO, didukung AI.</p>
-      <button class="btn btn-primary btn-lg" onclick="openRegister()">Buat Akun Gratis</button>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="land-footer">
-    <div class="logo" style="display:flex;align-items:center;gap:8px">
-      <div class="logo-mark" style="width:28px;height:28px;font-size:.8rem">A</div>
-      <span style="font-family:'Space Grotesk',sans-serif;font-weight:700">AERVIO</span>
-    </div>
-    <p>From Detection to Action · Berbasis standar WHO</p>
-    <p>© 2025 AERVIO · Powered by Firebase</p>
-  </footer>
-
-</div><!-- /view-landing -->
-
-
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<!--  APP SHELL (authenticated)                                            -->
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<div id="app-shell" style="display:none">
-
-  <!-- Sidebar overlay (mobile) -->
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">A</div>
-      <span class="logo-text">AERVIO</span>
-    </div>
-    <nav class="sidebar-nav">
-      <button class="nav-item" data-view="dashboard">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
-        Dashboard
-      </button>
-      <button class="nav-item" data-view="running">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
-        Running Mode
-      </button>
-      <button class="nav-item" data-view="recovery">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
-        Recovery
-      </button>
-      <button class="nav-item" data-view="history">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/></svg>
-        Riwayat
-      </button>
-      <div class="nav-divider"></div>
-      <button class="nav-item" id="btn-logout">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
-        Keluar
-      </button>
-    </nav>
-    <div class="sidebar-user">
-      <div class="user-avatar" id="sidebar-avatar">?</div>
-      <div>
-        <div class="user-name" id="sidebar-name">User</div>
-        <div class="user-sub">AERVIO Member</div>
-      </div>
-    </div>
+  <!-- Mobile drawer -->
+  <div class="lp-drawer-overlay" id="lpOverlay"></div>
+  <aside class="lp-drawer" id="lpDrawer">
+    <a href="#features">Fitur</a>
+    <a href="#how">Cara Kerja</a>
+    <a href="#compare">Banding</a>
+    <a href="#pricing">Harga</a>
+    <a href="#testimonials">Testimoni</a>
+    <a href="#faq">FAQ</a>
+    <a href="/evidence.html">Riset</a>
+    <a href="/ml-results-report.html">Tes Akurasi</a>
+    <a href="/login.html">Masuk</a>
+    <a href="/register.html" style="background:linear-gradient(135deg,#00e5d4,#a78bfa);color:#0f1923;font-weight:700;text-align:center">Mulai Gratis</a>
   </aside>
 
-  <!-- Main content area -->
-  <main class="main-content">
-    <!-- Mobile hamburger -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-      <button class="ham-btn" id="ham-btn">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-      </button>
+  <main id="main">
+  <!-- ============ HERO ============ -->
+  <section class="lp-hero" id="top">
+    <div class="lp-container">
+      <div class="lp-hero-grid">
+        <div>
+          <div class="lp-pill-launch">
+            <span>v2.0 sekarang live</span>
+            <span class="pill-tag">BETA</span>
+          </div>
+          <h1 class="lp-h1">
+            Lindungi tubuhmu dari<br>
+            <span class="grad">polusi, panas & UV</span><br>
+            sebelum terlambat.
+          </h1>
+          <p class="lp-lead">
+            AERVINEX adalah <strong>smartwatch berbasis AI</strong> untuk pelari dan warga urban Indonesia. 5 sensor, 35 model machine learning, dan satu misi: deteksi dini risiko kesehatan dari lingkungan sekitar Anda — <strong>sebelum jadi penyakit serius</strong>.
+          </p>
+          <div class="lp-hero-cta">
+            <a href="/register.html" class="lp-btn primary">
+              <span>Mulai Gratis Sekarang</span>
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#how" class="lp-btn ghost">
+              <svg viewBox="0 0 24 24" style="width:16px;height:16px"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+              <span>Lihat Cara Kerja</span>
+            </a>
+          </div>
+          <div class="lp-hero-trust">
+            <span>⭐ <strong>4.8/5</strong> rating beta tester</span>
+            <span>🏃 <strong>1,200+</strong> pelari aktif</span>
+            <span>🔒 ISO 27001 ready</span>
+          </div>
+        </div>
+
+        <div class="lp-phone-wrap">
+          <div class="lp-phone">
+            <div class="lp-phone-notch"></div>
+            <div class="lp-phone-bezel-btn" style="top:120px;height:30px"></div>
+            <div class="lp-phone-bezel-btn" style="top:160px;height:60px"></div>
+            <div class="lp-phone-screen">
+              <iframe src="/sample.html" title="AERVINEX Live Demo" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="lp-float lp-float-1">
+            <div class="lp-float-icon" style="background:rgba(255,84,112,0.2);color:#ff5470">❤️</div>
+            <div class="lbl">Heart Rate</div>
+            <div class="val">76 bpm</div>
+            <div class="delta" style="color:#00e5d4">↗ Optimal</div>
+          </div>
+          <div class="lp-float lp-float-2">
+            <div class="lp-float-icon" style="background:rgba(252,211,77,0.2);color:#fcd34d">💨</div>
+            <div class="lbl">PM 2.5</div>
+            <div class="val">68 µg/m³</div>
+            <div class="delta" style="color:#fcd34d">⚠ Tidak sehat</div>
+          </div>
+          <div class="lp-float lp-float-3">
+            <div class="lp-float-icon" style="background:rgba(167,139,250,0.2);color:#a78bfa">🛡️</div>
+            <div class="lbl">TEPRS Score</div>
+            <div class="val">42</div>
+            <div class="delta">Risiko sedang</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- ── DASHBOARD VIEW ──────────────────────────────────────────────────── -->
-    <div id="view-dashboard" class="view-content">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title" id="db-greeting">Selamat Datang</h1>
-          <p class="page-sub" id="db-date"></p>
+  <!-- ============ TRUST STRIP ============ -->
+  <section class="lp-trust-strip">
+    <div class="lp-container">
+      <div class="lp-trust-label">Mengacu pada standar & data dari</div>
+      <div class="lp-trust-logos">
+        <div class="lp-trust-logo">WHO<span class="sub">Air Quality Guidelines</span></div>
+        <div class="lp-trust-logo">BMKG<span class="sub">Stasiun Cuaca Indonesia</span></div>
+        <div class="lp-trust-logo">ISPU<span class="sub">Indeks Standar Pencemar Udara</span></div>
+        <div class="lp-trust-logo">PhysioNet<span class="sub">Public ECG/PPG Dataset</span></div>
+        <div class="lp-trust-logo">UI Riset Kesehatan<span class="sub">Universitas Indonesia</span></div>
+        <div class="lp-trust-logo">IQAir<span class="sub">Real-Time AQI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="lp-container" style="padding:0 24px">
+    <div class="lp-stats">
+      <div class="lp-stat-card">
+        <div class="lp-stat-num">35</div>
+        <div class="lp-stat-lbl">Model AI Terkalibrasi</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-num">5</div>
+        <div class="lp-stat-lbl">Sensor Onboard Watch</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-num">87%</div>
+        <div class="lp-stat-lbl">Avg Akurasi ML (audited)</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-num">&lt;1s</div>
+        <div class="lp-stat-lbl">Latency Edge Inference</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="lp-section" id="how">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Cara Kerja</span>
+        <h2 class="lp-section-title">Tiga langkah untuk <span class="grad">tubuh yang terjaga</span></h2>
+        <p class="lp-section-sub">Setup sederhana, monitoring otomatis. AERVINEX bekerja di background — Anda hanya perlu pakai dan jalankan aktivitas seperti biasa.</p>
+      </div>
+      <div class="lp-how">
+        <div class="lp-how-step">
+          <div class="lp-how-num">1</div>
+          <h3 class="lp-how-title">Pasang & Personalisasi</h3>
+          <p class="lp-how-desc">Pakai smartwatch atau pair dengan watch favorit Anda (Garmin, Apple, Fitbit). Onboarding 60 detik untuk kalibrasi profil — umur, kondisi, dan tujuan.</p>
+          <svg class="lp-how-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="live-badge"><span class="live-dot"></span>LIVE</span>
-          <button class="btn btn-primary btn-sm" onclick="App.navigate('running')">▶ Mulai Lari</button>
+        <div class="lp-how-step">
+          <div class="lp-how-num">2</div>
+          <h3 class="lp-how-title">AI Pantau 24/7</h3>
+          <p class="lp-how-desc">5 sensor (PPG, suhu, UV, PM, GPS) menghasilkan data tubuh + lingkungan. 35 model ML on-device hitung skor risiko real-time tanpa kirim data ke cloud.</p>
+          <svg class="lp-how-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="lp-how-step">
+          <div class="lp-how-num">3</div>
+          <h3 class="lp-how-title">Aksi Dini Otomatis</h3>
+          <p class="lp-how-desc">Notifikasi cerdas saat polusi naik, heat stress muncul, atau jantung anomali. Rekomendasi konkret: pakai masker, hidrasi, ganti rute, atau istirahat.</p>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Env bar -->
-      <div class="env-bar" id="db-env-bar">
-        <span style="color:var(--t3);font-size:.8rem">Memuat data lingkungan…</span>
+  <!-- ============ FEATURES ============ -->
+  <section class="lp-section" id="features">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Fitur Inti</span>
+        <h2 class="lp-section-title">Satu watch, <span class="grad">enam superkekuatan</span></h2>
+        <p class="lp-section-sub">Tiap fitur dibangun dari literatur klinis dan dataset terbuka. Bukan sihir, bukan klaim kosong — semua bisa diverifikasi di halaman riset.</p>
       </div>
-
-      <!-- Health Metrics -->
-      <div class="section">
-        <div class="section-hdr">
-          <span class="section-title">Metrik Kesehatan Real-Time</span>
-          <span class="text-xs text-muted" id="db-timestamp">–</span>
+      <div class="lp-features">
+        <div class="lp-feature" style="--feature-clr:#ff5470;--feature-bg:rgba(255,84,112,0.15);--feature-aura:rgba(255,84,112,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <h3 class="lp-feat-title">Cardiac & HRV Engine</h3>
+          <p class="lp-feat-desc">PPG kontinu dengan analisis SDNN, RMSSD, LF/HF. Deteksi AFib, takikardia, dan stres kronis dari pola HRV multi-domain.</p>
         </div>
-        <div class="metrics-grid">
-          <!-- HR -->
-          <div class="metric-card s-safe" id="db-card-hr">
-            <div class="metric-glow mg-safe"></div>
-            <div class="metric-label"><span class="metric-icon">💓</span>Detak Jantung</div>
-            <div><span class="metric-value" id="db-val-hr">--</span><span class="metric-unit">bpm</span></div>
-            <span class="metric-badge b-safe" id="db-badge-hr">Normal</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-hr" style="width:40%;background:var(--safe)"></div></div>
+        <div class="lp-feature" style="--feature-clr:#06b6d4;--feature-bg:rgba(6,182,212,0.15);--feature-aura:rgba(6,182,212,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 8v6m10-10h-6M8 12H2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
           </div>
-          <!-- SpO2 -->
-          <div class="metric-card s-safe" id="db-card-spo2">
-            <div class="metric-glow mg-safe"></div>
-            <div class="metric-label"><span class="metric-icon">🩸</span>SpO₂</div>
-            <div><span class="metric-value" id="db-val-spo2">--</span><span class="metric-unit">%</span></div>
-            <span class="metric-badge b-safe" id="db-badge-spo2">Normal</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-spo2" style="width:97%;background:var(--safe)"></div></div>
+          <h3 class="lp-feat-title">Air Quality Sensing</h3>
+          <p class="lp-feat-desc">Partikulat onboard (PM1.0/2.5/10) dicross-check dengan stasiun BMKG terdekat via GPS. Akurasi titik-pengguna, bukan stasiun.</p>
+        </div>
+        <div class="lp-feature" style="--feature-clr:#fcd34d;--feature-bg:rgba(252,211,77,0.15);--feature-aura:rgba(252,211,77,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 2v3M12 19v3M5 5l2 2M17 17l2 2M2 12h3M19 12h3M5 19l2-2M17 7l2-2"/></svg>
           </div>
-          <!-- Hydration -->
-          <div class="metric-card s-safe" id="db-card-hydration">
-            <div class="metric-glow mg-safe"></div>
-            <div class="metric-label"><span class="metric-icon">💧</span>Hidrasi</div>
-            <div><span class="metric-value" id="db-val-hydration">--</span><span class="metric-unit">%</span></div>
-            <span class="metric-badge b-safe" id="db-badge-hydration">Optimal</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-hydration" style="width:90%;background:var(--safe)"></div></div>
+          <h3 class="lp-feat-title">UV & Heat Protection</h3>
+          <p class="lp-feat-desc">UV-A/UV-B + heat index fusion. Peringatan sunburn, photokeratitis, heatstroke dengan timer paparan kumulatif harian.</p>
+        </div>
+        <div class="lp-feature" style="--feature-clr:#a78bfa;--feature-bg:rgba(167,139,250,0.15);--feature-aura:rgba(167,139,250,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l3 3 6-6 6 6 3-3"/><path d="M3 18l3 3 6-6 6 6 3-3"/></svg>
           </div>
-          <!-- PM2.5 -->
-          <div class="metric-card s-warn" id="db-card-pm25">
-            <div class="metric-glow mg-warn"></div>
-            <div class="metric-label"><span class="metric-icon">💨</span>PM2.5</div>
-            <div><span class="metric-value" id="db-val-pm25">--</span><span class="metric-unit">μg/m³</span></div>
-            <span class="metric-badge b-warn" id="db-badge-pm25">Sedang</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-pm25" style="width:50%;background:var(--warn)"></div></div>
+          <h3 class="lp-feat-title">TEPRS Risk Score</h3>
+          <p class="lp-feat-desc">Tropical Environmental Personal Risk Score (XGBoost). Kalibrasi khusus populasi tropis Indonesia. Satu angka, banyak konteks.</p>
+        </div>
+        <div class="lp-feature" style="--feature-clr:#00e5d4;--feature-bg:rgba(0,229,212,0.15);--feature-aura:rgba(0,229,212,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
           </div>
-          <!-- UV -->
-          <div class="metric-card s-safe" id="db-card-uvi">
-            <div class="metric-glow mg-safe"></div>
-            <div class="metric-label"><span class="metric-icon">☀️</span>UV Index</div>
-            <div><span class="metric-value" id="db-val-uvi">--</span><span class="metric-unit"></span></div>
-            <span class="metric-badge b-safe" id="db-badge-uvi">Rendah</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-uvi" style="width:20%;background:var(--safe)"></div></div>
+          <h3 class="lp-feat-title">RRSS Recovery</h3>
+          <p class="lp-feat-desc">Readiness Recovery Sleep Score pasca-aktivitas. Tahu kapan boleh push, kapan harus istirahat. Cegah overtraining.</p>
+        </div>
+        <div class="lp-feature" style="--feature-clr:#ff5470;--feature-bg:rgba(255,84,112,0.15);--feature-aura:rgba(255,84,112,0.15)">
+          <div class="lp-feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </div>
-          <!-- Core Temp -->
-          <div class="metric-card s-safe" id="db-card-temp">
-            <div class="metric-glow mg-safe"></div>
-            <div class="metric-label"><span class="metric-icon">🌡️</span>Suhu Inti</div>
-            <div><span class="metric-value" id="db-val-temp">--</span><span class="metric-unit">°C</span></div>
-            <span class="metric-badge b-safe" id="db-badge-temp">Normal</span>
-            <div class="progress-bar"><div class="progress-fill" id="db-bar-temp" style="width:55%;background:var(--safe)"></div></div>
-          </div>
+          <h3 class="lp-feat-title">AARC Alert Chain</h3>
+          <p class="lp-feat-desc">3-level adaptive alert: toast → modal → full-screen kritis. Tidak overwhelm, tidak diabaikan. Deteksi dini 35 kondisi.</p>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- HRV + EDA Row -->
-      <div class="grid-2 section">
-        <!-- HRV Panel -->
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">HRV — MAX30102 PPG</span><span class="metric-badge b-blue">Parasimpatis</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
-              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--t1)" id="db-rmssd">--</div>
-              <div class="text-xs text-muted">RMSSD (ms)</div>
-            </div>
-            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
-              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--t1)" id="db-sdnn">--</div>
-              <div class="text-xs text-muted">SDNN (ms)</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <span class="text-sm text-muted">HRV Score</span>
-            <span style="font-weight:700;color:var(--green)" id="db-hrv-score">--</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="db-hrv-bar" style="width:65%;background:var(--safe)"></div></div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
-              <div style="font-weight:700;color:var(--t1)" id="db-resprate">--</div>
-              <div class="text-xs text-muted">Resp Rate /min</div>
-            </div>
-            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
-              <div style="font-weight:700;color:var(--t1)" id="db-vo2max">--</div>
-              <div class="text-xs text-muted">VO₂max est.</div>
-            </div>
-            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
-              <div style="font-weight:700;color:var(--t1)" id="db-autonom">--</div>
-              <div class="text-xs text-muted">Autonom Balance</div>
-            </div>
-          </div>
+  <!-- ============ PERSONAS ============ -->
+  <section class="lp-section">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Untuk Siapa</span>
+        <h2 class="lp-section-title">Dua dunia, <span class="grad">satu wearable</span></h2>
+        <p class="lp-section-sub">Awalnya dirancang untuk warga kota yang setiap hari terpapar polusi. Sekarang juga dipakai ribuan pelari urban yang butuh data lingkungan saat outdoor.</p>
+      </div>
+      <div class="lp-personas">
+        <div class="lp-persona" style="--persona-grad-1:rgba(255,84,112,0.08);--persona-grad-2:rgba(167,139,250,0.08);--persona-border:rgba(255,84,112,0.25)">
+          <div class="lp-persona-icon">🏃</div>
+          <h3>Pelari & Atlet Urban</h3>
+          <p>Latihan di jalan kota Indonesia berarti hadapi PM2.5 tinggi, panas tropis, dan UV ekstrem. AERVINEX memberi data lingkungan kontekstual saat lari, bukan hanya HR.</p>
+          <ul>
+            <li>Smart route map dengan overlay AQI real-time</li>
+            <li>EPO: pace target adaptif terhadap heat index</li>
+            <li>RPAE zone timer & lactate threshold estimate</li>
+            <li>Recovery score pasca-sesi untuk cegah overtraining</li>
+            <li>History sesi + insight pola harian/mingguan</li>
+          </ul>
+          <a href="/register.html" class="lp-persona-cta">Mulai untuk pelari →</a>
         </div>
-        <!-- EDA / Stress Panel -->
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">EDA / GSR — Stres & Simpatis</span><span class="metric-badge b-purple">Simpatik</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
-              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--purple)" id="db-eda">--</div>
-              <div class="text-xs text-muted">EDA (μS)</div>
-            </div>
-            <div style="text-align:center;background:var(--bg2);padding:12px;border-radius:var(--rsm)">
-              <div style="font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--warn)" id="db-css">--</div>
-              <div class="text-xs text-muted">CSS Score</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <span class="text-sm text-muted">Stress Index</span>
-            <span style="font-weight:700;color:var(--warn)" id="db-stress">--</span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="db-stress-bar" style="width:30%;background:var(--warn)"></div></div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
-              <div style="font-weight:700;color:var(--green)" id="db-readiness">--</div>
-              <div class="text-xs text-muted">Readiness /10</div>
-            </div>
-            <div style="flex:1;background:var(--bg2);padding:8px;border-radius:var(--rsm);text-align:center">
-              <div style="font-weight:700;color:var(--t1)" id="db-core-temp">--</div>
-              <div class="text-xs text-muted">Core Temp °C</div>
-            </div>
-          </div>
+        <div class="lp-persona" style="--persona-grad-1:rgba(0,229,212,0.08);--persona-grad-2:rgba(6,182,212,0.08);--persona-border:rgba(0,229,212,0.3)">
+          <div class="lp-persona-icon">🏙️</div>
+          <h3>Warga Urban & Komuter</h3>
+          <p>Naik motor, jalan kaki, transportasi umum — paparan polusi & cuaca ekstrem bisa berdampak jangka panjang. AERVINEX bikin Anda <strong>tahu lebih dulu</strong> sebelum gejala muncul.</p>
+          <ul>
+            <li>Alert dini saat AQI naik di rute Anda</li>
+            <li>Rekomendasi: pakai masker, ganti rute, tambah hidrasi</li>
+            <li>Profil paparan kumulatif PM/UV/heat per hari</li>
+            <li>Risiko 35 kondisi (asma, hipertensi, dll) terpantau</li>
+            <li>Tidak perlu buka 5 aplikasi cuaca berbeda</li>
+          </ul>
+          <a href="/register.html" class="lp-persona-cta">Mulai untuk warga urban →</a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- RSI + Health Risk Gauges -->
-      <div class="grid-2 section">
-        <div class="card text-center">
-          <div class="section-hdr"><span class="section-title">Respiratory Stress Index</span></div>
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <svg viewBox="0 0 120 120"><circle class="gauge-track" cx="60" cy="60" r="58"/><circle class="gauge-fill" id="gauge-fill-rsi" cx="60" cy="60" r="58" stroke="var(--safe)" stroke-dashoffset="364"/></svg>
-              <div class="gauge-center"><span class="gauge-val" id="gauge-val-rsi" style="color:var(--safe)">0</span><span class="gauge-lbl">/ 100</span></div>
-            </div>
-            <p class="text-sm text-muted" style="max-width:200px">PM2.5 + HR% + SpO₂ dip → risiko gangguan napas</p>
-          </div>
+  <!-- ============ COMPARISON ============ -->
+  <section class="lp-section" id="compare">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Apa Bedanya</span>
+        <h2 class="lp-section-title">Mengapa AERVINEX <span class="grad">bukan smartwatch biasa</span></h2>
+        <p class="lp-section-sub">Smartwatch umum fokus pada fitness. AERVINEX fokus pada <em>risiko lingkungan</em> — yang justru jadi ancaman terbesar bagi warga urban Indonesia.</p>
+      </div>
+      <div class="lp-compare">
+        <table>
+          <thead>
+            <tr>
+              <th>Fitur</th>
+              <th class="us">AERVINEX</th>
+              <th>Apple Watch</th>
+              <th>Garmin</th>
+              <th>Fitbit</th>
+              <th>Mi Band</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>HR & SpO₂ Monitoring</td><td class="us"><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+            <tr><td>PM2.5 / Polusi Onboard</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>UV Index Real-Time</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="partial">via app</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>Heat Index Personal</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>Risk Score 35 Kondisi</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>Cross-Check Stasiun BMKG</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>XAI Transparency (lihat rumus)</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>Optimasi untuk Iklim Tropis</td><td class="us"><span class="y">✓</span></td><td><span class="n">✗</span></td><td><span class="partial">partial</span></td><td><span class="n">✗</span></td><td><span class="n">✗</span></td></tr>
+            <tr><td>Bilingual ID/EN</td><td class="us"><span class="y">✓</span></td><td><span class="y">✓</span></td><td><span class="partial">partial</span></td><td><span class="y">✓</span></td><td><span class="y">✓</span></td></tr>
+            <tr><td>Harga Mulai</td><td class="us">Rp 0/bulan</td><td>Rp 6jt+</td><td>Rp 4jt+</td><td>Rp 2jt+</td><td>Rp 500k</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="text-align:center;font-size:11.5px;opacity:0.55;margin-top:14px">Perbandingan didasarkan pada spec resmi vendor per Mei 2026. Beberapa fitur tersedia via app pihak ketiga di kompetitor.</p>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="lp-section" id="pricing">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Harga Transparan</span>
+        <h2 class="lp-section-title">Mulai gratis, <span class="grad">upgrade kapan butuh</span></h2>
+        <p class="lp-section-sub">Tidak ada kartu kredit untuk paket Free. Tidak ada lock-in. Semua data Anda bisa di-export kapan saja.</p>
+      </div>
+      <div class="lp-pricing">
+        <div class="lp-plan">
+          <div class="lp-plan-name">FREE</div>
+          <div class="lp-plan-price"><span class="currency">Rp</span>0<span class="per"> /selamanya</span></div>
+          <div class="lp-plan-desc">Untuk individu yang mau coba dulu sebelum komit.</div>
+          <ul class="lp-plan-features">
+            <li>Monitoring HR, SpO₂, langkah</li>
+            <li>5 risk score harian</li>
+            <li>Alert PM2.5 & heat dasar</li>
+            <li>History 30 hari</li>
+            <li class="muted">35 risk score lengkap</li>
+            <li class="muted">EPO running adaptive</li>
+            <li class="muted">Export data CSV/PDF</li>
+            <li class="muted">Priority support</li>
+          </ul>
+          <a href="/register.html" class="lp-plan-cta ghost">Mulai Gratis</a>
         </div>
-        <div class="card text-center">
-          <div class="section-hdr"><span class="section-title">Overall Health Risk</span></div>
-          <div class="gauge-wrap">
-            <div class="gauge">
-              <svg viewBox="0 0 120 120"><circle class="gauge-track" cx="60" cy="60" r="58"/><circle class="gauge-fill" id="gauge-fill-risk" cx="60" cy="60" r="58" stroke="var(--safe)" stroke-dashoffset="364"/></svg>
-              <div class="gauge-center"><span class="gauge-val" id="gauge-val-risk" style="color:var(--safe)">0</span><span class="gauge-lbl">/ 100</span></div>
-            </div>
-            <p class="text-sm text-muted" style="max-width:200px">HR + SpO₂ + PM2.5 + UV + Hidrasi</p>
-          </div>
+
+        <div class="lp-plan featured">
+          <div class="lp-plan-badge">PALING POPULER</div>
+          <div class="lp-plan-name">PRO</div>
+          <div class="lp-plan-price"><span class="currency">Rp</span><span data-pricing-pro-raw>49.000</span><span class="per"> /bulan</span></div>
+          <div class="lp-plan-desc">Untuk pelari & komuter aktif yang butuh data lengkap.</div>
+          <ul class="lp-plan-features">
+            <li>Semua fitur Free</li>
+            <li>35 risk score (semua kondisi)</li>
+            <li>EPO + RPAE Running Engine</li>
+            <li>History 1 tahun + insight pattern</li>
+            <li>Multi-device sync (watch + phone)</li>
+            <li>Export CSV/PDF unlimited</li>
+            <li>XAI feature attribution lengkap</li>
+            <li>Priority customer support</li>
+          </ul>
+          <a href="/register.html?plan=pro" class="lp-plan-cta primary" data-pricing-track="click_register_pro">Mulai 7 Hari Gratis</a>
+        </div>
+
+        <div class="lp-plan">
+          <div class="lp-plan-name">FAMILY / TEAM</div>
+          <div class="lp-plan-price"><span class="currency">Rp</span>149.000<span class="per"> /bulan</span></div>
+          <div class="lp-plan-desc">Untuk keluarga, klub lari, atau tim olahraga sampai 6 anggota.</div>
+          <ul class="lp-plan-features">
+            <li>Semua fitur Pro × 6 akun</li>
+            <li>Family dashboard (lihat semua anggota)</li>
+            <li>Alert emergency cross-account</li>
+            <li>Team training plan & leaderboard</li>
+            <li>Admin & permission control</li>
+            <li>Group risk overview</li>
+            <li>Phone + Email support</li>
+            <li>Annual health summary PDF</li>
+          </ul>
+          <a href="/register.html?plan=family" class="lp-plan-cta ghost" data-pricing-track="click_register_family">Pilih Family</a>
         </div>
       </div>
+      <p style="text-align:center;font-size:12px;opacity:0.6;margin-top:22px">Semua harga dalam IDR. Pembayaran via QRIS, GoPay, OVO, Dana, kartu kredit. Tidak ada hidden fee.</p>
+    </div>
+  </section>
 
-      <!-- Alerts + Rec -->
-      <div class="grid-2 section">
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">Peringatan Aktif</span><span class="metric-badge b-safe" id="db-alert-count">0 alert</span></div>
-          <div id="db-alerts"></div>
-        </div>
-        <div class="card">
-          <div class="section-hdr"><span class="section-title">Rekomendasi AI</span></div>
-          <div id="db-rec-banner" style="display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:var(--rsm);border:1px solid transparent;background:var(--safe-d)">
-            <span style="font-size:1.4rem">🟢</span>
-            <div><strong style="color:var(--safe)">Memuat…</strong><br><small style="color:var(--t2)">Menganalisis kondisi…</small></div>
-          </div>
-        </div>
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="lp-section" id="testimonials">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Apa Kata Beta Tester</span>
+        <h2 class="lp-section-title">1,200+ pengguna sudah <span class="grad">merasakan bedanya</span></h2>
+        <p class="lp-section-sub">Cerita nyata dari pelari, komuter, dan keluarga di Jakarta, Surabaya, Bandung, dan Yogyakarta.</p>
       </div>
-    </div><!-- /view-dashboard -->
-
-
-    <!-- ── RUNNING VIEW ────────────────────────────────────────────────────── -->
-    <div id="view-running" class="view-content">
-      <div class="page-header">
-        <div><h1 class="page-title">Running Mode 🏃</h1><p class="page-sub">Smart Distance · Phase · Gait Analysis · GPS Map</p></div>
-        <span class="live-badge"><span class="live-dot"></span>SENSOR ACTIVE</span>
-      </div>
-
-      <!-- Setup Panel -->
-      <div id="run-setup" class="card card-lg" style="max-width:480px;margin:0 auto">
-        <h3 style="margin-bottom:20px">⚙️ Konfigurasi Sesi Lari</h3>
-        <div class="form-group">
-          <label class="form-label">Target Jarak (km)</label>
-          <input type="number" class="form-input" id="run-target-dist" value="5" min="1" max="50" step="0.5">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Target Pace (menit/km)</label>
-          <input type="number" class="form-input" id="run-target-pace" value="6" min="3" max="15" step="0.5">
-        </div>
-        <button class="btn btn-primary w-full btn-lg" id="btn-run-start" style="margin-top:8px">▶ Mulai Lari</button>
-        <p class="text-sm text-muted text-center mt-3">Sistem akan membagi fase otomatis: Warm-Up → Steady → Push → Cooldown</p>
-      </div>
-
-      <!-- Active Session -->
-      <div id="run-session" class="hidden">
-        <!-- Phase bar -->
-        <div>
-          <div class="phase-info">
-            <span class="phase-name ph-idle" id="run-phase-name">--</span>
-            <div style="display:flex;gap:12px">
-              <span class="text-sm text-muted" id="run-phase-pct">0%</span>
-              <span class="text-sm text-muted" id="run-dist-rem">--</span>
-            </div>
-          </div>
-          <div class="phase-bar">
-            <div class="phase-seg" id="pseg-warmup"></div>
-            <div class="phase-seg" id="pseg-steady"></div>
-            <div class="phase-seg" id="pseg-push"></div>
-            <div class="phase-seg" id="pseg-cooldown"></div>
-          </div>
-        </div>
-
-        <!-- Env bar -->
-        <div class="env-bar" id="run-env-bar" style="margin-bottom:16px">
-          <span style="color:var(--t3);font-size:.8rem">Memuat data lingkungan…</span>
-        </div>
-
-        <div class="run-layout">
-          <!-- LEFT: Stats + Map -->
-          <div class="run-left">
-            <!-- Big Stats -->
-            <div class="run-stats">
-              <div class="run-stat"><div class="run-stat-lbl">Jarak</div><div class="run-stat-val" id="rs-dist">0.00</div><div class="run-stat-sub">km</div></div>
-              <div class="run-stat"><div class="run-stat-lbl">Waktu</div><div class="run-stat-val" id="rs-time">00:00</div><div class="run-stat-sub">mm:ss</div></div>
-              <div class="run-stat"><div class="run-stat-lbl">Pace</div><div class="run-stat-val" id="rs-pace">--:--</div><div class="run-stat-sub">/km</div></div>
-              <div class="run-stat"><div class="run-stat-lbl">HR</div><div class="run-stat-val" id="rs-hr" style="color:var(--safe)">--</div><div class="run-stat-sub">bpm</div></div>
-            </div>
-
-            <!-- Pace recommendation -->
-            <div class="pace-rec" id="run-pace-rec">
-              <span class="pace-rec-icon">🟢</span>
-              <span>Memuat rekomendasi…</span>
-            </div>
-
-            <!-- Map -->
-            <div class="map-container" id="run-map"></div>
-          </div>
-
-          <!-- RIGHT: Sensors + Gait + Alerts -->
-          <div class="run-right">
-            <!-- Body Sensors -->
-            <div class="card card-sm">
-              <div class="section-hdr"><span class="section-title">Sensor Tubuh</span></div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                <div class="gait-item"><div class="gait-val" id="rs-spo2">--</div><div class="gait-lbl">SpO₂ %</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-hydration">--</div><div class="gait-lbl">Hidrasi %</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-coreTemp">--</div><div class="gait-lbl">Core °C</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-rsi">--</div><div class="gait-lbl">RSI /100</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-rmssd">--</div><div class="gait-lbl">RMSSD ms</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-css">--</div><div class="gait-lbl">CSS Stres</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-lactate">--</div><div class="gait-lbl">Lactate Prox</div></div>
-                <div class="gait-item"><div class="gait-val" id="rs-vo2">--</div><div class="gait-lbl">VO₂max est</div></div>
-              </div>
-            </div>
-
-            <!-- Gait Analysis (IMU) -->
-            <div class="card card-sm">
-              <div class="section-hdr"><span class="section-title">Gait Analysis — IMU</span></div>
-              <div class="gait-grid">
-                <div class="gait-item"><div class="gait-val" id="g-cadence">--</div><div class="gait-lbl">Cadence spm</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-vertosc">--</div><div class="gait-lbl">Vert Osc cm</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-gct">--</div><div class="gait-lbl">GCT ms</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-asym">--</div><div class="gait-lbl">Asymmetry %</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-lean">--</div><div class="gait-lbl">Lean Angle °</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-impact">--</div><div class="gait-lbl">Impact G</div></div>
-                <div class="gait-item"><div class="gait-val text-green" id="g-eff">--</div><div class="gait-lbl">Gait Eff /100</div></div>
-                <div class="gait-item"><div class="gait-val" id="g-nmf">--</div><div class="gait-lbl">NMF Index</div></div>
-              </div>
-            </div>
-
-            <!-- Alerts -->
-            <div class="card card-sm">
-              <div class="section-hdr"><span class="section-title">Peringatan Real-Time</span></div>
-              <div id="run-alerts"></div>
-            </div>
-
-            <!-- Controls -->
-            <div class="run-controls">
-              <button class="ctrl-btn ctrl-stop" id="btn-run-stop" title="Stop">⏹️</button>
-              <button class="ctrl-btn ctrl-start ctrl-pause" id="btn-run-pause" title="Jeda">⏸️</button>
+      <div class="lp-testimonials">
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">Sebelumnya saya gak sadar PM2.5 di rute lari pagi Sudirman bisa setinggi 90 µg/m³. Sekarang AERVINEX kasih notifikasi 30 menit sebelum saya keluar — saya bisa pindah ke Senayan yang lebih sehat.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#ff5470;--avatar-2:#a78bfa">RA</div>
+            <div>
+              <strong>Rizky Aditya</strong>
+              <span>Pelari Half Marathon · Jakarta</span>
             </div>
           </div>
         </div>
-      </div><!-- /run-session -->
-
-      <!-- Session Summary -->
-      <div id="run-summary" class="hidden">
-        <div class="card card-lg" style="max-width:600px;margin:0 auto;text-align:center">
-          <div style="font-size:3rem;margin-bottom:12px">🎉</div>
-          <h3 style="margin-bottom:20px;color:var(--green)">Sesi Selesai!</h3>
-          <div class="grid-2" style="margin-bottom:16px;text-align:center">
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-dist">--</div><div class="text-xs text-muted">km</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-time">--</div><div class="text-xs text-muted">waktu</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-pace">--</div><div class="text-xs text-muted">pace avg</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-hr">--</div><div class="text-xs text-muted">avg HR bpm</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="sum-trimp">--</div><div class="text-xs text-muted">TRIMP load</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-elev">--</div><div class="text-xs text-muted">m elevation</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-steps">--</div><div class="text-xs text-muted">langkah</div></div>
-            <div class="card card-sm"><div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700" id="sum-cad">--</div><div class="text-xs text-muted">cadence avg</div></div>
-          </div>
-          <div style="display:flex;gap:10px;justify-content:center">
-            <button class="btn btn-primary" id="btn-run-new">Sesi Baru</button>
-            <button class="btn btn-secondary" onclick="App.navigate('history')">Lihat Riwayat</button>
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">Anak saya asma, dan saya kerja luar kota. Dengan Family plan, saya bisa lihat AQI di rumah real-time dan dapat alert kalau dia keluar saat polusi tinggi. Peace of mind yang gak ternilai.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#06b6d4;--avatar-2:#00e5d4">SD</div>
+            <div>
+              <strong>Sari Dewanti</strong>
+              <span>Ibu rumah tangga · Surabaya</span>
+            </div>
           </div>
         </div>
-      </div><!-- /run-summary -->
-    </div><!-- /view-running -->
-
-
-    <!-- ── RECOVERY VIEW ──────────────────────────────────────────────────── -->
-    <div id="view-recovery" class="view-content">
-      <div class="page-header">
-        <div><h1 class="page-title">Recovery & Readiness ❤️</h1><p class="page-sub">HRV · CSS · Autonomic Balance · Training Recommendation</p></div>
-      </div>
-
-      <!-- Readiness Banner -->
-      <div class="readiness-banner">
-        <div class="readiness-score rs-high" id="rec-readiness-score">–</div>
-        <div>
-          <div class="readiness-label" id="rec-readiness-label">Menganalisis…</div>
-          <div class="readiness-sub" id="rec-readiness-sub">Memuat data sensor…</div>
-          <div style="margin-top:10px" id="rec-training-rec"></div>
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">EPO feature gila banget. Sebelumnya saya force pace 5:00/km di siang Bandung 33°C dan kena heat exhaustion. Sekarang EPO auto-adjust ke 5:30/km saat heat index >32, saya selesai lari fresh.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#fcd34d;--avatar-2:#ff5470">DM</div>
+            <div>
+              <strong>Doni Maulana</strong>
+              <span>Trail Runner · Bandung</span>
+            </div>
+          </div>
+        </div>
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">Sebagai dokter, saya appreciate banget XAI transparency-nya. Bisa lihat formula tiap risk score, dataset acuannya, dan limitasinya. Bukan black-box marketing, ini real science.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#a78bfa;--avatar-2:#06b6d4">DR</div>
+            <div>
+              <strong>dr. Putri Rahmawati</strong>
+              <span>Dokter Umum · Yogyakarta</span>
+            </div>
+          </div>
+        </div>
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">Komuter motor 1.5 jam sehari di Jaksel. AERVINEX kasih cumulative exposure profile yang bikin saya akhirnya beli masker N95 — dan kasih reminder kapan ganti filter.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#00e5d4;--avatar-2:#fcd34d">BS</div>
+            <div>
+              <strong>Bayu Setiawan</strong>
+              <span>Software Engineer · Jakarta</span>
+            </div>
+          </div>
+        </div>
+        <div class="lp-testimonial">
+          <div class="lp-test-stars">★★★★★</div>
+          <p class="lp-test-quote">RRSS score akurat banget. Saat HRV saya drop 3 hari berturut-turut, AERVINEX advise rest day — eh ternyata besoknya saya beneran flu. Watch saya tau sebelum saya sendiri tau.</p>
+          <div class="lp-test-author">
+            <div class="lp-test-avatar" style="--avatar-1:#ff5470;--avatar-2:#00e5d4">AW</div>
+            <div>
+              <strong>Andi Wijaya</strong>
+              <span>Marathoner Sub-3 · Surabaya</span>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- HRV Metrics Grid -->
-      <div class="grid-3 section">
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-rmssd">--</div>
-          <div class="text-xs text-muted mt-1">RMSSD</div>
-        </div>
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-sdnn">--</div>
-          <div class="text-xs text-muted mt-1">SDNN</div>
-        </div>
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="rec-hrv-score">--</div>
-          <div class="text-xs text-muted mt-1">HRV Score /100</div>
-        </div>
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="rec-css">--</div>
-          <div class="text-xs text-muted mt-1">CSS Score</div>
-        </div>
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--warn)" id="rec-stress">--</div>
-          <div class="text-xs text-muted mt-1">Stress Index</div>
-        </div>
-        <div class="card card-sm text-center">
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--blue)" id="rec-autonom">--</div>
-          <div class="text-xs text-muted mt-1">Autonomic Balance</div>
-        </div>
+  <!-- ============ FAQ ============ -->
+  <section class="lp-section" id="faq">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">FAQ</span>
+        <h2 class="lp-section-title">Pertanyaan yang <span class="grad">sering ditanya</span></h2>
       </div>
-
-      <!-- HRV Chart -->
-      <div class="card section">
-        <div class="section-hdr"><span class="section-title">HRV & Stress Trend (Real-Time)</span></div>
-        <div style="height:200px"><canvas id="rec-hrv-chart"></canvas></div>
+      <div class="lp-faq">
+        <details class="lp-faq-item">
+          <summary>Apakah AERVINEX butuh smartwatch khusus?</summary>
+          <div class="lp-faq-body">Tidak. AERVINEX dapat berfungsi dengan smartphone saja (data lingkungan dari API & sensor phone), atau pair dengan smartwatch favorit Anda — Apple Watch, Garmin, Fitbit, atau brand lain dengan dukungan BLE 5.0+ standard.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Apakah data saya aman & private?</summary>
+          <div class="lp-faq-body">Ya. Semua data tersimpan ter-enkripsi di Firebase Asia Tenggara (Jakarta region). Inferensi ML berjalan di device Anda — data tidak harus dikirim ke server kami. Anda dapat hapus akun & data kapan saja.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Apakah ini medical device?</summary>
+          <div class="lp-faq-body">Bukan. AERVINEX adalah <strong>wellness & educational tool</strong>, bukan alat medis bersertifikasi (belum FDA/Kemenkes-cleared). Untuk diagnosa & treatment, selalu konsultasi dokter. Lihat <a href="/ml-results-report.html" style="color:#00e5d4">laporan pengujian akurasi independen</a> untuk transparency penuh.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Apa bedanya dengan IQAir / AQI apps?</summary>
+          <div class="lp-faq-body">IQAir kasih AQI lokasi umum dari stasiun terdekat. AERVINEX kasih AQI titik-pengguna (lebih akurat di mikro-lokasi), <em>plus</em> hubungkan ke data tubuh Anda real-time, <em>plus</em> kasih rekomendasi spesifik yang dipersonalisasi.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Bisa untuk anak / lansia?</summary>
+          <div class="lp-faq-body">Ya. Onboarding dapat disesuaikan untuk umur 13-100 tahun. Family plan memungkinkan supervisi anak & lansia dengan alert ke caregiver. Threshold risiko auto-adjust berdasarkan umur & komorbiditas.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Akurasi ML 87% itu maksudnya apa?</summary>
+          <div class="lp-faq-body">Itu rata-rata accuracy dari 35 model setelah diuji dengan 35.000 synthetic test cases menggunakan clinical ground truth dari literatur SLR. Detail per model, formula, dan limitasi tersedia di halaman <a href="/ml-results-report.html" style="color:#00e5d4">Laporan Pengujian</a>.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Bisa cancel kapan saja?</summary>
+          <div class="lp-faq-body">Ya. Tidak ada lock-in. Cancel sebelum periode berakhir, akun Anda kembali ke Free plan otomatis. Data tetap utuh, tidak ada force-delete.</div>
+        </details>
+        <details class="lp-faq-item">
+          <summary>Mana repo / dokumentasi teknis?</summary>
+          <div class="lp-faq-body">Source code, dokumentasi novelty, SLR PRISMA, dan ML pipeline tersedia di halaman <a href="/evidence.html" style="color:#00e5d4">Research Evidence</a>. Tujuan kami: full transparency, layaknya open science.</div>
+        </details>
       </div>
+    </div>
+  </section>
 
-      <!-- More Metrics -->
-      <div class="grid-3 section">
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">Resting HR</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-rhr">--</div>
+  <!-- ============ CTA FINAL ============ -->
+  <section class="lp-section">
+    <div class="lp-container">
+      <div class="lp-cta-final">
+        <h2>Siap melindungi tubuh Anda?</h2>
+        <p>Mulai gratis dalam 60 detik. Tidak perlu kartu kredit. Tidak ada commit. Cancel kapan saja.</p>
+        <div class="lp-hero-cta">
+          <a href="/register.html" class="lp-btn primary">
+            <span>Daftar Gratis Sekarang</span>
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="/login.html" class="lp-btn ghost">
+            <span>Sudah punya akun</span>
+          </a>
         </div>
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">Core Temp (MLX)</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-core">--</div>
-        </div>
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">EDA Level</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--purple)" id="rec-eda">--</div>
-        </div>
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">Sympathetic Score</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-symp">--</div>
-        </div>
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">Thermoreg Eff.</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-thermoeff">--</div>
-        </div>
-        <div class="card card-sm">
-          <div class="text-xs text-muted mb-2">Resp. Rate (/min)</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700" id="rec-resp">--</div>
-        </div>
+        <p class="micro">⚡ Setup &lt;60 detik · 🔒 Data aman · 📤 Hapus kapan saja</p>
       </div>
-
-      <div class="card section" style="text-align:center">
-        <div class="text-xs text-muted mb-2">VO₂max Estimate (Uth-Sørensen)</div>
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:2.5rem;font-weight:700;color:var(--blue)" id="rec-vo2max">--</div>
-        <div class="text-sm text-muted mt-1">ml/kg/min — kapasitas aerobik estimasi</div>
-      </div>
-    </div><!-- /view-recovery -->
-
-
-    <!-- ── HISTORY VIEW ────────────────────────────────────────────────────── -->
-    <div id="view-history" class="view-content">
-      <div class="page-header">
-        <div><h1 class="page-title">Riwayat & Analitik 📊</h1><p class="page-sub">Riwayat sesi lari, TRIMP, PM2.5 exposure</p></div>
-      </div>
-
-      <!-- Loading -->
-      <div id="hist-loading" style="display:none;justify-content:center;padding:30px"><span class="text-muted">Memuat data…</span></div>
-
-      <!-- Summary Stats -->
-      <div class="grid-4 section" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
-        <div class="hist-stat"><div class="hist-stat-val" id="h-total-dist">--</div><div class="hist-stat-lbl">Total Jarak</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" id="h-total-time">--</div><div class="hist-stat-lbl">Total Waktu</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" id="h-sessions">--</div><div class="hist-stat-lbl">Sesi</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" id="h-avg-hr">--</div><div class="hist-stat-lbl">Avg HR</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" id="h-avg-pm25">--</div><div class="hist-stat-lbl">Avg PM2.5</div></div>
-        <div class="hist-stat"><div class="hist-stat-val" id="h-trimp-total">--</div><div class="hist-stat-lbl">Total TRIMP</div></div>
-      </div>
-
-      <!-- Charts -->
-      <div class="grid-2 section">
-        <div class="card"><div class="section-hdr"><span class="section-title">HR & Training Load per Sesi</span></div><div style="height:220px"><canvas id="hist-hr-chart"></canvas></div></div>
-        <div class="card"><div class="section-hdr"><span class="section-title">Jarak & Paparan PM2.5</span></div><div style="height:220px"><canvas id="hist-load-chart"></canvas></div></div>
-      </div>
-
-      <!-- Sessions Table -->
-      <div class="card">
-        <div class="section-hdr"><span class="section-title">Riwayat Sesi</span></div>
-        <div style="overflow-x:auto">
-          <table class="tbl">
-            <thead><tr><th>Tanggal</th><th>Jarak</th><th>Waktu</th><th>Pace Avg</th><th>HR Avg</th><th>PM2.5</th><th>TRIMP</th></tr></thead>
-            <tbody id="hist-tbody"><tr><td colspan="7" style="text-align:center;color:var(--t3);padding:24px">Belum ada sesi. Mulai berlari!</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div><!-- /view-history -->
+    </div>
+  </section>
 
   </main>
-</div><!-- /app-shell -->
 
-
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<!--  AUTH MODAL                                                           -->
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-auth">
-  <div class="modal">
-    <div class="modal-tabs">
-      <div class="modal-tab active" id="tab-login" onclick="switchTab('login')">Masuk</div>
-      <div class="modal-tab" id="tab-register" onclick="switchTab('register')">Daftar</div>
+  <!-- ============ FOOTER ============ -->
+  <footer class="lp-footer">
+    <div class="lp-container">
+      <div class="lp-footer-top">
+        <div class="lp-footer-brand">
+          <a href="#top" class="lp-logo">
+            <span class="lp-dot"></span>
+            <span>AERVINEX</span>
+          </a>
+          <p>Smart wearable untuk pelari & warga urban Indonesia. From detection to action — sebelum jadi penyakit.</p>
+          <div class="lp-footer-social">
+            <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497-3.753c-.002-.249 1.51-2.772 1.818-4.013z"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.46-5.16a3 3 0 0 0-2.12-2.12C18.88 4.5 12 4.5 12 4.5s-6.88 0-8.42.22a3 3 0 0 0-2.12 2.12C1 8.5 1 12 1 12s0 3.5.46 5.16a3 3 0 0 0 2.12 2.12c1.54.22 8.42.22 8.42.22s6.88 0 8.42-.22a3 3 0 0 0 2.12-2.12C23 15.5 23 12 23 12zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg></a>
+            <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+          </div>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Produk</h4>
+          <a href="#features">Fitur</a>
+          <a href="#how">Cara Kerja</a>
+          <a href="#pricing">Harga</a>
+          <a href="/sample.html">Demo UI</a>
+          <a href="/encyclopedia.html">Encyclopedia</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Sains & Riset</h4>
+          <a href="/evidence.html">Research Evidence</a>
+          <a href="/ml-results-report.html">Test Akurasi ML</a>
+          <a href="/ml-improvement-plan.html">Rencana ML v2</a>
+          <a href="/aervinex-roadmap.html">Roadmap 18 Bulan</a>
+          <a href="/about.html">Tentang Kami</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Legal</h4>
+          <a href="/privacy-policy.html">Kebijakan Privasi</a>
+          <a href="/terms.html">Syarat Layanan</a>
+          <a href="/help.html">Bantuan</a>
+          <a href="mailto:hello@aervinex.id">hello@aervinex.id</a>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <div>© 2026 AERVINEX · Made in Indonesia 🇮🇩 · From Detection to Action</div>
+        <div class="links">
+          <a href="/privacy-policy.html">Privacy</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/help.html">Status</a>
+        </div>
+      </div>
     </div>
+  </footer>
 
-    <!-- Login Form -->
-    <div id="form-login">
-      <div class="modal-title">Selamat Datang</div>
-      <p class="modal-sub">Masuk ke akun AERVIO Anda</p>
-      <form onsubmit="handleLogin(event)">
-        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="li-email" placeholder="anda@email.com" required></div>
-        <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="li-pass" placeholder="••••••••" required></div>
-        <div class="form-error" id="li-err"></div>
-        <button type="submit" class="btn btn-primary w-full" id="li-btn" style="margin-top:8px">Masuk</button>
-      </form>
-    </div>
-
-    <!-- Register Form -->
-    <div id="form-register" style="display:none">
-      <div class="modal-title">Buat Akun</div>
-      <p class="modal-sub">Mulai monitoring kesehatan dengan AERVIO</p>
-      <form onsubmit="handleRegister(event)">
-        <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" class="form-input" id="re-name" placeholder="Nama Anda" required></div>
-        <div class="form-group"><label class="form-label">Usia</label><input type="number" class="form-input" id="re-age" placeholder="25" min="10" max="99" required></div>
-        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="re-email" placeholder="anda@email.com" required></div>
-        <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="re-pass" placeholder="Min. 6 karakter" minlength="6" required></div>
-        <div class="form-error" id="re-err"></div>
-        <button type="submit" class="btn btn-primary w-full" id="re-btn" style="margin-top:8px">Buat Akun</button>
-      </form>
-    </div>
-
-    <div class="modal-footer"><a href="#" onclick="App.closeModals()" style="color:var(--t3)">Batal</a></div>
+  <!-- Lang FAB -->
+  <div class="lp-lang-fab" id="lpLangFab">
+    <button class="lp-lang-btn active" data-lang="id">ID</button>
+    <button class="lp-lang-btn" data-lang="en">EN</button>
   </div>
-</div>
 
-<!-- Toast Container -->
-<div class="toast-wrap" id="toast-wrap"></div>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/app-check.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+  <!-- Core Web Vitals reporter — sampled to Firestore (10%) -->
+  <script src="/js/web-vitals-reporter.js" defer></script>
+  <!-- Pricing A/B test — assign variant + track conversions -->
+  <script src="/js/pricing-ab.js" defer></script>
 
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<!--  SCRIPTS                                                              -->
-<!-- ══════════════════════════════════════════════════════════════════════ -->
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<!-- Leaflet Map -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<!-- AERVIO Scripts (order matters) -->
-<script src="/js/firebase-config.js"></script>
-<script src="/js/auth.js"></script>
-<script src="/js/utils.js"></script>
-<script src="/js/sensor-sim.js"></script>
-<script src="/js/health-engine.js"></script>
-<script src="/js/app.js"></script>
-<script src="/js/dashboard.js"></script>
-<script src="/js/running.js"></script>
-<script src="/js/recovery.js"></script>
-<script src="/js/history.js"></script>
+  <script>
+    // Mobile drawer
+    const burger = document.getElementById('lpBurger');
+    const drawer = document.getElementById('lpDrawer');
+    const overlay = document.getElementById('lpOverlay');
+    function toggleDrawer(open) {
+      drawer.classList.toggle('open', open);
+      overlay.classList.toggle('open', open);
+    }
+    burger?.addEventListener('click', () => toggleDrawer(true));
+    overlay?.addEventListener('click', () => toggleDrawer(false));
+    drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleDrawer(false)));
 
-<script>
-// ── AUTH FORMS ─────────────────────────────────────────────────────────
-function switchTab(to) {
-  document.getElementById('form-login').style.display    = to==='login'    ? 'block' : 'none';
-  document.getElementById('form-register').style.display = to==='register' ? 'block' : 'none';
-  document.getElementById('tab-login').className    = 'modal-tab' + (to==='login'    ? ' active' : '');
-  document.getElementById('tab-register').className = 'modal-tab' + (to==='register' ? ' active' : '');
-}
+    // Auto-redirect if logged in & onboarded — but allow staying on landing
+    if (typeof auth !== 'undefined') {
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) return;
+        if (sessionStorage.getItem('aervinex-stay-on-landing')) return;
+        try {
+          const snap = await db.collection('users').doc(user.uid).get();
+          const data = snap.exists ? snap.data() : null;
+          const onboarded = data?.onboarding?.completed === true || localStorage.getItem('aervinex-onboarded') === '1';
+          // Don't auto-redirect — let user explore landing. Just show user is logged in via UI later if needed.
+        } catch {}
+      });
+    }
 
-function openRegister() {
-  App.openModal('modal-auth');
-  switchTab('register');
-}
-
-async function handleLogin(e) {
-  e.preventDefault();
-  const btn=document.getElementById('li-btn'), err=document.getElementById('li-err');
-  btn.disabled=true; btn.textContent='Masuk…'; err.style.display='none';
-  try {
-    await auth.signInWithEmailAndPassword(document.getElementById('li-email').value, document.getElementById('li-pass').value);
-    App.closeModals();
-  } catch(ex) {
-    err.textContent=AervioAuth.friendlyError(ex.code); err.style.display='block';
-    btn.disabled=false; btn.textContent='Masuk';
-  }
-}
-
-async function handleRegister(e) {
-  e.preventDefault();
-  const btn=document.getElementById('re-btn'), err=document.getElementById('re-err');
-  btn.disabled=true; btn.textContent='Mendaftar…'; err.style.display='none';
-  try {
-    const name=document.getElementById('re-name').value;
-    const age=parseInt(document.getElementById('re-age').value)||25;
-    const email=document.getElementById('re-email').value;
-    const pass=document.getElementById('re-pass').value;
-    const cred=await auth.createUserWithEmailAndPassword(email, pass);
-    await cred.user.updateProfile({ displayName: name });
-    await db.collection('users').doc(cred.user.uid).set({
-      name, age, email, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    // Lang toggle (lightweight, hooks to i18n if present)
+    document.querySelectorAll('.lp-lang-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.lp-lang-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        if (window.AervinexI18n?.setLang) window.AervinexI18n.setLang(b.dataset.lang);
+      });
     });
-    App.closeModals();
-  } catch(ex) {
-    err.textContent=AervioAuth.friendlyError(ex.code); err.style.display='block';
-    btn.disabled=false; btn.textContent='Buat Akun';
-  }
-}
-</script>
+  </script>
 </body>
 </html>

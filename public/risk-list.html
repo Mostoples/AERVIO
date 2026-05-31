@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Semua Risk Factor — AERVINEX</title>
+  <meta name="description" content="Katalog 35 risiko kesehatan AERVINEX: pernapasan, kardiovaskular, panas, UV, mental — klik untuk detail dan self-assessment." />
+  <link rel="canonical" href="https://aervinex.web.app/risk-list.html" />
+  <link rel="alternate" hreflang="id" href="https://aervinex.web.app/risk-list.html" />
+  <link rel="alternate" hreflang="en" href="https://aervinex.web.app/risk-list.html?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://aervinex.web.app/risk-list.html" />
+  <meta property="og:title" content="Semua Risk Factor — AERVINEX" />
+  <meta property="og:description" content="35 risiko kesehatan dengan deteksi ML — eksplorasi katalog AERVINEX." />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .rl-cat-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .rl-card {
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      cursor: pointer;
+      position: relative;
+    }
+    .rl-head {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .rl-icon-wrap {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      background: var(--bg-soft);
+      box-shadow: var(--shadow-raised-sm);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .rl-icon-wrap .ico { width: 22px; height: 22px; }
+    .rl-name { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .rl-cat { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+    .rl-tagline { font-size: 11px; color: var(--text-muted); line-height: 1.4; min-height: 2.8em; }
+    .rl-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .rl-score {
+      display: inline-block; padding: 4px 10px; border-radius: var(--radius-pill);
+      background: var(--bg-soft); color: var(--text-muted);
+      font-size: 11px; font-weight: 700;
+    }
+    .rl-score.high   { background: rgba(255,92,124,0.15);  color: rgb(255,130,150); }
+    .rl-score.med    { background: rgba(255,181,71,0.15);  color: rgb(255,181,71); }
+    .rl-score.low    { background: rgba(74,222,128,0.12);  color: rgb(74,222,128); }
+    .rl-actions { display: flex; gap: 6px; }
+    .rl-mini-btn {
+      flex: 0 0 auto;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      font-size: 10px; font-weight: 700;
+      text-decoration: none;
+      background: var(--bg-soft); color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .rl-mini-btn:hover { color: var(--accent); border-color: rgba(0,229,212,0.3); }
+    .rl-mini-btn.primary { background: var(--accent); color: #06222a; }
+  </style>
+</head>
+<body class="theme-dark" data-page="risk-list">
+  <a href="#main" class="sr-only-focusable">Lewati ke konten utama</a>
+  <main id="main" class="app-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Semua Risk Factor</h2>
+        <p id="countLabel">35 kondisi · klik untuk detail / assessment</p>
+      </div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="search-wrap">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="rlSearch" placeholder="Cari nama kondisi atau gejala..." />
+      </div>
+    </section>
+
+    <section class="rl-cat-row" id="catRow"></section>
+
+    <section class="grid-2" id="rlGrid"></section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav" aria-label="Navigasi utama">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/icon-lib.js"></script>
+  <script src="js/disease-list.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    const ICO = (emoji) => (window.AervinexIcons?.fromEmoji(emoji)) || emoji;
+
+    let currentCat = '';
+    let currentQuery = '';
+
+    function scoreClass(s) { return s >= 40 ? 'high' : s >= 20 ? 'med' : 'low'; }
+
+    function renderCategories() {
+      const row = document.getElementById('catRow');
+      const cats = [{ id: '', icon: '🔵', count: DISEASE_LIST.length }, ...DISEASE_CATEGORIES];
+      row.innerHTML = cats.map(c => `
+        <span class="filter-chip ${c.id === currentCat ? 'active' : ''}" data-cat="${c.id}" style="flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-pill);background:var(--bg);box-shadow:var(--shadow-raised-sm);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer">
+          <span style="width:14px;height:14px;display:inline-flex">${ICO(c.icon)}</span>
+          <span>${c.id || 'Semua'} <span style="opacity:0.6">(${c.count})</span></span>
+        </span>
+      `).join('');
+      row.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => { currentCat = chip.dataset.cat; render(); });
+      });
+    }
+
+    function render() {
+      const filtered = DISEASE_LIST.filter(d =>
+        (!currentCat || d.category === currentCat) &&
+        (!currentQuery ||
+          d.name.toLowerCase().includes(currentQuery) ||
+          d.tagline.toLowerCase().includes(currentQuery) ||
+          d.category.toLowerCase().includes(currentQuery))
+      );
+      document.getElementById('countLabel').textContent = `${filtered.length} dari ${DISEASE_LIST.length} kondisi`;
+      const grid = document.getElementById('rlGrid');
+      if (!filtered.length) { grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:30px;font-size:13px">Tidak ada kondisi yang cocok dengan filter ini</p>'; return; }
+      grid.innerHTML = filtered.map(d => `
+        <div class="card ${d.aura} rl-card" data-id="${d.id}">
+          <div class="rl-head">
+            <div class="rl-icon-wrap">${ICO(d.icon)}</div>
+            <div style="flex:1;min-width:0">
+              <div class="rl-name">${d.name}</div>
+              <div class="rl-cat">${d.category}</div>
+            </div>
+            <span class="rl-score ${scoreClass(d.baseline)}">${d.baseline}%</span>
+          </div>
+          <p class="rl-tagline">${d.tagline}</p>
+          <div class="rl-foot">
+            <a href="/risk-detail.html?id=${d.id}" class="rl-mini-btn">📊 ML Detail</a>
+            <a href="/assessment.html?id=${d.id}" class="rl-mini-btn primary">📝 Assessment</a>
+          </div>
+        </div>
+      `).join('');
+      // Card click → ML detail (foot buttons keep their own href)
+      grid.querySelectorAll('.rl-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('a')) return;
+          location.href = '/risk-detail.html?id=' + card.dataset.id;
+        });
+      });
+    }
+
+    document.getElementById('rlSearch').addEventListener('input', (e) => { currentQuery = e.target.value.toLowerCase(); render(); });
+    renderCategories();
+    render();
+  </script>
+</body>
+</html>

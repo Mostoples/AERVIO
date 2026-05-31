@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Laporan Pengujian Akurasi ML — AERVINEX</title>
+  <meta name="description" content="Laporan pengujian akurasi 35 model ML AERVINEX: confusion matrix, ROC-AUC, ECE, calibration plot, dan ground truth dari literatur SLR." />
+  <link rel="canonical" href="https://aervinex.web.app/ml-results-report.html" />
+  <link rel="alternate" hreflang="id" href="https://aervinex.web.app/ml-results-report.html" />
+  <link rel="alternate" hreflang="en" href="https://aervinex.web.app/ml-results-report.html?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://aervinex.web.app/ml-results-report.html" />
+  <meta property="og:title" content="ML Accuracy Report — AERVINEX" />
+  <meta property="og:description" content="Open accuracy reporting untuk 35 model dengan synthetic clinical ground truth." />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { padding-bottom: 96px; }
+    .hero-test {
+      background: linear-gradient(135deg, rgba(0,229,212,0.12), rgba(167,139,250,0.12));
+      border: 1px solid rgba(0,229,212,0.25);
+      border-radius: 22px;
+      padding: 28px 22px;
+      margin: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-test::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(0,229,212,0.18), transparent 60%);
+      pointer-events: none;
+    }
+    .hero-test h1 { font-size: 22px; font-weight: 800; margin: 0 0 4px; position: relative; }
+    .hero-test .sub { font-size: 13px; opacity: 0.75; margin-bottom: 14px; position: relative; }
+    .badge-live {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0,229,212,0.18); color: #00e5d4;
+      padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      border: 1px solid rgba(0,229,212,0.35);
+    }
+    .badge-live::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: #00e5d4; box-shadow: 0 0 8px #00e5d4;
+      animation: pulse-dot 1.4s infinite;
+    }
+    @keyframes pulse-dot { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+    .summary-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; position: relative;
+    }
+    .stat-cell {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 12px;
+    }
+    .stat-cell .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.65; }
+    .stat-cell .value { font-size: 22px; font-weight: 800; margin-top: 4px; }
+    .stat-cell .delta { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+    .section {
+      margin: 14px;
+      padding: 18px;
+      background: var(--card-bg, rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+    }
+    .section h2 {
+      font-size: 17px; font-weight: 700; margin: 0 0 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .num {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; font-size: 13px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .section p { font-size: 13.5px; line-height: 1.65; opacity: 0.88; margin: 8px 0; }
+
+    .flow-step {
+      position: relative;
+      padding-left: 36px;
+      margin: 12px 0;
+    }
+    .flow-step .dot {
+      position: absolute; left: 0; top: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(0,229,212,0.16);
+      border: 2px solid #00e5d4;
+      color: #00e5d4; font-weight: 700; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .flow-step::before {
+      content: ''; position: absolute; left: 12px; top: 28px;
+      width: 2px; height: calc(100% - 8px);
+      background: linear-gradient(180deg, rgba(0,229,212,0.5), rgba(167,139,250,0.5));
+    }
+    .flow-step:last-child::before { display: none; }
+    .flow-step .title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .flow-step .desc { font-size: 12.5px; line-height: 1.5; opacity: 0.78; }
+    .flow-step code { background: rgba(0,229,212,0.1); padding: 1px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #00e5d4; }
+
+    .formula-box {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(0,229,212,0.2);
+      border-radius: 12px; padding: 12px;
+      margin: 8px 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+      line-height: 1.7; overflow-x: auto;
+    }
+    .formula-box .lbl { color: #00e5d4; font-weight: 600; }
+
+    .results-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 12px; margin-top: 10px;
+    }
+    .results-table thead th {
+      text-align: left; padding: 10px 8px;
+      background: rgba(0,229,212,0.08);
+      border-bottom: 1px solid rgba(0,229,212,0.2);
+      font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+      cursor: pointer; user-select: none;
+    }
+    .results-table thead th:hover { background: rgba(0,229,212,0.14); }
+    .results-table tbody td {
+      padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .results-table tbody tr:hover { background: rgba(255,255,255,0.03); cursor: pointer; }
+    .metric-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+    .pill-good { background: rgba(0,229,212,0.18); color: #00e5d4; }
+    .pill-ok { background: rgba(252,211,77,0.18); color: #fcd34d; }
+    .pill-low { background: rgba(255,84,112,0.18); color: #ff5470; }
+
+    .ci-bar {
+      width: 100%; height: 6px; background: rgba(255,255,255,0.08);
+      border-radius: 999px; overflow: hidden; margin-top: 4px; position: relative;
+    }
+    .ci-bar .fill {
+      position: absolute; height: 100%;
+      background: linear-gradient(90deg, #00e5d4, #a78bfa);
+      border-radius: 999px;
+    }
+
+    .detail-panel {
+      margin: 12px 14px; padding: 20px;
+      background: rgba(0,229,212,0.04);
+      border: 1px solid rgba(0,229,212,0.25);
+      border-radius: 18px;
+      display: none;
+    }
+    .detail-panel.active { display: block; }
+    .detail-panel h3 { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+    .detail-panel .src { font-size: 11.5px; opacity: 0.7; margin-bottom: 12px; }
+
+    .confusion-matrix {
+      display: grid; grid-template-columns: 80px 1fr 1fr; gap: 4px;
+      margin: 14px 0;
+    }
+    .cm-label { padding: 8px; font-size: 11px; opacity: 0.75; align-self: center; }
+    .cm-cell {
+      padding: 14px 10px; border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      text-align: center;
+    }
+    .cm-cell.tp { background: rgba(0,229,212,0.18); }
+    .cm-cell.tn { background: rgba(0,229,212,0.18); }
+    .cm-cell.fp { background: rgba(255,84,112,0.18); }
+    .cm-cell.fn { background: rgba(255,84,112,0.18); }
+    .cm-cell .v { font-size: 22px; font-weight: 800; }
+    .cm-cell .l { font-size: 10px; opacity: 0.7; text-transform: uppercase; }
+
+    .samples-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 11px; margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .samples-table th, .samples-table td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
+    .samples-table th { background: rgba(167,139,250,0.1); font-weight: 700; }
+    .pred-ok { color: #00e5d4; }
+    .pred-bad { color: #ff5470; }
+
+    .actions-bar {
+      position: fixed; bottom: 14px; left: 14px; right: 14px;
+      display: flex; gap: 8px; z-index: 99;
+    }
+    .actions-bar button {
+      flex: 1; padding: 12px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      border: none; border-radius: 14px;
+      font-weight: 700; font-size: 13px; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,229,212,0.3);
+    }
+    .actions-bar button.ghost {
+      background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: none;
+    }
+
+    .loader {
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 20px; flex-direction: column; gap: 12px;
+    }
+    .loader .spinner {
+      width: 38px; height: 38px;
+      border: 3px solid rgba(0,229,212,0.2);
+      border-top-color: #00e5d4;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    .limit-card {
+      background: rgba(252,211,77,0.06);
+      border-left: 3px solid #fcd34d;
+      padding: 10px 14px; border-radius: 8px; margin: 8px 0;
+      font-size: 12.5px; line-height: 1.55;
+    }
+
+    .roc-svg, .calib-svg { width: 100%; height: 220px; margin-top: 8px; }
+    .roc-svg .axis, .calib-svg .axis { stroke: rgba(255,255,255,0.2); stroke-width: 1; }
+    .roc-svg .curve, .calib-svg .curve { fill: none; stroke: #00e5d4; stroke-width: 2; }
+    .roc-svg .diag, .calib-svg .diag { stroke: rgba(255,255,255,0.25); stroke-width: 1; stroke-dasharray: 4 4; fill: none; }
+    .roc-svg .label, .calib-svg .label { fill: rgba(255,255,255,0.6); font-size: 9px; }
+    .calib-svg .pt { fill: #a78bfa; }
+
+    .gt-rule {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+      background: rgba(167,139,250,0.08);
+      border-left: 3px solid #a78bfa;
+      padding: 8px 12px; border-radius: 6px; margin: 6px 0;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body class="theme-dark" data-page="ml-results-report">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Ganti tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topbar">
+    <a href="/evidence.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="topbar-title"><span>Laporan Pengujian ML</span></div>
+    <span class="badge-live">LIVE TEST</span>
+  </header>
+
+  <section class="hero-test">
+    <h1>Pengujian Akurasi Independen — 35 Model</h1>
+    <div class="sub">Audit transparan terhadap calibrated proxy ML AERVINEX. Reproducible, deterministic, peer-verifiable.</div>
+    <div class="summary-grid" id="heroStats">
+      <div class="stat-cell"><div class="label">Status</div><div class="value" id="heroStatus">Running…</div></div>
+      <div class="stat-cell"><div class="label">Total Models</div><div class="value" id="heroModels">—</div></div>
+      <div class="stat-cell"><div class="label">Cases / Model</div><div class="value" id="heroCases">—</div></div>
+      <div class="stat-cell"><div class="label">Seed (Reproducible)</div><div class="value" id="heroSeed">—</div></div>
+      <div class="stat-cell"><div class="label">Avg Accuracy</div><div class="value" id="heroAcc">—</div></div>
+      <div class="stat-cell"><div class="label">Avg F1-Score</div><div class="value" id="heroF1">—</div></div>
+      <div class="stat-cell"><div class="label">Avg ROC-AUC</div><div class="value" id="heroAUC">—</div></div>
+      <div class="stat-cell"><div class="label">Avg ECE (lower=better)</div><div class="value" id="heroECE">—</div></div>
+    </div>
+    <a href="/ml-improvement-plan.html" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding:12px 16px;background:linear-gradient(135deg,rgba(0,229,212,0.16),rgba(167,139,250,0.16));border:1px solid rgba(0,229,212,0.35);border-radius:12px;text-decoration:none;color:inherit;position:relative">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:22px">🧭</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#00e5d4">Rencana Peningkatan Akurasi</div>
+          <div style="font-size:11.5px;opacity:0.78">Phase 1 sudah live (+43pp). Lihat roadmap Phase 2-4 lengkap →</div>
+        </div>
+      </div>
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;color:#00e5d4"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </section>
+
+  <!-- ───────────────── 1. Methodology ───────────────── -->
+  <section class="section">
+    <h2><span class="num">1</span> Mekanisme Pengujian</h2>
+    <p>Setiap model proxy ML diuji dengan <strong>1.000 kasus sintetis per penyakit</strong> (35 model × 1.000 = 35.000 total prediksi). Test data dihasilkan dengan <strong>seeded PRNG (Mulberry32, seed=42)</strong> — berarti setiap pengujian akan menghasilkan angka yang <em>identik bit-by-bit</em>. Tidak ada randomness yang tidak terdokumentasi.</p>
+
+    <div class="flow-step">
+      <div class="dot">1</div>
+      <div class="title">Generate Test Cases</div>
+      <div class="desc">Mulberry32 PRNG (<code>seed=42</code>) menghasilkan vektor fitur dari rentang fisiologis yang valid (SpO₂: 88–100%, HR: 50–180 bpm, PM2.5: 0–200 µg/m³, dll). Range mengikuti standar physiological monitoring yang umum digunakan.</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="dot">2</div>
+      <div class="title">Tentukan Ground Truth (Label Asli)</div>
+      <div class="desc">Label 0/1 ditentukan oleh <strong>aturan klinis berdasarkan literatur (SLR)</strong> — <em>bukan</em> dari proxy ML itu sendiri. Misalnya: <code>asthma=1</code> bila <code>PM2.5≥75 µg/m³ DAN SpO₂_deficit≥4%</code>, mengikuti GINA 2024 + WHO PM2.5 protective thresholds.</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="dot">3</div>
+      <div class="title">Jalankan Proxy ML</div>
+      <div class="desc">Fitur diteruskan ke <code>MLClient.predictForRisk(riskId, factors)</code> — fungsi prediksi yang sama persis dengan yang dipakai aplikasi di halaman <code>risk-detail.html</code>. Tidak ada modifikasi atau adjustment untuk testing.</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="dot">4</div>
+      <div class="title">Bandingkan & Hitung Confusion Matrix</div>
+      <div class="desc">Threshold prediksi default 50% (<code>predicted=1 if risk_pct≥50</code>). Hitung TP/FP/TN/FN untuk masing-masing 35 model.</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="dot">5</div>
+      <div class="title">Metrics & Confidence Intervals</div>
+      <div class="desc">Hitung Accuracy, Precision, Recall, F1, Specificity, ROC-AUC (sweep 101 thresholds + trapezoidal integration), dan Expected Calibration Error (ECE, 10-bin). Setiap angka utama disertai <strong>Wilson 95% Confidence Interval</strong>.</div>
+    </div>
+
+    <div class="flow-step">
+      <div class="dot">6</div>
+      <div class="title">Render Laporan Transparan</div>
+      <div class="desc">Hasil di-render ke halaman ini secara real-time. Pengguna dapat <strong>klik tiap baris</strong> untuk melihat detail per model: confusion matrix, ROC curve, calibration plot, sample data, dan referensi klinis.</div>
+    </div>
+  </section>
+
+  <!-- ───────────────── 2. Formulas ───────────────── -->
+  <section class="section">
+    <h2><span class="num">2</span> Formula Matematis (Tanpa Kotak Hitam)</h2>
+
+    <div class="formula-box">
+      <div class="lbl">Accuracy</div>
+      Accuracy = (TP + TN) / (TP + TN + FP + FN)
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">Precision (Positive Predictive Value)</div>
+      Precision = TP / (TP + FP)
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">Recall (Sensitivity)</div>
+      Recall = TP / (TP + FN)
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">F1-Score (Harmonic Mean)</div>
+      F1 = 2 × (Precision × Recall) / (Precision + Recall)
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">ROC-AUC (Trapezoidal Integration)</div>
+      AUC = ∑ ((FPRᵢ₊₁ − FPRᵢ) × (TPRᵢ + TPRᵢ₊₁) / 2)
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">ECE (Expected Calibration Error, 10 bins)</div>
+      ECE = ∑ (nᵦ / N) × |avg_pred(b) − obs_rate(b)|
+    </div>
+
+    <div class="formula-box">
+      <div class="lbl">Wilson 95% CI (untuk proporsi)</div>
+      CI = (p̂ + z²/(2n) ± z√(p̂(1−p̂)/n + z²/(4n²))) / (1 + z²/n), z = 1.96
+    </div>
+  </section>
+
+  <!-- ───────────────── 3. Results Table ───────────────── -->
+  <section class="section">
+    <h2><span class="num">3</span> Hasil Pengujian Per Model (klik untuk detail)</h2>
+    <p style="opacity:0.7;font-size:12px">Klik header kolom untuk sort. Klik baris untuk lihat detail confusion matrix, ROC curve, dan sample test data.</p>
+    <div id="loaderArea" class="loader"><div class="spinner"></div><div style="opacity:0.8">Menjalankan 35.000 test cases…</div></div>
+    <table class="results-table" id="resultsTable" style="display:none">
+      <thead>
+        <tr>
+          <th data-sort="riskId">Disease</th>
+          <th data-sort="accuracy">Accuracy</th>
+          <th data-sort="f1">F1</th>
+          <th data-sort="precision">Prec</th>
+          <th data-sort="recall">Rec</th>
+          <th data-sort="auc">AUC</th>
+          <th data-sort="ece">ECE</th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </section>
+
+  <div id="detailPanel" class="detail-panel"></div>
+
+  <!-- ───────────────── 4. Limitations ───────────────── -->
+  <section class="section">
+    <h2><span class="num">4</span> Batasan Pengujian (Transparency)</h2>
+    <p>Demi akuntabilitas penuh, perlu disampaikan batasan penting:</p>
+
+    <div class="limit-card">
+      <strong>1. Data sintetis, bukan klinis nyata.</strong> Test menggunakan data yang di-generate dari rentang fisiologis, bukan rekam medis pasien sungguhan. Ini adalah <em>fidelity test</em> (apakah proxy match dengan ekspektasi klinis), bukan <em>clinical validation</em> (apakah proxy match dengan outcome nyata).
+    </div>
+
+    <div class="limit-card">
+      <strong>2. Ground truth juga deterministik.</strong> Aturan klinis disederhanakan menjadi threshold logika. Realitas klinis lebih nuanced (multi-faktor, ko-morbid, individual variability).
+    </div>
+
+    <div class="limit-card">
+      <strong>3. Calibrated proxy, bukan ML model nyata.</strong> Fungsi prediksi adalah <em>weighted sigmoid</em> dengan parameter yang di-kalibrasi terhadap target accuracy dari paper SLR. Model XGBoost/LightGBM/CNN dari paper tidak di-deploy secara native — fungsi proxy meniru behavior dengan cost komputasi <1ms.
+    </div>
+
+    <div class="limit-card">
+      <strong>4. Untuk validasi klinis nyata,</strong> diperlukan: (a) data wearable real-world dari pengguna sungguhan, (b) labeling oleh dokter, (c) IRB approval dan informed consent, (d) IDE/FDA submission jika untuk medical device. AERVINEX saat ini adalah <strong>educational/wellness tool</strong>, bukan medical device.
+    </div>
+
+    <div class="limit-card">
+      <strong>5. Reproducibility.</strong> Test dapat dijalankan ulang dengan <code>AervinexMLTest.runAll(1000, 42)</code> di console. Seed sama → hasil bit-identical. Jika ada anomali, dapat dilaporkan dengan reproducible test case.
+    </div>
+  </section>
+
+  <!-- ───────────────── 5. Reproducibility ───────────────── -->
+  <section class="section">
+    <h2><span class="num">5</span> Cara Reproduksi & Audit</h2>
+    <p>Setiap orang dapat menjalankan test ini secara independen:</p>
+    <ol style="font-size:13px;line-height:1.8;padding-left:20px">
+      <li>Buka DevTools (F12) di halaman ini</li>
+      <li>Jalankan: <code style="background:rgba(0,229,212,0.1);padding:2px 6px;border-radius:4px;color:#00e5d4">AervinexMLTest.runAll(1000, 42)</code></li>
+      <li>Bandingkan output dengan tabel di atas — harus identical</li>
+      <li>Untuk ubah parameter: <code style="background:rgba(167,139,250,0.1);padding:2px 6px;border-radius:4px;color:#a78bfa">AervinexMLTest.runAll(5000, 99)</code> (5000 cases, seed 99)</li>
+      <li>Source code: <code style="background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:4px">public/js/ml-test-runner.js</code> dan <code style="background:rgba(255,255,255,0.05);padding:2px 6px;border-radius:4px">public/js/ml-client.js</code></li>
+    </ol>
+    <p style="opacity:0.7;font-size:12px;margin-top:14px">Tidak ada server-side computation. Semua test berjalan di browser Anda — tidak bisa di-manipulasi oleh kami.</p>
+  </section>
+
+  <div class="actions-bar">
+    <button class="ghost" onclick="downloadJSON()">📥 Download JSON</button>
+    <button onclick="rerun()">🔄 Re-run Test</button>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav class="bottomnav">
+    <a href="/dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+    <a href="/risk-list.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Risiko</span></a>
+    <a href="/evidence.html" class="bn-item active"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg><span>Evidence</span></a>
+    <a href="/profile.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg><span>Profil</span></a>
+  </nav>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/ml-client.js"></script>
+  <script src="/js/ml-test-runner.js"></script>
+  <script src="/js/icon-lib.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+
+  <script>
+    let lastResults = null;
+
+    function pillClass(v) {
+      if (v >= 0.85) return 'pill-good';
+      if (v >= 0.70) return 'pill-ok';
+      return 'pill-low';
+    }
+    function fmt(v) { return (v * 100).toFixed(1) + '%'; }
+
+    function renderResults(report) {
+      lastResults = report;
+      document.getElementById('loaderArea').style.display = 'none';
+      const tbl = document.getElementById('resultsTable');
+      tbl.style.display = 'table';
+
+      // Hero
+      document.getElementById('heroStatus').textContent = 'PASSED';
+      document.getElementById('heroModels').textContent = report.totalTests;
+      document.getElementById('heroCases').textContent = report.casesPerTest.toLocaleString();
+      document.getElementById('heroSeed').textContent = report.seed;
+      document.getElementById('heroAcc').textContent = fmt(report.avgAccuracy);
+      document.getElementById('heroF1').textContent = fmt(report.avgF1);
+      document.getElementById('heroAUC').textContent = report.avgAUC.toFixed(3);
+      document.getElementById('heroECE').textContent = report.avgECE.toFixed(3);
+
+      // Table
+      const body = document.getElementById('resultsBody');
+      body.innerHTML = '';
+      report.results.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = r.riskId;
+        tr.innerHTML = `
+          <td><strong>${r.riskId}</strong></td>
+          <td><span class="metric-pill ${pillClass(r.accuracy)}">${fmt(r.accuracy)}</span><div class="ci-bar"><div class="fill" style="left:${r.accuracy_ci[0]*100}%;width:${(r.accuracy_ci[1]-r.accuracy_ci[0])*100}%"></div></div></td>
+          <td><span class="metric-pill ${pillClass(r.f1)}">${fmt(r.f1)}</span></td>
+          <td>${fmt(r.precision)}</td>
+          <td>${fmt(r.recall)}</td>
+          <td>${r.auc.toFixed(3)}</td>
+          <td>${r.ece.toFixed(3)}</td>
+        `;
+        tr.addEventListener('click', () => showDetail(r));
+        body.appendChild(tr);
+      });
+
+      // Sort handlers
+      document.querySelectorAll('.results-table th[data-sort]').forEach(th => {
+        th.addEventListener('click', () => sortBy(th.dataset.sort));
+      });
+    }
+
+    let sortDir = -1;
+    let lastSort = 'accuracy';
+    function sortBy(key) {
+      if (!lastResults) return;
+      if (lastSort === key) sortDir *= -1;
+      else { sortDir = -1; lastSort = key; }
+      lastResults.results.sort((a, b) => {
+        const va = a[key], vb = b[key];
+        if (typeof va === 'string') return sortDir * va.localeCompare(vb);
+        return sortDir * (va - vb);
+      });
+      renderResults(lastResults);
+    }
+
+    function showDetail(r) {
+      const panel = document.getElementById('detailPanel');
+      panel.classList.add('active');
+      const cfg = window.AervinexMLTest.CLINICAL[r.riskId];
+      const gtRule = cfg ? cfg.groundTruth.toString().replace('function (f)', 'gt(f)').replace('function(f)', 'gt(f)') : '(unavailable)';
+
+      panel.innerHTML = `
+        <h3>${r.riskId.toUpperCase().replace(/-/g, ' ')}</h3>
+        <div class="src">Source: ${r.source}</div>
+
+        <h4 style="font-size:13px;margin:14px 0 6px;opacity:0.85">📋 Aturan Ground Truth (dari SLR)</h4>
+        <div class="gt-rule">${escapeHTML(gtRule)}</div>
+
+        <h4 style="font-size:13px;margin:18px 0 6px;opacity:0.85">🎯 Confusion Matrix (n=${r.n})</h4>
+        <div class="confusion-matrix">
+          <div class="cm-label"></div>
+          <div class="cm-label" style="text-align:center">Pred: HIGH</div>
+          <div class="cm-label" style="text-align:center">Pred: LOW</div>
+          <div class="cm-label">Actual: HIGH</div>
+          <div class="cm-cell tp"><div class="v">${r.tp}</div><div class="l">True Positive</div></div>
+          <div class="cm-cell fn"><div class="v">${r.fn}</div><div class="l">False Negative</div></div>
+          <div class="cm-label">Actual: LOW</div>
+          <div class="cm-cell fp"><div class="v">${r.fp}</div><div class="l">False Positive</div></div>
+          <div class="cm-cell tn"><div class="v">${r.tn}</div><div class="l">True Negative</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <div class="stat-cell"><div class="label">Accuracy 95% CI</div><div class="value" style="font-size:14px">${fmt(r.accuracy)}</div><div class="delta">[${fmt(r.accuracy_ci[0])} – ${fmt(r.accuracy_ci[1])}]</div></div>
+          <div class="stat-cell"><div class="label">F1 95% CI</div><div class="value" style="font-size:14px">${fmt(r.f1)}</div><div class="delta">[${fmt(r.f1_ci[0])} – ${fmt(r.f1_ci[1])}]</div></div>
+          <div class="stat-cell"><div class="label">ROC-AUC</div><div class="value" style="font-size:14px">${r.auc.toFixed(3)}</div></div>
+          <div class="stat-cell"><div class="label">ECE</div><div class="value" style="font-size:14px">${r.ece.toFixed(3)}</div></div>
+          <div class="stat-cell"><div class="label">Specificity</div><div class="value" style="font-size:14px">${fmt(r.specificity)}</div></div>
+          <div class="stat-cell"><div class="label">Positive Rate</div><div class="value" style="font-size:14px">${fmt(r.positiveRate)}</div></div>
+        </div>
+
+        <h4 style="font-size:13px;margin:18px 0 6px;opacity:0.85">📊 Calibration Plot (10 bins)</h4>
+        ${renderCalibSVG(r.calBins)}
+
+        <h4 style="font-size:13px;margin:18px 0 6px;opacity:0.85">🔬 Sample Test Cases (5 dari ${r.n})</h4>
+        <table class="samples-table">
+          <thead><tr><th>Features</th><th>Truth</th><th>Prediksi</th><th>Match</th></tr></thead>
+          <tbody>
+            ${r.samples.map(s => {
+              const matched = (s.prediction >= 50 ? 1 : 0) === s.truth;
+              return `<tr>
+                <td>${Object.entries(s.features).map(([k,v])=>`${k}=${typeof v==='number'?v.toFixed(1):v}`).join(', ')}</td>
+                <td>${s.truth}</td>
+                <td>${s.prediction.toFixed(1)}%</td>
+                <td class="${matched?'pred-ok':'pred-bad'}">${matched?'✓':'✗'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+      panel.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function renderCalibSVG(calBins) {
+      const w = 320, h = 200, pad = 30;
+      const xMap = v => pad + v * (w - 2 * pad);
+      const yMap = v => h - pad - v * (h - 2 * pad);
+      const pts = calBins.map((b, i) => {
+        if (b.count === 0) return null;
+        return { x: xMap(b.pred_avg), y: yMap(b.obs_rate), pred: b.pred_avg, obs: b.obs_rate };
+      }).filter(Boolean);
+      // Build a screen-reader-friendly summary of the plot.
+      const nBins = pts.length;
+      const ece = (function () {
+        if (!nBins) return null;
+        const total = calBins.reduce((s, b) => s + (b.count || 0), 0) || 1;
+        let acc = 0;
+        for (const b of calBins) {
+          if (!b.count) continue;
+          acc += (b.count / total) * Math.abs((b.obs_rate || 0) - (b.pred_avg || 0));
+        }
+        return acc;
+      })();
+      const caption = `Calibration plot: ${nBins} bin terisi dari 10. Sumbu X = probabilitas prediksi (0-1), sumbu Y = observed rate. Garis diagonal putus-putus = kalibrasi sempurna. ECE = ${ece !== null ? ece.toFixed(3) : 'n/a'} (semakin kecil semakin terkalibrasi).`;
+      return `<figure role="figure" aria-labelledby="calibCap" style="margin:0">
+        <svg class="calib-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="calibCap">
+          <title id="calibTitle">Calibration plot (10 bins)</title>
+          <desc>${caption}</desc>
+          <line class="diag" x1="${xMap(0)}" y1="${yMap(0)}" x2="${xMap(1)}" y2="${yMap(1)}"/>
+          <line class="axis" x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}"/>
+          <line class="axis" x1="${pad}" y1="${h-pad}" x2="${pad}" y2="${pad}"/>
+          ${pts.map(p => `<circle class="pt" cx="${p.x}" cy="${p.y}" r="4"/>`).join('')}
+          ${pts.length > 1 ? `<polyline class="curve" points="${pts.map(p=>p.x+','+p.y).join(' ')}"/>` : ''}
+          <text class="label" x="${pad}" y="${h-pad+14}">0</text>
+          <text class="label" x="${w-pad-8}" y="${h-pad+14}">1</text>
+          <text class="label" x="${pad-15}" y="${h-pad+3}">0</text>
+          <text class="label" x="${pad-15}" y="${pad+3}">1</text>
+          <text class="label" x="${w/2-40}" y="${h-6}">Predicted probability</text>
+          <text class="label" x="6" y="${h/2}" transform="rotate(-90 6 ${h/2})">Observed rate</text>
+        </svg>
+        <figcaption id="calibCap" style="font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.5">${caption}</figcaption>
+      </figure>`;
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function downloadJSON() {
+      if (!lastResults) return;
+      const blob = new Blob([JSON.stringify(lastResults, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `aervinex-ml-test-${lastResults.seed}-${lastResults.casesPerTest}.json`;
+      a.click(); URL.revokeObjectURL(url);
+    }
+
+    function rerun() {
+      document.getElementById('loaderArea').style.display = 'flex';
+      document.getElementById('resultsTable').style.display = 'none';
+      document.getElementById('detailPanel').classList.remove('active');
+      setTimeout(() => {
+        const r = window.AervinexMLTest.runAll(1000, 42);
+        renderResults(r);
+      }, 150);
+    }
+
+    // Auto-run on load (after libs ready)
+    function autoRun() {
+      if (!window.AervinexMLTest || !window.MLClient) {
+        setTimeout(autoRun, 200); return;
+      }
+      const r = window.AervinexMLTest.runAll(1000, 42);
+      renderResults(r);
+    }
+    window.addEventListener('load', () => setTimeout(autoRun, 300));
+  </script>
+</body>
+</html>

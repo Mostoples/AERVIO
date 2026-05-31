@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>AERVINEX — UI Sample</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark">
+  <div class="app-shell">
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="top-bar">
+      <button class="btn-icon" aria-label="Menu">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <h1 class="brand-name">AERVINEX</h1>
+      </div>
+      <div class="top-bar-actions">
+        <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+          <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <button class="btn-icon notif" aria-label="Notifikasi">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+          <span class="badge-dot"></span>
+        </button>
+        <button class="btn-icon avatar" aria-label="Profil">
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ SEARCH ============ -->
+    <section class="search-wrap">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder="Cari fitur, riwayat, encyclopedia..." />
+        <button class="search-go" aria-label="Search">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ GREETING ============ -->
+    <section class="greeting">
+      <div>
+        <p class="greet-eyebrow">Selamat pagi,</p>
+        <h2 class="greet-name">Athlete</h2>
+        <p class="greet-date" id="greetDate">Kamis, 28 Mei 2026</p>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span>Live · Connected</span>
+      </div>
+    </section>
+
+    <!-- ============ HERO METRIC ============ -->
+    <section class="card hero-card aura-cyan">
+      <div class="hero-left">
+        <p class="hero-label">Environment Health Risk</p>
+        <div class="hero-value">
+          <span class="hero-num" id="teprsValue">34</span>
+          <span class="hero-unit">%</span>
+        </div>
+        <p class="hero-desc">TEPRS · Risiko rendah · Aman untuk aktivitas outdoor</p>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:34%"></div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314; stroke-dashoffset:207"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">34%</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">SAFE</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ QUICK METRICS GRID ============ -->
+    <section class="grid-2">
+      <div class="card metric-card aura-coral">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <span class="metric-trend up">+4</span>
+        </div>
+        <p class="metric-label">Heart Rate</p>
+        <div class="metric-value">
+          <span id="hrValue">78</span><span class="metric-unit">bpm</span>
+        </div>
+        <div class="spark">
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,20 10,18 20,22 30,12 40,16 50,10 60,14 70,8 80,16 90,12 100,18"/></svg>
+        </div>
+      </div>
+
+      <div class="card metric-card aura-blue">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg>
+          </div>
+          <span class="metric-trend">PEAK</span>
+        </div>
+        <p class="metric-label">SpO₂</p>
+        <div class="metric-value">
+          <span>97</span><span class="metric-unit">%</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill" style="width:97%"></div>
+        </div>
+      </div>
+
+      <div class="card metric-card aura-amber">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>
+          </div>
+          <span class="metric-trend up">+1.2k</span>
+        </div>
+        <p class="metric-label">Steps</p>
+        <div class="metric-value">
+          <span>8.2</span><span class="metric-unit">k</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill" style="width:82%"></div>
+        </div>
+      </div>
+
+      <div class="card metric-card aura-green">
+        <div class="metric-head">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+          </div>
+          <span class="metric-trend">READY</span>
+        </div>
+        <p class="metric-label">Recovery</p>
+        <div class="metric-value">
+          <span>86</span><span class="metric-unit">RRSS</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill" style="width:86%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB NAV + CHART ============ -->
+    <section class="card chart-card aura-violet">
+      <div class="tab-nav" role="tablist">
+        <button class="tab active" data-tab="today">Today</button>
+        <button class="tab" data-tab="week">Week</button>
+        <button class="tab" data-tab="month">Month</button>
+        <button class="tab" data-tab="year">Year</button>
+      </div>
+      <div class="chart-head">
+        <div>
+          <p class="chart-label">Activity & Risk Trend</p>
+          <p class="chart-sub"><span class="dot-cyan"></span>TEPRS <span class="dot-muted"></span>Heart Rate</p>
+        </div>
+        <div class="chart-figure">
+          <span class="chart-num">11,300</span>
+          <span class="chart-delta up">+2.4%</span>
+        </div>
+      </div>
+      <div class="chart-area">
+        <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00e5d4" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline class="chart-line-muted" points="0,90 30,82 60,88 90,70 120,75 150,60 180,68 210,50 240,58 270,42 300,48 320,38"/>
+          <polyline class="chart-line" points="0,80 30,70 60,75 90,55 120,62 150,45 180,52 210,35 240,42 270,28 300,35 320,22"/>
+          <polygon class="chart-fill" points="0,80 30,70 60,75 90,55 120,62 150,45 180,52 210,35 240,42 270,28 300,35 320,22 320,120 0,120"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ============ QUICK ACTIONS ============ -->
+    <section class="quick-actions">
+      <h3 class="section-title">Aksi Cepat</h3>
+      <div class="action-grid">
+        <button class="btn-pill primary">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg>
+          <span>Start Run</span>
+        </button>
+        <button class="btn-pill">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg>
+          <span>Recovery</span>
+        </button>
+        <button class="btn-pill">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg>
+          <span>History</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ ALERTS / SETTINGS ============ -->
+    <section class="card settings-card">
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+          </div>
+          <div>
+            <p class="setting-title">Smart Alerts</p>
+            <p class="setting-sub">AARC chain · TUHAM thresholds</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+          </div>
+          <div>
+            <p class="setting-title">Auto Recovery Mode</p>
+            <p class="setting-sub">Aktif setelah lari intensitas tinggi</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon">
+            <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+          </div>
+          <div>
+            <p class="setting-title">Background Sync</p>
+            <p class="setting-sub">Update sensor tiap 30 detik</p>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ============ ENCYCLOPEDIA TEASER ============ -->
+    <section class="card encyclopedia-card aura-pink">
+      <div class="ency-head">
+        <div>
+          <p class="setting-title">Encyclopedia</p>
+          <p class="setting-sub">Riset & referensi science wearable</p>
+        </div>
+        <button class="btn-icon">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="ency-tags">
+        <span class="tag">PM2.5</span>
+        <span class="tag">HRV</span>
+        <span class="tag">VO₂max</span>
+        <span class="tag">Heat Index</span>
+        <span class="tag">+12</span>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <!-- ============ BOTTOM NAV ============ -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" aria-label="Home">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="nav-item" aria-label="Dashboard">
+        <svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Stats</span>
+      </button>
+      <button class="nav-item fab" aria-label="Start">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="nav-item" aria-label="Library">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5z"/></svg>
+        <span>Library</span>
+      </button>
+      <button class="nav-item" aria-label="Profile">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="js/icon-lib.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/aervinex-home.js"></script>
+</body>
+</html>

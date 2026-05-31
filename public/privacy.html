@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Privasi &amp; Data — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="privacy">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Privasi &amp; Data</h2><p>Kelola data &amp; permissions</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="card aura-cyan" style="padding:20px">
+      <h3 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">🔒 Data Anda terlindungi</h3>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6">Semua data sensor dienkripsi at-rest di Firestore (asia-southeast2). Akses hanya via Firebase Auth token Anda. Kami tidak menjual data ke pihak ketiga.</p>
+    </section>
+
+    <h3 class="section-title">Sharing &amp; Riset</h3>
+    <section class="card aura-violet list-card">
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 11.5a8.4 8.4 0 11-16 0c0-4.6 3.6-8.4 8-8.4s8 3.8 8 8.4z"/></svg></div><div><p class="setting-title">Anonymous research aggregate</p><p class="setting-sub">Data tanpa identitas untuk riset akademis</p></div></div>
+        <label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg></div><div><p class="setting-title">Integrasi Strava</p><p class="setting-sub">Auto-sync sesi running</p></div></div>
+        <label class="toggle"><input type="checkbox" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info"><div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><div><p class="setting-title">Apple Health / Google Fit</p><p class="setting-sub">Two-way sync HR &amp; aktivitas</p></div></div>
+        <label class="toggle"><input type="checkbox" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+    </section>
+
+    <h3 class="section-title">Permissions</h3>
+    <section class="card list-card">
+      <div class="list-row"><div class="list-row-icon">📍</div><div class="list-row-body"><p class="list-row-title">Lokasi (GPS)</p><p class="list-row-sub">Untuk pilih stasiun BMKG/IQAir terdekat</p></div><span class="tbl-status ok">Granted</span></div>
+      <div class="list-row"><div class="list-row-icon">📡</div><div class="list-row-body"><p class="list-row-title">Bluetooth</p><p class="list-row-sub">Pair &amp; sync data device</p></div><span class="tbl-status ok">Granted</span></div>
+      <div class="list-row"><div class="list-row-icon">🔔</div><div class="list-row-body"><p class="list-row-title">Notifikasi</p><p class="list-row-sub">Push alerts L1, L2, L3</p></div><span class="tbl-status ok">Granted</span></div>
+      <div class="list-row"><div class="list-row-icon">📷</div><div class="list-row-body"><p class="list-row-title">Camera</p><p class="list-row-sub">Untuk scan QR pair device</p></div><span class="tbl-status muted">Not requested</span></div>
+    </section>
+
+    <h3 class="section-title">Data Saya</h3>
+    <section class="card list-card">
+      <div class="list-row"><div class="list-row-icon">📊</div><div class="list-row-body"><p class="list-row-title">Sesi tersimpan</p><p class="list-row-sub">128 sesi · 1.2 GB</p></div></div>
+      <div class="list-row"><div class="list-row-icon">⌚</div><div class="list-row-body"><p class="list-row-title">Sensor reads</p><p class="list-row-sub">~480k reads/30 hari</p></div></div>
+      <div class="list-row"><div class="list-row-icon">🔔</div><div class="list-row-body"><p class="list-row-title">Alert history</p><p class="list-row-sub">42 alerts · 7 hari</p></div></div>
+    </section>
+
+    <button class="btn-block primary" id="btnExport"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Export Semua Data (CSV)</span></button>
+
+    <h3 class="section-title">Zona Berbahaya</h3>
+    <section class="card aura-coral" style="padding:18px">
+      <button class="btn-block ghost" style="margin-bottom:10px;border-color:rgba(255,181,71,.4);color:rgb(255,181,71)" id="btnClearHistory">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        <span>Hapus History (keep akun)</span>
+      </button>
+      <button class="btn-block ghost" style="border-color:rgba(255,92,124,.4);color:rgb(255,130,150)" id="btnDelAcc">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        <span>Hapus Akun &amp; Semua Data</span>
+      </button>
+    </section>
+
+    <p style="text-align:center;font-size:12px;color:var(--text-muted);padding:14px">
+      <a href="/privacy-policy.html" class="auth-link">📋 Privacy Policy</a> ·
+      <a href="/terms.html" class="auth-link">📄 Terms</a> ·
+      <a href="/consent.html" class="auth-link">🔬 Research Consent</a>
+    </p>
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    document.getElementById('btnExport').addEventListener('click', () => AervinexToast('Export CSV mulai · email dalam 5 menit', 'success'));
+    document.getElementById('btnClearHistory').addEventListener('click', () => {
+      if (confirm('Hapus semua history & sesi tersimpan? Akun &  profil tetap.')) AervinexToast('History dihapus', 'warn');
+    });
+    document.getElementById('btnDelAcc').addEventListener('click', () => {
+      if (confirm('Hapus akun + SEMUA data? Tindakan ini tidak bisa dibatalkan.')) AervinexToast('Konfirmasi via email dalam 5 menit', 'warn', 5000);
+    });
+  </script>
+</body>
+</html>

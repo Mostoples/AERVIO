@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Bantuan &amp; FAQ — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 14px 0; cursor: pointer; }
+    .faq-item:last-child { border-bottom: 0; }
+    body.theme-light .faq-item { border-bottom-color: rgba(0,0,0,0.06); }
+    .faq-q { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; color: var(--text); }
+    .faq-chevron { transition: transform 0.25s; color: var(--text-muted); flex-shrink: 0; }
+    .faq-item.open .faq-chevron { transform: rotate(90deg); color: var(--accent); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; padding: 0; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .faq-item.open .faq-a { max-height: 300px; padding-top: 10px; }
+    .cat-chip { padding: 6px 12px; border-radius: var(--radius-pill); background: var(--bg); box-shadow: var(--shadow-raised-sm); font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; flex-shrink: 0; }
+    .cat-chip.active { background: var(--accent); color: #06222a; box-shadow: var(--shadow-accent); }
+  </style>
+</head>
+<body class="theme-dark" data-page="help">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Bantuan &amp; FAQ</h2><p>Cari jawaban atau hubungi support</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="search-wrap">
+      <div class="search-input">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="faqSearch" placeholder="Cari pertanyaan..." />
+      </div>
+    </section>
+
+    <section style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">
+      <span class="cat-chip active" data-cat="">Semua</span>
+      <span class="cat-chip" data-cat="setup">Setup</span>
+      <span class="cat-chip" data-cat="device">Device</span>
+      <span class="cat-chip" data-cat="alert">Alerts</span>
+      <span class="cat-chip" data-cat="data">Data &amp; Privacy</span>
+      <span class="cat-chip" data-cat="troubleshoot">Troubleshoot</span>
+    </section>
+
+    <section class="card" id="faqCard"></section>
+
+    <section class="card aura-violet" style="text-align:center;padding:24px">
+      <h3 style="font-size:16px;font-weight:700;color:var(--text)">🔬 Penasaran cara AI kerjanya?</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin:6px 0 14px">Lihat dataset, model accuracy, SLR PRISMA, dan workflow lengkap di Evidence page</p>
+      <a href="/evidence.html" class="btn-pill primary"><svg viewBox="0 0 24 24" class="ico"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg><span>Buka Research Evidence</span></a>
+    </section>
+
+    <section class="card aura-cyan" style="text-align:center;padding:24px">
+      <h3 style="font-size:16px;font-weight:700;color:var(--text)">Masih butuh bantuan?</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin:6px 0 14px">Tim support online 09:00 – 17:00 WIB</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-pill primary" id="btnTicket"><svg viewBox="0 0 24 24" class="ico"><path d="M21 11.5a8.4 8.4 0 11-16 0c0-4.6 3.6-8.4 8-8.4s8 3.8 8 8.4z"/></svg><span>Buka Ticket</span></button>
+        <a href="mailto:support@aervinex.app" class="btn-pill"><svg viewBox="0 0 24 24" class="ico"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg><span>Email</span></a>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    const FAQ = [
+      { cat: 'setup', q: 'Cara pair AERVINEX Watch pertama kali?', a: 'Buka aplikasi → Profile → Device Manager → Pair Ulang Device. Pastikan Bluetooth aktif dan watch dalam mode pairing (tahan crown 3 detik sampai indikator berkedip cyan).' },
+      { cat: 'setup', q: 'Apakah perlu kalibrasi awal?', a: 'Direkomendasikan. Buka Device Manager → Kalibrasi Sensor. Proses 30 detik akan menormalisasi baseline HR, suhu kulit, dan partikulat. Ulangi tiap 30 hari untuk akurasi optimal.' },
+      { cat: 'device', q: 'Berapa lama baterai bertahan?', a: 'Normal use: ~28 jam. Mode hemat daya: ~48 jam. Energy harvest (thermoelectric + biofuel cell) bisa menambah ~6 jam ekstra saat aktivitas tinggi.' },
+      { cat: 'device', q: 'Apakah waterproof?', a: 'Rating IP67 — tahan keringat, hujan, mandi. JANGAN dipakai berenang atau menyelam (tekanan air bisa rusak biofuel cell).' },
+      { cat: 'alert', q: 'Apa beda L1, L2, dan L3 alert?', a: 'L1 = toast singkat (informasi); L2 = modal yang minta acknowledgement (peringatan menengah); L3 = full-screen overlay dengan pulse animation (kritis — wajib aksi segera).' },
+      { cat: 'alert', q: 'Kenapa banyak alert PM2.5?', a: 'Indonesia (terutama Jakarta) sering melewati ambang WHO. Threshold default L1=35, L2=55, L3=150 μg/m³. Bisa di-customize di Settings → Notifikasi.' },
+      { cat: 'data', q: 'Apa data yang disimpan?', a: 'Data sensor (HR, SpO₂, langkah, lokasi GPS), profil (nama, umur, BB, TB), sesi aktivitas, alert history. Data dienkripsi at rest di Firestore (asia-southeast2).' },
+      { cat: 'data', q: 'Cara export data saya?', a: 'Profile → Privasi & Data → Export Data. CSV bundle akan dikirim ke email dalam 5 menit. Format: ISO 8601 timestamps, UTF-8.' },
+      { cat: 'data', q: 'Apakah data dibagikan ke pihak ketiga?', a: 'Hanya untuk integrasi yang Anda izinkan eksplisit (Strava, Apple Health). Data agregat (anonymous) digunakan untuk riset akademis dengan izin user.' },
+      { cat: 'troubleshoot', q: 'Kenapa baterai cepat habis?', a: 'Cek: (1) Power Save Mode aktif?; (2) GPS continuous polling?; (3) BLE relay v2 enabled?; (4) Firmware terbaru (v1.0.3)? Hubungi support kalau masih masalah.' },
+      { cat: 'troubleshoot', q: 'Reading hidrasi tidak akurat', a: 'Sensor PPG butuh kontak kulit yang baik. Pastikan strap pas (tidak terlalu longgar). Re-calibrate di Device Manager. Tunggu 5-10 menit setelah aktivitas berat untuk reading stabil.' },
+      { cat: 'troubleshoot', q: 'Tidak menerima notifikasi', a: 'Cek: (1) Push notifications aktif di Settings; (2) App permissions notifikasi diberikan; (3) Tidak dalam Do Not Disturb mode; (4) Internet stabil.' },
+      { cat: 'setup', q: 'Bisa login pakai Google?', a: 'Ya. Di halaman login pilih "Lanjutkan dengan Google". Atau "Coba dulu sebagai Guest" untuk akses 7 hari tanpa daftar.' },
+      { cat: 'device', q: 'Cara update firmware?', a: 'Otomatis saat charging dan terhubung BLE. Manual cek: Device Manager → Firmware v1.0.3. Update memakan waktu ~5 menit, jangan lepas dari charger.' },
+    ];
+
+    let currentCat = '';
+    let currentQuery = '';
+
+    function render() {
+      const card = document.getElementById('faqCard');
+      const list = FAQ.filter(f =>
+        (!currentCat || f.cat === currentCat) &&
+        (!currentQuery || f.q.toLowerCase().includes(currentQuery) || f.a.toLowerCase().includes(currentQuery))
+      );
+      if (!list.length) { card.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:30px;font-size:13px">Tidak ada hasil · coba kata kunci lain</p>'; return; }
+      card.innerHTML = list.map((f, i) => `
+        <div class="faq-item" data-idx="${i}">
+          <div class="faq-q"><span>${f.q}</span><svg viewBox="0 0 24 24" class="ico faq-chevron" style="width:18px;height:18px"><path d="M9 6l6 6-6 6"/></svg></div>
+          <div class="faq-a">${f.a}</div>
+        </div>
+      `).join('');
+      card.querySelectorAll('.faq-item').forEach(item => item.addEventListener('click', () => item.classList.toggle('open')));
+    }
+
+    document.querySelectorAll('.cat-chip').forEach(chip => chip.addEventListener('click', () => {
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentCat = chip.dataset.cat;
+      render();
+    }));
+    document.getElementById('faqSearch').addEventListener('input', (e) => { currentQuery = e.target.value.toLowerCase(); render(); });
+    document.getElementById('btnTicket').addEventListener('click', () => AervinexToast('Ticket form akan terbuka · ETA 2 menit response', 'info'));
+    render();
+  </script>
+</body>
+</html>

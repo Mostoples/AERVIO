@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sensor Calibration — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="sensors">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Sensor Calibration</h1><p>Fleet-wide accuracy &amp; drift monitoring</p></div></div>
+      <div class="admin-header-actions"><button class="btn-pill primary" id="btnMassCalib"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg><span>Trigger Mass Calibrate</span></button><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">✓</div></div><div class="kpi-value">7,892</div><div class="kpi-label">In Spec</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">⚠️</div></div><div class="kpi-value">285</div><div class="kpi-label">Recalib Due</div></div>
+      <div class="card aura-coral kpi-card"><div class="kpi-head"><div class="kpi-icon">🔴</div></div><div class="kpi-value">42</div><div class="kpi-label">Out of Spec</div></div>
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">📊</div></div><div class="kpi-value">96.4%</div><div class="kpi-label">Fleet Accuracy</div></div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">Calibration Log (recent)</h3>
+      <div class="admin-table-wrap"><table class="admin-table">
+        <thead><tr><th>Timestamp</th><th>Device</th><th>Sensor</th><th>Pre-cal</th><th>Post-cal</th><th>Drift</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">2026-05-29 14:18</td><td class="mono">4f72-A3D8</td><td>Optical</td><td>96.8%</td><td>98.2%</td><td>-1.4%</td><td><span class="tbl-status ok">PASS</span></td></tr>
+          <tr><td class="mono">2026-05-29 13:42</td><td class="mono">2a91-B7C4</td><td>PM Sensor</td><td>92.1%</td><td>94.8%</td><td>-2.7%</td><td><span class="tbl-status ok">PASS</span></td></tr>
+          <tr><td class="mono">2026-05-29 12:08</td><td class="mono">8b34-D1E9</td><td>UV Sensor</td><td>87.4%</td><td>89.2%</td><td>-1.8%</td><td><span class="tbl-status warn">RECHECK</span></td></tr>
+          <tr><td class="mono">2026-05-29 11:25</td><td class="mono">1c08-F5A0</td><td>Optical</td><td>97.6%</td><td>98.4%</td><td>-0.8%</td><td><span class="tbl-status ok">PASS</span></td></tr>
+          <tr><td class="mono">2026-05-29 10:14</td><td class="mono">6e22-C8B3</td><td>Temperature</td><td>99.1%</td><td>99.5%</td><td>-0.4%</td><td><span class="tbl-status ok">PASS</span></td></tr>
+          <tr><td class="mono">2026-05-29 09:55</td><td class="mono">9d15-A2F7</td><td>PM Sensor</td><td>78.4%</td><td>78.6%</td><td>-0.2%</td><td><span class="tbl-status danger">FAIL · replace</span></td></tr>
+          <tr><td class="mono">2026-05-29 08:42</td><td class="mono">3f88-D6E1</td><td>Optical</td><td>95.2%</td><td>97.8%</td><td>-2.6%</td><td><span class="tbl-status ok">PASS</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <div class="admin-cols cols-1-1">
+      <section class="card aura-violet">
+        <h3 class="section-title">Drift Distribution (per sensor)</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>Optical Heart</span><span style="font-weight:700">±0.8%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:18%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>Body Temp</span><span style="font-weight:700">±0.3%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:8%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>UV Sensor</span><span style="font-weight:700">±2.1%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:42%;background:linear-gradient(90deg,rgb(255,181,71),rgb(255,210,120))"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span>PM Sensor</span><span style="font-weight:700">±3.4%</span></div><div class="progress-bar small"><div class="progress-fill" style="width:68%;background:linear-gradient(90deg,rgb(255,181,71),rgb(255,210,120))"></div></div></div>
+        </div>
+      </section>
+      <section class="card aura-coral">
+        <h3 class="section-title">Replacement Recommended</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">🔴</div><div class="list-row-body"><p class="list-row-title mono">9d15-A2F7 · PM Sensor</p><p class="list-row-sub">Accuracy 78%, gagal 3x kalibrasi</p></div><span class="list-row-meta">SHIP</span></div>
+          <div class="list-row"><div class="list-row-icon">🔴</div><div class="list-row-body"><p class="list-row-title mono">b428-E9F1 · Optical</p><p class="list-row-sub">Drift 4.2% &gt; threshold 3%</p></div><span class="list-row-meta">SHIP</span></div>
+          <div class="list-row"><div class="list-row-icon">🔴</div><div class="list-row-body"><p class="list-row-title mono">a3c7-1842 · UV</p><p class="list-row-sub">Off-spec 6 minggu berturut</p></div><span class="list-row-meta">SHIP</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnMassCalib').addEventListener('click', () => {
+    if (confirm('Trigger calibrate untuk 285 devices yang due? Notif akan dikirim ke users.')) {
+      AervinexToast('Mass calibrate dijadwalkan · ETA 6 jam untuk 285 devices', 'success', 5000);
+    }
+  });
+  // Replacement rows → toast
+  document.querySelectorAll('.list-row').forEach(row => {
+    if (row.querySelector('.list-row-meta')?.textContent === 'SHIP') {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => {
+        const sn = row.querySelector('.list-row-title')?.textContent || 'device';
+        AervinexToast(`RMA dibuat untuk ${sn}`, 'info');
+      });
+    }
+  });
+</script>
+</body>
+</html>

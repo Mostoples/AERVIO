@@ -1,21 +1,190 @@
 rules_version = '2';
+
+// ============================================================
+// AERVINEX Firestore Security Rules — Hardened (v2)
+// Principles:
+//   1. Default deny (last `match /{document=**}` blocks everything not whitelisted)
+//   2. All writes require auth (kecuali public read-only)
+//   3. Per-collection field validation (types, length, ranges)
+//   4. Rate-limiting via serverTimestamp comparison
+//   5. Admin allowlist via custom claim email
+// ============================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users can only read/write their own profile
+
+    // -------- Helpers --------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      // Admin allowlist by email — should migrate to custom claims long-term
+      return isSignedIn() && request.auth.token.email in [
+        'cooxnime@gmail.com',
+        'fadli.rahman@aervi.id',
+        'lukman.hadi@aervi.id'
+      ];
+    }
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function ownsResource() {
+      return isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+    function createsOwnResource() {
+      return isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+    // Reject anonymous-only sessions on sensitive writes (uncomment if needed)
+    function isVerifiedOrAnon() {
+      return isSignedIn();
+    }
+    // Field type / range validators
+    function isStr(v, maxLen) {
+      return v is string && v.size() <= maxLen;
+    }
+    function isNumInRange(v, lo, hi) {
+      return v is number && v >= lo && v <= hi;
+    }
+    // Basic rate limit: enforce that a new write happens >= 1s after last
+    // Caller must include `clientTs` as serverTimestamp (or `updatedAt`)
+    // Compares previous resource.data.updatedAt vs request.time
+    function rateLimitedWrite() {
+      return !('updatedAt' in resource.data)
+        || request.time > resource.data.updatedAt + duration.value(1, 's');
+    }
+
+    // -------- users/{uid} --------
+    // Only owner or admin. Validates basic profile fields.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isSelf(userId) || isAdmin();
+      // Create: must be self, name/email length bounded
+      allow create: if isSelf(userId)
+        && (!('name' in request.resource.data) || isStr(request.resource.data.name, 120))
+        && (!('email' in request.resource.data) || isStr(request.resource.data.email, 200));
+      // Update: must be self, immutable uid, bounded fields
+      allow update: if isSelf(userId)
+        && (!('uid' in request.resource.data) || request.resource.data.uid == userId)
+        && (!('name' in request.resource.data) || isStr(request.resource.data.name, 120))
+        && (!('age' in request.resource.data) || isNumInRange(request.resource.data.age, 0, 130));
+      // Delete: only self (self-service GDPR/UU PDP delete) or admin
+      allow delete: if isSelf(userId) || isAdmin();
     }
 
-    // Health logs: user can only access their own logs
+    // -------- health_logs/{docId} --------
+    // High-volume time-series. Rate limit writes to 1 per second per doc.
     match /health_logs/{docId} {
-      allow read, write: if request.auth != null && resource.data.uid == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow read:   if ownsResource() || isAdmin();
+      allow create: if createsOwnResource()
+        // Validate core fields if present
+        && (!('hr' in request.resource.data) || isNumInRange(request.resource.data.hr, 20, 250))
+        && (!('spo2' in request.resource.data) || isNumInRange(request.resource.data.spo2, 50, 100))
+        && (!('pm25' in request.resource.data) || isNumInRange(request.resource.data.pm25, 0, 1000));
+      // Rate-limit: subsequent updates must respect 1s cooldown
+      allow update: if ownsResource() && rateLimitedWrite();
+      allow delete: if ownsResource() || isAdmin();
     }
 
-    // Sessions: user can only access their own sessions
+    // -------- sessions/{docId} (running / activity sessions) --------
     match /sessions/{docId} {
-      allow read, write: if request.auth != null && resource.data.uid == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow read:   if ownsResource() || isAdmin();
+      allow create: if createsOwnResource()
+        && (!('distance' in request.resource.data) || isNumInRange(request.resource.data.distance, 0, 1000000))
+        && (!('duration' in request.resource.data) || isNumInRange(request.resource.data.duration, 0, 86400));
+      allow update: if ownsResource();
+      allow delete: if ownsResource() || isAdmin();
+    }
+
+    // -------- assessments/{docId} (questionnaire / TEPRS etc) --------
+    match /assessments/{docId} {
+      allow read:   if ownsResource() || isAdmin();
+      allow create: if createsOwnResource()
+        && (!('type' in request.resource.data) || isStr(request.resource.data.type, 64))
+        && (!('score' in request.resource.data) || isNumInRange(request.resource.data.score, 0, 100));
+      allow update: if ownsResource();
+      allow delete: if ownsResource() || isAdmin();
+    }
+
+    // -------- alerts/{docId} --------
+    // Server (admin/functions) may create system alerts; user may create self alerts
+    match /alerts/{docId} {
+      allow read:   if ownsResource() || isAdmin();
+      allow create: if isAdmin() || (createsOwnResource()
+        && (!('severity' in request.resource.data) || isStr(request.resource.data.severity, 16))
+        && (!('message' in request.resource.data) || isStr(request.resource.data.message, 1000)));
+      allow update: if ownsResource() || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // -------- paired_devices/{docId} (BLE pairings) --------
+    match /paired_devices/{docId} {
+      allow read:   if ownsResource() || isAdmin();
+      allow create: if createsOwnResource()
+        && (!('deviceId' in request.resource.data) || isStr(request.resource.data.deviceId, 128));
+      // No update — re-pair = delete + create. Prevents stealthy hijack.
+      allow update: if false;
+      allow delete: if ownsResource() || isAdmin();
+    }
+
+    // -------- tour_events/{docId} (onboarding telemetry) --------
+    match /tour_events/{docId} {
+      // Append-only for any signed-in user; admin reads aggregates
+      allow create: if isSignedIn()
+        && (!('event' in request.resource.data) || isStr(request.resource.data.event, 64));
+      allow read:   if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // -------- research_consent/{userId} (GDPR / UU PDP opt-in) --------
+    match /research_consent/{userId} {
+      allow read: if isSelf(userId) || isAdmin();
+      // Writer must be self; consent record carries `uid == userId` invariant
+      allow write: if isSelf(userId)
+        && (!('consent' in request.resource.data) || request.resource.data.consent is bool);
+    }
+
+    // -------- xai_audit/{docId} (XAI explanation audit trail) --------
+    match /xai_audit/{docId} {
+      allow create: if createsOwnResource();
+      allow read:   if ownsResource() || isAdmin();
+      // Immutable audit trail — no edits
+      allow update, delete: if isAdmin();
+    }
+
+    // -------- admin_config/{docId} --------
+    // Admin only — feature flags, model thresholds, etc.
+    match /admin_config/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    // -------- audit_log/{docId} --------
+    // Immutable, admin write-only (typically from Cloud Functions)
+    match /audit_log/{docId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // -------- public/{docId} --------
+    // Read-only public content (announcements, disease encyclopedia summaries)
+    match /public/{docId} {
+      allow read:  if true;
+      allow write: if isAdmin();
+    }
+
+    // -------- web_vitals/{docId} (anonymous performance telemetry) --------
+    // Sampled at 10% client-side, no PII. Anyone (including anonymous) may
+    // append; only admin can read aggregates. Append-only.
+    match /web_vitals/{docId} {
+      allow create: if (!('metrics' in request.resource.data) || request.resource.data.metrics is map)
+        && (!('path' in request.resource.data) || isStr(request.resource.data.path, 256))
+        && (!('ua' in request.resource.data) || isStr(request.resource.data.ua, 512));
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // -------- DEFAULT DENY --------
+    // Anything not explicitly matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

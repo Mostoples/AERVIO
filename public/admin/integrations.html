@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Integrasi — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="integrations">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Integrasi</h1><p>External API &amp; webhook</p></div></div>
+      <div class="admin-header-actions"><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <div class="admin-cols cols-1-1-1">
+      <section class="card aura-cyan">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">🇮🇩</div><div><h3 style="font-size:16px;font-weight:700">BMKG</h3><p style="font-size:11px;color:var(--text-muted)">Stasiun pemantau udara &amp; cuaca</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status warn">Degraded</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Calls 24h</span><span style="font-weight:700">8,420</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">p95 latency</span><span style="font-weight:700">280 ms</span></div></div>
+        <button class="btn-block ghost">Configure</button>
+      </section>
+
+      <section class="card aura-blue">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">🌍</div><div><h3 style="font-size:16px;font-weight:700">IQAir</h3><p style="font-size:11px;color:var(--text-muted)">Global air quality network</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status ok">Healthy</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Calls 24h</span><span style="font-weight:700">12,840</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">p95 latency</span><span style="font-weight:700">184 ms</span></div></div>
+        <button class="btn-block ghost">Configure</button>
+      </section>
+
+      <section class="card aura-violet">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">🔥</div><div><h3 style="font-size:16px;font-weight:700">Firebase</h3><p style="font-size:11px;color:var(--text-muted)">Auth · Firestore · Hosting · FCM</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status ok">Healthy</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Project</span><span class="mono">aervinex</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Region</span><span class="mono">asia-southeast2</span></div></div>
+        <button class="btn-block ghost">Console →</button>
+      </section>
+
+      <section class="card aura-green">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">📱</div><div><h3 style="font-size:16px;font-weight:700">Google Sign-In</h3><p style="font-size:11px;color:var(--text-muted)">OAuth provider</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status ok">Active</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Daily auths</span><span style="font-weight:700">842</span></div></div>
+        <button class="btn-block ghost">Configure</button>
+      </section>
+
+      <section class="card aura-coral">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">💬</div><div><h3 style="font-size:16px;font-weight:700">Slack</h3><p style="font-size:11px;color:var(--text-muted)">Alert webhooks · admin notifs</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status ok">Connected</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Channel</span><span class="mono">#aervinex-alerts</span></div></div>
+        <button class="btn-block ghost">Re-auth</button>
+      </section>
+
+      <section class="card aura-amber">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:32px">📊</div><div><h3 style="font-size:16px;font-weight:700">Mixpanel</h3><p style="font-size:11px;color:var(--text-muted)">Product analytics</p></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Status</span><span class="tbl-status ok">Active</span></div></div>
+        <div class="setting-block"><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--text-muted)">Events 24h</span><span style="font-weight:700">428k</span></div></div>
+        <button class="btn-block ghost">Configure</button>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3 class="section-title">Webhooks</h3>
+      <div class="admin-table-wrap"><table class="admin-table">
+        <thead><tr><th>Endpoint</th><th>Events</th><th>Last Fired</th><th>Success Rate</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">https://slack.../alerts</td><td>L2, L3 alerts</td><td>3 mnt lalu</td><td>99.8%</td><td><span class="tbl-status ok">Active</span></td></tr>
+          <tr><td class="mono">https://research.ui.edu/aervi</td><td>aggregate.daily</td><td>5 jam lalu</td><td>100%</td><td><span class="tbl-status ok">Active</span></td></tr>
+          <tr><td class="mono">https://billing.../subscribe</td><td>user.upgrade, downgrade</td><td>2 jam lalu</td><td>98.2%</td><td><span class="tbl-status ok">Active</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.querySelectorAll('.btn-block.ghost').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card');
+      const name = card?.querySelector('h3')?.textContent || 'service';
+      const label = btn.textContent.trim();
+      if (label.includes('Console')) AervinexToast(`Membuka ${name} console di tab baru...`, 'info');
+      else if (label.includes('Re-auth')) AervinexToast(`OAuth re-auth flow ${name} dimulai`, 'info');
+      else AervinexToast(`Buka panel konfigurasi ${name}`, 'info');
+    });
+  });
+  // Webhook rows clickable
+  document.querySelectorAll('.admin-table tbody tr').forEach(tr => {
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', () => {
+      const ep = tr.querySelector('.mono')?.textContent || 'webhook';
+      AervinexToast(`Detail webhook: ${ep}`, 'info');
+    });
+  });
+</script>
+</body>
+</html>

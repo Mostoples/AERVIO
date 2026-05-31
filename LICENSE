@@ -1,0 +1,38 @@
+AERVINEX — GNU Affero General Public License v3.0
+
+Copyright (C) 2026 AERVINEX Project Contributors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+The complete text of the GNU AGPL v3.0 is available at:
+https://www.gnu.org/licenses/agpl-3.0.txt
+
+Network use of this software requires that the complete corresponding source
+code be made available to all users interacting with it over a network. See
+Section 13 of the License for details.
+
+ADDITIONAL TERMS (per AGPL-3.0 Section 7):
+
+1. Medical disclaimer: This software is a wellness and educational tool, not a
+   medical device. It is not intended for diagnosis, treatment, or prevention
+   of any disease. Users assume all risk of use.
+
+2. Trademark: The names "AERVINEX", "AERVI", and associated logos are
+   trademarks of the AERVINEX Project and may not be used to endorse derivative
+   works without permission.
+
+3. Attribution: Derivative works must visibly display "Powered by AERVINEX
+   (AGPL-3.0)" with a link to the upstream repository.
+
+For ML model weights distributed via Hugging Face Hub or similar:
+- Trained model weights are released under Apache License 2.0 (dual-license)
+- Training data sources retain their original licenses (CC-BY-NC, ODC-BY, etc.)
+
+For commercial licensing inquiries: licensing@aervinex.id

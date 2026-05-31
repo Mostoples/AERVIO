@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Dashboard — AERVINEX</title>
+  <meta name="description" content="Dashboard real-time AERVINEX: skor TEPRS lingkungan, monitoring vital, dan rekomendasi personalisasi." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://aervinex.web.app/dashboard.html" />
+  <link rel="alternate" hreflang="id" href="https://aervinex.web.app/dashboard.html" />
+  <link rel="alternate" hreflang="en" href="https://aervinex.web.app/dashboard.html?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://aervinex.web.app/dashboard.html" />
+  <meta property="og:title" content="Dashboard — AERVINEX" />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin />
+  <link rel="dns-prefetch" href="https://securetoken.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="dashboard">
+  <a href="#main" class="sr-only-focusable">Lewati ke konten utama</a>
+  <main id="main" class="app-shell">
+
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-dot"></span>
+        <h1 class="brand-name">AERVINEX</h1>
+      </div>
+      <div class="top-bar-actions">
+        <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+          <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <a href="/alerts.html" class="btn-icon notif" aria-label="Notifikasi">
+          <svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg>
+          <span class="badge-dot"></span>
+        </a>
+        <a href="/profile.html" class="btn-icon" aria-label="Profil">
+          <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <section class="greeting">
+      <div>
+        <p class="greet-eyebrow">Selamat datang,</p>
+        <h2 class="greet-name" id="userName">User</h2>
+        <p class="greet-date" id="greetDate">—</p>
+        <div id="streakBadge" style="margin-top:6px"></div>
+      </div>
+      <a href="/device.html" class="status-pill" style="text-decoration:none;color:inherit" aria-label="Device status">
+        <span class="status-dot"></span>
+        <span>Live · Connected</span>
+      </a>
+    </section>
+
+    <!-- Smart Recommendations (rule-based) -->
+    <section id="smartRecs"></section>
+
+    <a class="card hero-card aura-cyan" href="/risk-detail.html?id=teprs" style="text-decoration:none;color:inherit">
+      <div class="hero-left">
+        <p class="hero-label">Environment Health Risk · klik untuk detail</p>
+        <div class="hero-value">
+          <span class="hero-num" id="teprsValue">34</span>
+          <span class="hero-unit">%</span>
+        </div>
+        <p class="hero-desc">TEPRS · Risiko rendah · Aman untuk aktivitas outdoor</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:34%"></div></div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:207"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">34%</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">SAFE</text>
+        </svg>
+      </div>
+    </a>
+
+    <h3 class="section-title">Vital Signs</h3>
+    <section class="grid-2">
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=hr" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <span class="metric-trend up" id="hrTrend">+4</span>
+        </div>
+        <p class="metric-label">Heart Rate</p>
+        <div class="metric-value"><span id="hrValue">78</span><span class="metric-unit">bpm</span></div>
+        <div class="spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,20 10,18 20,22 30,12 40,16 50,10 60,14 70,8 80,16 90,12 100,18"/></svg></div>
+      </a>
+      <a class="card metric-card aura-blue" href="/metric-detail.html?id=spo2" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></div>
+          <span class="metric-trend">SpO₂</span>
+        </div>
+        <p class="metric-label">Oksigen Darah</p>
+        <div class="metric-value"><span id="spo2Value">97</span><span class="metric-unit">%</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="spo2Bar" style="width:97%"></div></div>
+      </a>
+      <a class="card metric-card aura-green" href="/metric-detail.html?id=rr" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v6M6 8c0 4 6 6 6 6s6-2 6-6M3 18c3 0 4-2 4-2s1 2 5 2 5-2 5-2 1 2 4 2"/></svg></div>
+          <span class="metric-trend">RR</span>
+        </div>
+        <p class="metric-label">Respiratory</p>
+        <div class="metric-value"><span id="rrValue">16</span><span class="metric-unit">brpm</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="rrBar" style="width:55%"></div></div>
+      </a>
+      <a class="card metric-card aura-cyan" href="/metric-detail.html?id=hyd" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.5s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/></svg></div>
+          <span class="metric-trend up" id="hydTrend">OK</span>
+        </div>
+        <p class="metric-label">Hidrasi</p>
+        <div class="metric-value"><span id="hydValue">72</span><span class="metric-unit">%</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="hydBar" style="width:72%"></div></div>
+      </a>
+    </section>
+
+    <h3 class="section-title">Lingkungan</h3>
+    <section class="grid-2">
+      <a class="card metric-card aura-amber" href="/metric-detail.html?id=uv" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <span class="metric-trend" id="uvLabel">SEDANG</span>
+        </div>
+        <p class="metric-label">UV Index</p>
+        <div class="metric-value"><span id="uvValue">5</span><span class="metric-unit">/11</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="uvBar" style="width:45%"></div></div>
+      </a>
+      <a class="card metric-card aura-violet" href="/metric-detail.html?id=pm" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="6" cy="14" r="2"/><circle cx="14" cy="8" r="3"/><circle cx="18" cy="17" r="2"/><circle cx="9" cy="6" r="1.5"/></svg></div>
+          <span class="metric-trend" id="pmLabel">SEDANG</span>
+        </div>
+        <p class="metric-label">PM2.5</p>
+        <div class="metric-value"><span id="pmValue">38</span><span class="metric-unit">μg/m³</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="pmBar" style="width:42%"></div></div>
+      </a>
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=heat" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8M14 14a2 2 0 11-4 0c0-1 1-2 2-4 1 2 2 3 2 4z"/></svg></div>
+          <span class="metric-trend">HEAT</span>
+        </div>
+        <p class="metric-label">Heat Index</p>
+        <div class="metric-value"><span id="heatValue">31</span><span class="metric-unit">°C</span></div>
+        <div class="progress-bar small"><div class="progress-fill" id="heatBar" style="width:55%"></div></div>
+      </a>
+      <a class="card metric-card aura-green" href="/history.html" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+          <span class="metric-trend up">+1.2k</span>
+        </div>
+        <p class="metric-label">Steps</p>
+        <div class="metric-value"><span>8.2</span><span class="metric-unit">k</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:82%"></div></div>
+      </a>
+    </section>
+
+    <h3 class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+      Deteksi Risiko Penyakit
+      <a href="/risk-list.html" style="font-size:11px;color:var(--accent);font-weight:600;text-decoration:none">Lihat semua 35 →</a>
+    </h3>
+    <section class="card aura-coral list-card">
+      <a class="list-row" href="/risk-detail.html?id=asma" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v6M6 8c0 4 6 6 6 6s6-2 6-6M3 18c3 0 4-2 4-2s1 2 5 2 5-2 5-2 1 2 4 2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Asma / ISPA</p>
+          <p class="list-row-sub" id="riskAsmaSub">PM2.5 sedang · ringan</p>
+        </div>
+        <span class="list-row-meta" id="riskAsma">14%</span>
+      </a>
+      <a class="list-row" href="/risk-detail.html?id=heatstroke" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8M14 14a2 2 0 11-4 0c0-1 1-2 2-4 1 2 2 3 2 4z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Heatstroke / Kelelahan Panas</p>
+          <p class="list-row-sub" id="riskHeatSub">Heat index moderate</p>
+        </div>
+        <span class="list-row-meta" id="riskHeat">22%</span>
+      </a>
+      <a class="list-row" href="/risk-detail.html?id=dehidrasi" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.5s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Dehidrasi</p>
+          <p class="list-row-sub" id="riskDehSub">Hidrasi 72% · cukup</p>
+        </div>
+        <span class="list-row-meta" id="riskDeh">18%</span>
+      </a>
+      <a class="list-row" href="/risk-detail.html?id=afib" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Aritmia / AFib</p>
+          <p class="list-row-sub" id="riskAfibSub">Ritme HR stabil</p>
+        </div>
+        <span class="list-row-meta" id="riskAfib">6%</span>
+      </a>
+      <a class="list-row" href="/risk-detail.html?id=sunburn" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Sunburn / Kerusakan Kulit</p>
+          <p class="list-row-sub" id="riskUvSub">UV sedang · gunakan SPF 30+</p>
+        </div>
+        <span class="list-row-meta" id="riskUv">28%</span>
+      </a>
+    </section>
+
+    <h3 class="section-title">Rekomendasi AI · Real-time</h3>
+    <section class="card aura-amber list-card" id="recPanel">
+      <!-- diisi via JS -->
+    </section>
+
+    <section class="quick-actions">
+      <h3 class="section-title">Aksi Cepat</h3>
+      <div class="action-grid" id="quickActions">
+        <a href="/running.html" class="btn-pill primary" data-qa-icon="run">
+          <span class="qa-icon"></span>
+          <span>Start Run</span>
+        </a>
+        <a href="/recovery.html" class="btn-pill" data-qa-icon="heart">
+          <span class="qa-icon"></span>
+          <span>Recovery</span>
+        </a>
+        <a href="/history.html" class="btn-pill" data-qa-icon="chart-line">
+          <span class="qa-icon"></span>
+          <span>History</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav" aria-label="Navigasi utama">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard" aria-current="page"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ml-client.js"></script>
+  <script src="js/icon-lib.js"></script>
+  <script src="js/tour.js"></script>
+  <script src="js/web-vitals-reporter.js" defer></script>
+  <script src="js/streak-tracker.js" defer></script>
+  <script src="js/smart-recs.js" defer></script>
+  <script src="js/push-permission.js" defer></script>
+  <script src="js/feedback-prompt.js" defer></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(user => {
+      const displayName = user.displayName || (user.isAnonymous ? 'Guest' : (user.email || 'User').split('@')[0]);
+      document.getElementById('userName').textContent = displayName;
+      AervinexSetGreetDate();
+      // First-time tour — auto-launch if not completed
+      setTimeout(() => AervinexTour.startDashboardTour(), 1200);
+      // Streak badge in greeting
+      setTimeout(() => {
+        if (window.AervinexStreak) {
+          window.AervinexStreak.tick().then(() => window.AervinexStreak.renderBadge(document.getElementById('streakBadge')));
+        }
+      }, 600);
+      // Smart recommendations — rerender every 30s in case env tick updates
+      setTimeout(() => window.AervinexSmartRecs?.render(), 800);
+      setInterval(() => window.AervinexSmartRecs?.render(), 30000);
+    });
+
+    // Inject animated icons ke Quick Actions
+    function injectQuickActionIcons() {
+      if (!window.AervinexIcons?.get) { setTimeout(injectQuickActionIcons, 80); return; }
+      document.querySelectorAll('#quickActions [data-qa-icon]').forEach(btn => {
+        const wrap = btn.querySelector('.qa-icon');
+        if (!wrap || wrap.querySelector('svg')) return;
+        wrap.style.cssText = 'display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;flex-shrink:0';
+        wrap.innerHTML = window.AervinexIcons.get(btn.dataset.qaIcon);
+      });
+    }
+    injectQuickActionIcons();
+
+    // ── Live metric simulation ────────────────────────────────
+    (function () {
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+      const $ = (id) => document.getElementById(id);
+
+      // Vitals
+      let hr  = 78, spo2 = 97, rr = 16, hyd = 72;
+      // Environment (urban-tropical baseline)
+      let uv  = 5,  pm   = 38, heat = 31;
+
+      function uvLabel(v) {
+        if (v <= 2) return 'RENDAH';
+        if (v <= 5) return 'SEDANG';
+        if (v <= 7) return 'TINGGI';
+        if (v <= 10) return 'SANGAT';
+        return 'EKSTREM';
+      }
+      function pmLabel(v) {
+        if (v <= 12) return 'BAIK';
+        if (v <= 35) return 'SEDANG';
+        if (v <= 55) return 'TIDAK SEHAT';
+        return 'BERBAHAYA';
+      }
+
+      function tick() {
+        hr   = clamp(hr   + Math.round((Math.random() - 0.5) * 4), 62, 145);
+        spo2 = clamp(spo2 + (Math.random() - 0.5) * 0.6, 92, 99.5);
+        rr   = clamp(rr   + Math.round((Math.random() - 0.5) * 2), 12, 28);
+        hyd  = clamp(hyd  + (Math.random() - 0.55) * 1.2, 30, 95);
+        uv   = clamp(uv   + (Math.random() - 0.5) * 0.4, 0, 11);
+        pm   = clamp(pm   + (Math.random() - 0.5) * 5,   5, 180);
+        heat = clamp(heat + (Math.random() - 0.5) * 0.5, 24, 42);
+
+        $('hrValue').textContent   = Math.round(hr);
+        $('spo2Value').textContent = spo2.toFixed(1);
+        $('spo2Bar').style.width   = spo2 + '%';
+        $('rrValue').textContent   = Math.round(rr);
+        $('rrBar').style.width     = (rr / 30 * 100) + '%';
+        $('hydValue').textContent  = Math.round(hyd);
+        $('hydBar').style.width    = hyd + '%';
+        $('hydTrend').textContent  = hyd >= 65 ? 'OK' : hyd >= 50 ? 'WARN' : 'LOW';
+        $('uvValue').textContent   = uv.toFixed(1);
+        $('uvBar').style.width     = (uv / 11 * 100) + '%';
+        $('uvLabel').textContent   = uvLabel(uv);
+        $('pmValue').textContent   = Math.round(pm);
+        $('pmBar').style.width     = clamp(pm / 100 * 100, 0, 100) + '%';
+        $('pmLabel').textContent   = pmLabel(pm);
+        $('heatValue').textContent = heat.toFixed(1);
+        $('heatBar').style.width   = ((heat - 24) / 18 * 100) + '%';
+
+        // ── TEPRS hero — actual ML prediction (calibrated XGBoost proxy) ──
+        if (window.MLClient && window.Utils) {
+          const teprs = MLClient.predictTEPRS(pm, pm * 1.5, heat, 70, 4, 0, 0, 0);
+          const teprsPct = Math.round((teprs.class / 3) * 88 + 6);
+          const teprsEl = document.getElementById('teprsValue');
+          if (teprsEl) teprsEl.textContent = teprsPct;
+          const heroBar = document.querySelector('.hero-card .progress-bar .progress-fill');
+          if (heroBar) heroBar.style.width = teprsPct + '%';
+          const heroDesc = document.querySelector('.hero-card .hero-desc');
+          if (heroDesc) heroDesc.innerHTML = `TEPRS · <strong>${teprs.label}</strong> · ML confidence ${(teprs.confidence * 100).toFixed(0)}%`;
+          const ringFill = document.querySelector('.hero-card .ring-fill');
+          if (ringFill) ringFill.setAttribute('style', `stroke-dasharray:314;stroke-dashoffset:${(314 - 314 * teprsPct/100).toFixed(0)}`);
+          const ringNum = document.querySelector('.hero-card .ring-num');
+          if (ringNum) ringNum.textContent = teprsPct + '%';
+          const ringSub = document.querySelector('.hero-card .ring-sub');
+          if (ringSub) ringSub.textContent = teprs.label.toUpperCase().slice(0, 4);
+        }
+
+        // ── Disease risk recompute (rule-based, range 0–100%) ──
+        const asma  = clamp(pm * 0.6 + (rr - 14) * 4 + (100 - spo2) * 8, 0, 100);
+        const heatR = clamp((heat - 28) * 8 + (hr - 80) * 0.7 + (100 - hyd) * 0.4, 0, 100);
+        const deh   = clamp(100 - hyd + (heat - 28) * 1.5, 0, 100);
+        const afib  = clamp(Math.abs(hr - 75) * 0.6 + (100 - spo2) * 4, 0, 60);
+        const uvR   = clamp(uv * 9 + (heat - 28) * 1.2, 0, 100);
+
+        $('riskAsma').textContent = Math.round(asma) + '%';
+        $('riskHeat').textContent = Math.round(heatR) + '%';
+        $('riskDeh').textContent  = Math.round(deh)  + '%';
+        $('riskAfib').textContent = Math.round(afib) + '%';
+        $('riskUv').textContent   = Math.round(uvR)  + '%';
+        $('riskAsmaSub').textContent = 'PM2.5 ' + pmLabel(pm).toLowerCase() + ' · ' + (asma > 50 ? 'tinggi' : asma > 25 ? 'sedang' : 'ringan');
+        $('riskHeatSub').textContent = 'Heat ' + heat.toFixed(0) + '°C · ' + (heatR > 50 ? 'awas heatstroke' : heatR > 25 ? 'waspada' : 'aman');
+        $('riskDehSub').textContent  = 'Hidrasi ' + Math.round(hyd) + '% · ' + (deh > 50 ? 'kritis' : deh > 30 ? 'turun' : 'cukup');
+        $('riskAfibSub').textContent = 'HR ' + Math.round(hr) + ' bpm · SpO₂ ' + spo2.toFixed(1) + '%';
+        $('riskUvSub').textContent   = 'UV ' + uv.toFixed(1) + ' · ' + (uvR > 50 ? 'pakai SPF 50+ & lengan panjang' : uvR > 25 ? 'SPF 30+' : 'aman <30 min');
+
+        // ── AI Recommendation engine (priority queue, top 3) ──
+        const recs = [];
+        if (pm > 55) recs.push({ icon: '🌫️', title: 'Pindah ke area dengan udara lebih bersih', sub: 'PM2.5 ' + Math.round(pm) + ' μg/m³ — tidak sehat untuk aktivitas outdoor', p: 95 });
+        else if (pm > 35) recs.push({ icon: '😷', title: 'Pakai masker N95 saat di luar', sub: 'PM2.5 ' + Math.round(pm) + ' μg/m³ — sedang', p: 60 });
+        if (heatR > 50) recs.push({ icon: '🥵', title: 'Hentikan aktivitas — cari teduh', sub: 'Heat index ' + heat.toFixed(1) + '°C, risiko heatstroke tinggi', p: 98 });
+        else if (heat > 33) recs.push({ icon: '🌡️', title: 'Kurangi intensitas — istirahat 5 menit', sub: 'Heat ' + heat.toFixed(1) + '°C, denyut ' + Math.round(hr), p: 70 });
+        if (deh > 45) recs.push({ icon: '💧', title: 'Minum air sekarang — 250-500ml', sub: 'Hidrasi turun ke ' + Math.round(hyd) + '%', p: 85 });
+        else if (deh > 25) recs.push({ icon: '🥤', title: 'Sip air berkala tiap 15 menit', sub: 'Antisipasi suhu naik & keringat', p: 40 });
+        if (uvR > 50) recs.push({ icon: '☀️', title: 'Hindari paparan matahari langsung', sub: 'UV index ' + uv.toFixed(1) + ' — risiko sunburn tinggi', p: 80 });
+        if (afib > 25) recs.push({ icon: '❤️', title: 'HR/SpO₂ tidak stabil — periksa', sub: 'Pertimbangkan rest 5-10 menit', p: 75 });
+        if (recs.length === 0) recs.push({ icon: '✅', title: 'Kondisi aman untuk aktivitas outdoor', sub: 'Semua parameter dalam rentang normal', p: 0 });
+        recs.sort((a, b) => b.p - a.p);
+
+        const panel = $('recPanel');
+        const renderIcon = (em) => (window.AervinexIcons?.fromEmoji(em)) || em;
+        panel.innerHTML = recs.slice(0, 3).map(r => `
+          <div class="list-row">
+            <div class="list-row-icon">${renderIcon(r.icon)}</div>
+            <div class="list-row-body">
+              <p class="list-row-title">${r.title}</p>
+              <p class="list-row-sub">${r.sub}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      tick();
+      const ticker = setInterval(tick, 2000);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) clearInterval(ticker); });
+    })();
+  </script>
+</body>
+</html>

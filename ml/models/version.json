@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "schema": "https://aervinex.id/schema/ml-version-v1",
+    "description": "Versioned manifest of trained ML models. Updated by train_*.py.",
+    "calibration_map": "ml/local-test/calibration-map.json",
+    "calibration_version": "v2-2026-05-31"
+  },
+  "afib": {
+    "trained_at": null,
+    "dataset": "pending — CinC 2017",
+    "dataset_hash": null,
+    "n_samples": 0,
+    "metrics": {
+      "auc": null,
+      "f1": null,
+      "precision": null,
+      "recall": null
+    },
+    "features": [
+      "rmssd", "sdnn", "pnn50", "sd1", "sd2",
+      "sampen", "cosen", "meanRR", "sdsd",
+      "lf", "hf", "lfHf", "higuci", "kurt", "skew"
+    ],
+    "framework": "xgboost",
+    "onnx_path": "public/models/afib.onnx",
+    "size_kb_budget": 500,
+    "status": "scaffolded"
+  },
+  "respiratory": {
+    "trained_at": null,
+    "dataset": "pending — DETECT cohort (Scripps)",
+    "dataset_hash": null,
+    "n_samples": 0,
+    "metrics": {
+      "auc": null,
+      "f1": null,
+      "precision": null,
+      "recall": null
+    },
+    "features": [
+      "delta_rhr", "sleep_deviation_min", "steps_drop_pct",
+      "spo2_drop", "cough_count_24h"
+    ],
+    "framework": "lightgbm",
+    "onnx_path": "public/models/respiratory.onnx",
+    "size_kb_budget": 500,
+    "status": "scaffolded"
+  }
+}

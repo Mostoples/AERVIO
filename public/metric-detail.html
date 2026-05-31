@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Detail Metric — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .stat-box { text-align: center; padding: 12px 6px; background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow-raised-sm); }
+    .stat-val { font-size: 18px; font-weight: 800; color: var(--text); font-family: 'Inter', sans-serif; }
+    .stat-lbl { font-size: 10px; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .baseline-marker { position: absolute; left: 0; right: 0; border-top: 1px dashed rgba(255,255,255,0.2); pointer-events: none; }
+    body.theme-light .baseline-marker { border-top-color: rgba(0,0,0,0.18); }
+  </style>
+</head>
+<body class="theme-dark" data-page="metric-detail">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="javascript:history.back()" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2 id="pageTitle">Metric</h2>
+        <p id="pageSub">—</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card hero-card" id="heroCard">
+      <div class="hero-left">
+        <p class="hero-label" id="metricLabel">—</p>
+        <div class="hero-value">
+          <span class="hero-num" id="currentVal">--</span>
+          <span class="hero-unit" id="currentUnit">—</span>
+        </div>
+        <p class="hero-desc" id="currentStatus">—</p>
+        <div class="progress-bar"><div class="progress-fill" id="currentBar" style="width:50%"></div></div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" id="heroRing" style="stroke-dasharray:314;stroke-dashoffset:160"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num" id="heroRingNum">--</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub" id="heroRingSub">—</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card chart-card" id="chartCard">
+      <div class="tab-nav" role="tablist">
+        <button class="tab active" data-range="1h">1 jam</button>
+        <button class="tab" data-range="24h">24 jam</button>
+        <button class="tab" data-range="7d">7 hari</button>
+      </div>
+      <div class="chart-head">
+        <div>
+          <p class="chart-label" id="chartLabel">Trend</p>
+          <p class="chart-sub"><span class="dot-cyan"></span><span id="chartLegend">—</span> <span class="dot-muted"></span>Baseline</p>
+        </div>
+        <div class="chart-figure">
+          <span class="chart-num" id="chartLast">--</span>
+          <span class="chart-delta up" id="chartDelta">+0%</span>
+        </div>
+      </div>
+      <div class="chart-area" style="position:relative">
+        <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00e5d4" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline class="chart-line-muted" id="baselineLine" points=""/>
+          <polyline class="chart-line" id="dataLine" points=""/>
+          <polygon class="chart-fill" id="dataFill" points=""/>
+        </svg>
+      </div>
+    </section>
+
+    <h3 class="section-title">Statistik 24 Jam</h3>
+    <section class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="statAvg">--</div><div class="stat-lbl">Rata-rata</div></div>
+      <div class="stat-box"><div class="stat-val" id="statMin">--</div><div class="stat-lbl">Min</div></div>
+      <div class="stat-box"><div class="stat-val" id="statMax">--</div><div class="stat-lbl">Max</div></div>
+      <div class="stat-box"><div class="stat-val" id="statLast">--</div><div class="stat-lbl">Last 1h</div></div>
+    </section>
+
+    <h3 class="section-title">Insight &amp; Rekomendasi</h3>
+    <section class="card list-card" id="insightCard">
+      <!-- populated via JS -->
+    </section>
+
+    <h3 class="section-title">Terkait Risiko Kesehatan</h3>
+    <section class="card list-card" id="relatedCard">
+      <!-- populated via JS — links to risk-detail.html?id=... -->
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+
+    // ── Metric registry ────────────────────────────────────────
+    const METRICS = {
+      hr:    { name: 'Heart Rate',       sub: 'PPG · BPM real-time',     unit: 'bpm',   min: 50, max: 180, baseline: 75, aura: 'aura-coral', precision: 0,
+               status: v => v < 60 ? 'Bradycardia · Rendah' : v < 100 ? 'Normal · Aman' : v < 130 ? 'Elevated · aktivitas' : 'Sangat tinggi · awas',
+               insights: v => [
+                 { icon: '❤️', t: 'Resting HR Anda', s: 'Baseline ~75 bpm — turun dari 78 bpm bulan lalu, indikasi recovery membaik' },
+                 { icon: '📊', t: 'HRV terkait', s: 'HR variabilitas adalah indikator stres autonomic — cek RMSSD di Recovery' },
+                 v > 130 ? { icon: '⚠️', t: 'HR sangat tinggi', s: 'Pertimbangkan istirahat. Jika tidak sedang aktivitas, periksa aritmia' } : null
+               ].filter(Boolean),
+               related: ['afib', 'heatstroke'] },
+
+      spo2:  { name: 'Oksigen Darah (SpO₂)', sub: 'Pulse oximetry',         unit: '%',     min: 88, max: 100, baseline: 97, aura: 'aura-blue', precision: 1,
+               status: v => v >= 95 ? 'Normal · sehat' : v >= 92 ? 'Borderline · pantau' : 'Hipoksia · konsultasi medis',
+               insights: v => [
+                 { icon: '🫁', t: 'SpO₂ normal 95-100%', s: 'Penurunan persisten di bawah 92% saat istirahat = tanda hipoksia' },
+                 { icon: '🏔️', t: 'Faktor altitude', s: 'Di dataran tinggi normal turun 1-2%. AERVINEX kompensasi otomatis' }
+               ],
+               related: ['asma', 'afib'] },
+
+      rr:    { name: 'Respiratory Rate', sub: 'Laju napas',               unit: 'brpm',  min: 8,  max: 35,  baseline: 16, aura: 'aura-green', precision: 0,
+               status: v => v < 12 ? 'Rendah · cek' : v <= 20 ? 'Normal · istirahat' : v <= 28 ? 'Tinggi · aktivitas' : 'Sangat tinggi · awas',
+               insights: v => [
+                 { icon: '🌬️', t: 'Normal istirahat 12-20 brpm', s: 'Naik saat aktivitas/stres, turun saat tidur dalam' },
+                 { icon: '🚨', t: 'Tachypnea', s: 'RR >24 brpm saat istirahat = warning sign respiratory distress' }
+               ],
+               related: ['asma'] },
+
+      hyd:   { name: 'Hidrasi',         sub: 'Index hidrasi tubuh',      unit: '%',     min: 0,  max: 100, baseline: 75, aura: 'aura-cyan', precision: 0,
+               status: v => v >= 70 ? 'Hidrasi cukup' : v >= 55 ? 'Mulai turun · minum' : v >= 40 ? 'Dehidrasi ringan' : 'Dehidrasi sedang · segera minum',
+               insights: v => [
+                 { icon: '💧', t: 'Target harian 2-3 L', s: 'Pada cuaca panas tropis bisa naik ke 3.5 L. AERVINEX kalkulasi otomatis' },
+                 v < 60 ? { icon: '⚠️', t: 'Hidrasi turun', s: 'Minum 250-500ml dalam 30 menit. Tingkatkan elektrolit jika berkeringat banyak' } : null
+               ].filter(Boolean),
+               related: ['dehidrasi', 'heatstroke'] },
+
+      uv:    { name: 'UV Index',        sub: 'UV-A + UV-B',             unit: '/11',   min: 0,  max: 11,  baseline: 5,  aura: 'aura-amber', precision: 1,
+               status: v => v <= 2 ? 'Rendah · aman' : v <= 5 ? 'Sedang · SPF 30+' : v <= 7 ? 'Tinggi · SPF 50' : v <= 10 ? 'Sangat tinggi · hindari' : 'Ekstrem · indoor',
+               insights: v => [
+                 { icon: '☀️', t: 'Time-to-burn', s: v > 7 ? '< 15 menit untuk skin tipe sedang' : v > 4 ? '~30-45 menit' : '> 1 jam' },
+                 { icon: '🧴', t: 'Sunscreen', s: 'Re-apply tiap 2 jam saat outdoor. Gunakan SPF 30+ minimum' }
+               ],
+               related: ['sunburn'] },
+
+      pm:    { name: 'PM2.5',           sub: 'Partikel halus udara',     unit: 'μg/m³', min: 0,  max: 200, baseline: 35, aura: 'aura-violet', precision: 0,
+               status: v => v <= 12 ? 'Baik · sehat' : v <= 35 ? 'Sedang · sensitif waspada' : v <= 55 ? 'Tidak sehat · masker' : v <= 150 ? 'Sangat tidak sehat · indoor' : 'Berbahaya · darurat',
+               insights: v => [
+                 { icon: '😷', t: 'Standar WHO', s: 'Annual mean 5 μg/m³. Indonesia (ISPU) batas sedang 50 μg/m³' },
+                 v > 35 ? { icon: '🚨', t: 'PM2.5 tinggi', s: 'Pakai masker N95. Hindari outdoor cardio. Cek air purifier indoor' } : null
+               ].filter(Boolean),
+               related: ['asma', 'teprs'] },
+
+      heat:  { name: 'Heat Index',      sub: 'Suhu apparent',           unit: '°C',    min: 22, max: 45,  baseline: 30, aura: 'aura-coral', precision: 1,
+               status: v => v < 27 ? 'Nyaman' : v < 32 ? 'Hati-hati' : v < 41 ? 'Sangat panas · cramps' : v < 54 ? 'Bahaya · heatstroke' : 'Ekstrem',
+               insights: v => [
+                 { icon: '🌡️', t: 'Heat Index = suhu + RH', s: 'Tropical Asia Tenggara sering >35°C feels-like saat siang' },
+                 v > 32 ? { icon: '💧', t: 'Kurangi intensitas', s: 'Pindah indoor jika memungkinkan. Hidrasi + elektrolit setiap 15 menit' } : null
+               ].filter(Boolean),
+               related: ['heatstroke', 'dehidrasi'] },
+
+      rest:  { name: 'Resting HR',      sub: 'Denyut istirahat',         unit: 'bpm',   min: 40, max: 90,  baseline: 60, aura: 'aura-pink', precision: 0,
+               status: v => v < 50 ? 'Atletik (excellent)' : v < 65 ? 'Sangat baik' : v < 75 ? 'Normal' : 'Tinggi · cek stres/tidur',
+               insights: v => [
+                 { icon: '😴', t: 'Resting HR atletik 40-50 bpm', s: 'Indikator cardio fitness yang kuat' },
+                 { icon: '📈', t: 'Trend penting', s: 'Kenaikan persisten 5+ bpm = warning overtraining/penyakit' }
+               ],
+               related: ['afib'] },
+
+      rmssd: { name: 'RMSSD (HRV)',     sub: 'Variabilitas parasimpatik', unit: 'ms',   min: 10, max: 120, baseline: 50, aura: 'aura-cyan', precision: 0,
+               status: v => v < 20 ? 'Rendah · stres tinggi' : v < 40 ? 'Sedang' : v < 70 ? 'Baik' : 'Sangat baik · recovery prima',
+               insights: v => [
+                 { icon: '🧠', t: 'RMSSD = vagal tone', s: 'Tinggi = sistem saraf parasimpatik dominan = recovery baik' },
+                 { icon: '📊', t: 'Bandingkan vs personal baseline', s: 'Bukan absolute number — turun 20% dari baseline = stres/overtraining' }
+               ],
+               related: [] },
+
+      sdnn:  { name: 'SDNN (HRV)',      sub: 'Variabilitas 5 menit',     unit: 'ms',   min: 15, max: 150, baseline: 65, aura: 'aura-violet', precision: 0,
+               status: v => v < 30 ? 'Rendah' : v < 60 ? 'Sedang' : v < 100 ? 'Baik' : 'Sangat baik',
+               insights: v => [
+                 { icon: '⚙️', t: 'SDNN = global ANS', s: 'Mencerminkan keseluruhan otonom (simpatik + parasimpatik)' }
+               ],
+               related: [] },
+
+      lfhf:  { name: 'LF/HF Ratio',     sub: 'Stres autonomic',          unit: 'ratio', min: 0.3, max: 4, baseline: 1.5, aura: 'aura-blue', precision: 2,
+               status: v => v < 0.7 ? 'Parasimpatik dominan · rest' : v < 2 ? 'Seimbang · normal' : v < 3 ? 'Simpatik dominan · stres' : 'Stres tinggi',
+               insights: v => [
+                 { icon: '🎚️', t: 'LF/HF = simpatik/parasimpatik', s: 'Tinggi = stres, rendah = recovery. Sweet spot 1.5-2.0' }
+               ],
+               related: [] },
+    };
+
+    const RELATED_NAMES = {
+      teprs: 'Environment Health Risk',
+      asma: 'Asma / ISPA',
+      heatstroke: 'Heatstroke',
+      dehidrasi: 'Dehidrasi',
+      afib: 'Aritmia / AFib',
+      sunburn: 'Sunburn'
+    };
+
+    // ── Init from URL ─────────────────────────────────────────
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || 'hr';
+    const M = METRICS[id] || METRICS.hr;
+    document.getElementById('pageTitle').textContent = M.name;
+    document.getElementById('pageSub').textContent   = M.sub;
+    document.getElementById('metricLabel').textContent = M.name;
+    document.getElementById('currentUnit').textContent = M.unit;
+    document.getElementById('chartLabel').textContent  = M.name + ' Trend';
+    document.getElementById('chartLegend').textContent = M.name;
+    document.getElementById('heroCard').classList.add(M.aura);
+    document.getElementById('chartCard').classList.add(M.aura);
+
+    // ── Data generation ───────────────────────────────────────
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    function genSeries(n, base, jitter, drift = 0) {
+      const arr = [];
+      let v = base + (Math.random() - 0.5) * jitter * 0.5;
+      for (let i = 0; i < n; i++) {
+        v += (Math.random() - 0.5) * jitter + drift;
+        v = clamp(v, M.min, M.max);
+        arr.push(v);
+      }
+      return arr;
+    }
+
+    const RANGES = {
+      '1h': { n: 18, jitter: (M.max - M.min) * 0.08 },
+      '24h':{ n: 24, jitter: (M.max - M.min) * 0.14 },
+      '7d': { n: 14, jitter: (M.max - M.min) * 0.18 }
+    };
+    let currentRange = '1h';
+    let data = genSeries(RANGES[currentRange].n, M.baseline, RANGES[currentRange].jitter);
+    let baseline = new Array(data.length).fill(M.baseline);
+
+    // ── Chart rendering ───────────────────────────────────────
+    const VB_W = 320, VB_H = 120, PAD_Y = 10;
+    const yRange = M.max - M.min;
+    const toY = v => VB_H - PAD_Y - ((v - M.min) / yRange) * (VB_H - 2 * PAD_Y);
+
+    function pointsStr(arr) {
+      const n = arr.length;
+      return arr.map((v, i) => `${((i / (n - 1)) * VB_W).toFixed(1)},${toY(v).toFixed(2)}`).join(' ');
+    }
+    function fillStr(arr) {
+      return `${pointsStr(arr)} ${VB_W},${VB_H} 0,${VB_H}`;
+    }
+
+    const dataLine     = document.getElementById('dataLine');
+    const dataFill     = document.getElementById('dataFill');
+    const baselineLine = document.getElementById('baselineLine');
+
+    function renderChart(d, b) {
+      dataLine.setAttribute('points', pointsStr(d));
+      dataFill.setAttribute('points', fillStr(d));
+      baselineLine.setAttribute('points', pointsStr(b));
+      const last = d[d.length - 1];
+      const first = d[0];
+      const delta = ((last - first) / first) * 100;
+      const deltaEl = document.getElementById('chartDelta');
+      document.getElementById('chartLast').textContent = last.toFixed(M.precision);
+      deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
+      deltaEl.classList.toggle('up', delta >= 0);
+    }
+
+    function renderHero(v) {
+      document.getElementById('currentVal').textContent = v.toFixed(M.precision);
+      document.getElementById('currentStatus').textContent = M.status(v);
+      const pct = clamp((v - M.min) / yRange * 100, 0, 100);
+      document.getElementById('currentBar').style.width = pct + '%';
+      const ringDash = 314 - (pct / 100) * 314;
+      document.getElementById('heroRing').setAttribute('style', `stroke-dasharray:314;stroke-dashoffset:${ringDash.toFixed(0)}`);
+      document.getElementById('heroRingNum').textContent = v.toFixed(M.precision);
+      document.getElementById('heroRingSub').textContent = pct > 75 ? 'HIGH' : pct > 50 ? 'MED' : pct > 25 ? 'OK' : 'LOW';
+    }
+
+    function renderStats(d) {
+      const avg = d.reduce((a, b) => a + b, 0) / d.length;
+      document.getElementById('statAvg').textContent  = avg.toFixed(M.precision);
+      document.getElementById('statMin').textContent  = Math.min(...d).toFixed(M.precision);
+      document.getElementById('statMax').textContent  = Math.max(...d).toFixed(M.precision);
+      document.getElementById('statLast').textContent = d[d.length - 1].toFixed(M.precision);
+    }
+
+    function renderInsights(v) {
+      const card = document.getElementById('insightCard');
+      const items = M.insights(v);
+      card.innerHTML = items.map(item => `
+        <div class="list-row">
+          <div class="list-row-icon" style="font-size:18px">${item.icon}</div>
+          <div class="list-row-body">
+            <p class="list-row-title">${item.t}</p>
+            <p class="list-row-sub">${item.s}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRelated() {
+      const card = document.getElementById('relatedCard');
+      if (!M.related.length) { card.style.display = 'none'; return; }
+      card.innerHTML = M.related.map(rid => `
+        <a class="list-row" href="/risk-detail.html?id=${rid}" style="text-decoration:none;color:inherit">
+          <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg></div>
+          <div class="list-row-body">
+            <p class="list-row-title">${RELATED_NAMES[rid] || rid}</p>
+            <p class="list-row-sub">Lihat detail risiko & faktor kontribusi</p>
+          </div>
+          <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      `).join('');
+    }
+
+    renderChart(data, baseline);
+    renderHero(data[data.length - 1]);
+    renderStats(data);
+    renderInsights(data[data.length - 1]);
+    renderRelated();
+
+    // ── Live animated sliding window ──────────────────────────
+    let animHandle = null;
+    function animateTo(target, duration = 1300) {
+      if (animHandle) cancelAnimationFrame(animHandle);
+      const from = [...data];
+      const start = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - start) / duration);
+        const e = 1 - Math.pow(1 - p, 3);
+        const cur = from.map((v, i) => v + (target[i] - v) * e);
+        renderChart(cur, baseline);
+        if (p < 1) animHandle = requestAnimationFrame(step);
+        else { data = target; animHandle = null; renderHero(data[data.length - 1]); renderStats(data); renderInsights(data[data.length - 1]); }
+      };
+      animHandle = requestAnimationFrame(step);
+    }
+
+    function tick() {
+      const jitter = RANGES[currentRange].jitter;
+      const last = data[data.length - 1];
+      const next = clamp(last + (Math.random() - 0.5) * jitter, M.min, M.max);
+      animateTo([...data.slice(1), next], 1300);
+    }
+    const ticker = setInterval(tick, 1800);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) clearInterval(ticker); });
+
+    // ── Tab switching ─────────────────────────────────────────
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        currentRange = btn.dataset.range;
+        const r = RANGES[currentRange];
+        data = genSeries(r.n, M.baseline, r.jitter);
+        baseline = new Array(data.length).fill(M.baseline);
+        renderChart(data, baseline);
+        renderStats(data);
+      });
+    });
+  </script>
+</body>
+</html>

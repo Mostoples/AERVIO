@@ -1,0 +1,31 @@
+# AERVINEX robots.txt
+# Updated: 2026-05-31
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin
+Disallow: /api/
+Disallow: /__/
+Disallow: /alerts.html
+Disallow: /edit-profile.html
+Disallow: /assessment-history.html
+
+# Heavy auth-gated routes — let bots see them but don't waste crawl budget
+Crawl-delay: 1
+
+# AI training crawlers (opt out — we publish to public web but reserve rights
+# on bulk LLM ingestion). Comment out a block to allow that bot.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+Sitemap: https://aervinex.web.app/sitemap.xml

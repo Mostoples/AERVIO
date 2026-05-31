@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Edit Profil — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="edit-profile">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Edit Profil</h2><p>Data dasar &amp; target aktivitas</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="card aura-cyan" style="text-align:center;padding:24px">
+      <div id="avatar" style="width:80px;height:80px;border-radius:50%;background:var(--bg);box-shadow:var(--shadow-raised);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:var(--accent);letter-spacing:2px;margin:0 auto 12px">?</div>
+      <button class="btn-pill" id="btnAvatar">Ganti Avatar</button>
+    </section>
+
+    <section class="card" style="padding:20px">
+      <div id="errBox" class="form-error"></div>
+      <form id="profileForm" style="display:flex;flex-direction:column;gap:14px" novalidate>
+        <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" type="text" id="fName" placeholder="Adia Amaranta" required /></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="fEmail" disabled style="opacity:0.6" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="form-label">Umur</label><input class="form-input" type="number" id="fAge" min="13" max="100" value="25" /></div>
+          <div class="form-group"><label class="form-label">Gender</label>
+            <select class="form-input" id="fGender" style="cursor:pointer"><option>Pilih...</option><option>Pria</option><option>Wanita</option><option>Prefer not to say</option></select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group"><label class="form-label">Berat (kg)</label><input class="form-input" type="number" id="fWeight" min="30" max="200" value="65" step="0.1" /></div>
+          <div class="form-group"><label class="form-label">Tinggi (cm)</label><input class="form-input" type="number" id="fHeight" min="100" max="220" value="170" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Tipe Aktivitas Utama</label>
+          <select class="form-input" id="fTarget" style="cursor:pointer">
+            <option>Pelari (running, marathon)</option><option>Warga Urban (commute, daily)</option><option>Atlet outdoor (multi-sport)</option><option>Casual fitness</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Target Lari Mingguan (km)</label><input class="form-input" type="number" id="fWeeklyKm" min="0" max="200" value="20" /></div>
+        <button type="submit" class="btn-block primary" id="btnSave"><span>Simpan Perubahan</span></button>
+      </form>
+    </section>
+
+    <section class="card aura-coral" style="padding:18px">
+      <h3 class="section-title" style="margin-bottom:6px">Zona Berbahaya</h3>
+      <button class="btn-block ghost" style="border-color:rgba(255,92,124,.4);color:rgb(255,130,150)" id="btnDelAcc">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        <span>Hapus Akun &amp; Semua Data</span>
+      </button>
+    </section>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(user => {
+      const name = user.displayName || (user.isAnonymous ? 'Guest User' : (user.email || 'User').split('@')[0]);
+      document.getElementById('fName').value  = name;
+      document.getElementById('fEmail').value = user.email || (user.isAnonymous ? 'anonymous@guest' : '');
+      document.getElementById('avatar').textContent = AERVINEXAuth.getInitials(name);
+      // Load existing profile from Firestore if exists
+      db.collection('users').doc(user.uid).get().then(snap => {
+        if (!snap.exists) return;
+        const p = snap.data();
+        if (p.age)      document.getElementById('fAge').value      = p.age;
+        if (p.gender)   document.getElementById('fGender').value   = p.gender;
+        if (p.weight)   document.getElementById('fWeight').value   = p.weight;
+        if (p.height)   document.getElementById('fHeight').value   = p.height;
+        if (p.target)   document.getElementById('fTarget').value   = p.target;
+        if (p.weeklyKm) document.getElementById('fWeeklyKm').value = p.weeklyKm;
+      });
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = AERVINEXAuth.currentUser;
+      if (!user) return;
+      const payload = {
+        name:     document.getElementById('fName').value.trim(),
+        age:      parseInt(document.getElementById('fAge').value, 10),
+        gender:   document.getElementById('fGender').value,
+        weight:   parseFloat(document.getElementById('fWeight').value),
+        height:   parseInt(document.getElementById('fHeight').value, 10),
+        target:   document.getElementById('fTarget').value,
+        weeklyKm: parseInt(document.getElementById('fWeeklyKm').value, 10),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true;
+      try {
+        await db.collection('users').doc(user.uid).set(payload, { merge: true });
+        if (payload.name && user.displayName !== payload.name) await user.updateProfile({ displayName: payload.name });
+        AervinexToast('Profil tersimpan', 'success');
+        setTimeout(() => location.href = '/profile.html', 800);
+      } catch (ex) {
+        document.getElementById('errBox').textContent = 'Gagal simpan: ' + ex.message;
+        document.getElementById('errBox').classList.add('show');
+      } finally { btn.disabled = false; }
+    });
+
+    document.getElementById('btnAvatar').addEventListener('click', () => AervinexToast('Avatar picker akan tersedia di v1.1', 'info'));
+    document.getElementById('btnDelAcc').addEventListener('click', () => {
+      if (confirm('Hapus akun ini dan SEMUA data riwayat? Tindakan ini tidak bisa dibatalkan.')) {
+        AervinexToast('Permintaan hapus akun diterima · email konfirmasi dikirim', 'warn', 5000);
+      }
+    });
+  </script>
+</body>
+</html>

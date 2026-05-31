@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>History — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="history">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>History &amp; Analytics</h2>
+        <p>Sesi terakhir &amp; trend</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card chart-card aura-violet">
+      <div class="tab-nav" role="tablist">
+        <button class="tab active" data-tab="week">7d</button>
+        <button class="tab" data-tab="month">30d</button>
+        <button class="tab" data-tab="year">1y</button>
+      </div>
+      <div class="chart-head">
+        <div>
+          <p class="chart-label">TEPRS &amp; HR Trend</p>
+          <p class="chart-sub"><span class="dot-cyan"></span>TEPRS <span class="dot-muted"></span>Heart Rate</p>
+        </div>
+        <div class="chart-figure">
+          <span class="chart-num">42.3</span>
+          <span class="chart-delta up">+2.4%</span>
+        </div>
+      </div>
+      <div class="chart-area">
+        <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00e5d4" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline class="chart-line-muted" points="0,90 30,82 60,88 90,70 120,75 150,60 180,68 210,50 240,58 270,42 300,48 320,38"/>
+          <polyline class="chart-line" points="0,80 30,70 60,75 90,55 120,62 150,45 180,52 210,35 240,42 270,28 300,35 320,22"/>
+          <polygon class="chart-fill" points="0,80 30,70 60,75 90,55 120,62 150,45 180,52 210,35 240,42 270,28 300,35 320,22 320,120 0,120"/>
+        </svg>
+      </div>
+    </section>
+
+    <h3 class="section-title">Sesi Terbaru</h3>
+    <section class="card aura-cyan list-card">
+      <a class="list-row" href="/session-detail.html?id=morn-528" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Morning Run · 5.2 km</p>
+          <p class="list-row-sub">28 Mei 2026 · 28:14 · Z2 dominan</p>
+        </div>
+        <span class="list-row-meta">+12 RRSS</span>
+      </a>
+      <a class="list-row" href="/session-detail.html?id=rec-527" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Recovery Session</p>
+          <p class="list-row-sub">27 Mei 2026 · HRV +8ms · stres turun</p>
+        </div>
+        <span class="list-row-meta">86</span>
+      </a>
+      <a class="list-row" href="/session-detail.html?id=tempo-526" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Tempo Run · 7.8 km</p>
+          <p class="list-row-sub">26 Mei 2026 · 36:42 · Z3-Z4</p>
+        </div>
+        <span class="list-row-meta">+18 km/w</span>
+      </a>
+      <a class="list-row" href="/alerts.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">AARC Alert · PM2.5 spike</p>
+          <p class="list-row-sub">25 Mei 2026 · Level 2 · Mitigasi: indoor</p>
+        </div>
+        <span class="list-row-meta">L2</span>
+      </a>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/tour.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(() => {
+      setTimeout(() => AervinexTour.startHistoryTour(), 1500);
+    });
+
+    // ── Live animated chart with sliding window + interpolated transitions ──
+    (function () {
+      const teprsLine = document.querySelector('.chart-line');
+      const teprsFill = document.querySelector('.chart-fill');
+      const hrLine    = document.querySelector('.chart-line-muted');
+      const numEl     = document.querySelector('.chart-num');
+      const deltaEl   = document.querySelector('.chart-delta');
+
+      const VB_W = 320, VB_H = 120, PAD_Y = 10;
+      const toY = (v) => VB_H - PAD_Y - (v / 100) * (VB_H - 2 * PAD_Y);
+      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+      const ranges = {
+        week:  { n: 12, drift: 1.2, jitter: 7 },
+        month: { n: 22, drift: 0.6, jitter: 9 },
+        year:  { n: 14, drift: 0.3, jitter: 11 },
+      };
+      let currentRange = 'week';
+
+      function genSeries(n, base, drift, jitter) {
+        const arr = [];
+        let v = base + (Math.random() - 0.5) * 8;
+        for (let i = 0; i < n; i++) {
+          v += (Math.random() - 0.5) * jitter + drift;
+          v = clamp(v, 18, 88);
+          arr.push(v);
+        }
+        return arr;
+      }
+
+      function pointsStr(data) {
+        const n = data.length;
+        return data.map((v, i) => `${((i / (n - 1)) * VB_W).toFixed(1)},${toY(v).toFixed(2)}`).join(' ');
+      }
+      function fillStr(data) {
+        return `${pointsStr(data)} ${VB_W},${VB_H} 0,${VB_H}`;
+      }
+
+      function render(tData, hData) {
+        teprsLine.setAttribute('points', pointsStr(tData));
+        teprsFill.setAttribute('points', fillStr(tData));
+        hrLine.setAttribute('points', pointsStr(hData));
+        const last  = tData[tData.length - 1];
+        const first = tData[0];
+        const delta = ((last - first) / first) * 100;
+        numEl.textContent = last.toFixed(1);
+        deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
+        deltaEl.classList.toggle('up', delta >= 0);
+      }
+
+      // Initial data
+      let teprsData = genSeries(ranges.week.n, 45, ranges.week.drift, ranges.week.jitter);
+      let hrData    = genSeries(ranges.week.n, 58, 0, ranges.week.jitter);
+      render(teprsData, hrData);
+
+      // Smooth animated transition between two datasets
+      let animHandle = null;
+      function animateTo(targetT, targetH, duration = 1400) {
+        if (animHandle) cancelAnimationFrame(animHandle);
+        const fromT = [...teprsData];
+        const fromH = [...hrData];
+        const start = performance.now();
+        const step = (now) => {
+          const p = Math.min(1, (now - start) / duration);
+          const e = 1 - Math.pow(1 - p, 3); // easeOutCubic
+          const tNow = fromT.map((v, i) => v + (targetT[i] - v) * e);
+          const hNow = fromH.map((v, i) => v + (targetH[i] - v) * e);
+          render(tNow, hNow);
+          if (p < 1) animHandle = requestAnimationFrame(step);
+          else { teprsData = targetT; hrData = targetH; animHandle = null; }
+        };
+        animHandle = requestAnimationFrame(step);
+      }
+
+      // Sliding window tick: drop oldest point, append new random-walk point on right
+      function tick() {
+        const r = ranges[currentRange];
+        const lastT = teprsData[teprsData.length - 1];
+        const lastH = hrData[hrData.length - 1];
+        const nextT = clamp(lastT + (Math.random() - 0.42) * r.jitter, 18, 88);
+        const nextH = clamp(lastH + (Math.random() - 0.5)  * r.jitter * 0.7, 18, 88);
+        const targetT = [...teprsData.slice(1), nextT];
+        const targetH = [...hrData.slice(1),    nextH];
+        animateTo(targetT, targetH, 1500);
+      }
+
+      const ticker = setInterval(tick, 1800);
+
+      // Tab switching: regenerate dataset with different scale
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+          btn.classList.add('active');
+          const range = btn.dataset.tab;
+          if (!ranges[range]) return;
+          currentRange = range;
+          const r = ranges[range];
+          const newT = genSeries(r.n, 45, r.drift, r.jitter);
+          const newH = genSeries(r.n, 58, 0,      r.jitter);
+          // If point count changed, snap (can't interpolate different-length arrays cleanly)
+          if (newT.length !== teprsData.length) {
+            teprsData = newT; hrData = newH;
+            render(teprsData, hrData);
+          } else {
+            animateTo(newT, newH, 900);
+          }
+        });
+      });
+
+      // Pause when tab is hidden (battery friendly)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) clearInterval(ticker);
+      });
+    })();
+  </script>
+</body>
+</html>

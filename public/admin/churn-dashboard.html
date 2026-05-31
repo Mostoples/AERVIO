@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Churn Dashboard — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .stat-card {
+      padding: 16px; background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;
+    }
+    .stat-card .v { font-size: 22px; font-weight: 800; color: #e6f1f4; }
+    .stat-card .k { font-size: 11px; color: #9aabb2; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .stat-card .d { font-size: 12px; margin-top: 6px; }
+    .stat-card .d.up { color: #00e5d4; }
+    .stat-card .d.down { color: #ef4444; }
+    .chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-top: 18px; }
+    @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+    .bar-chart {
+      display: flex; align-items: flex-end; gap: 10px;
+      height: 220px; margin-top: 14px; padding: 0 8px;
+    }
+    .bar {
+      flex: 1; background: linear-gradient(180deg, #f59e0b, #ef4444);
+      border-radius: 8px 8px 2px 2px;
+      transition: height 0.6s;
+      position: relative;
+    }
+    .bar-val {
+      position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: #e6f1f4; font-weight: 700; white-space: nowrap;
+    }
+    .bar-label {
+      text-align: center; margin-top: 6px; font-size: 10.5px; color: #9aabb2;
+    }
+    .reason-list { list-style: none; padding: 0; margin: 12px 0 0; }
+    .reason-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    .reason-row:last-child { border-bottom: 0; }
+    .reason-bar-track {
+      flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 999px; overflow: hidden;
+    }
+    .reason-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); border-radius: 999px; }
+    .reason-count { font-size: 12px; color: #c8d6dc; min-width: 50px; text-align: right; }
+    table.churn-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    table.churn-table th, table.churn-table td {
+      padding: 9px 12px; text-align: left; font-size: 12.5px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    table.churn-table th { font-size: 11px; color: #9aabb2; text-transform: uppercase; letter-spacing: 0.5px; }
+    .pill { padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; }
+    .pill.warn { background: rgba(245,158,11,0.16); color: #f59e0b; }
+    .pill.danger { background: rgba(239,68,68,0.16); color: #ef4444; }
+    .pill.ok { background: rgba(0,229,212,0.16); color: #00e5d4; }
+  </style>
+</head>
+<body class="theme-dark" data-page="churn-dashboard">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham" aria-label="Menu"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <div class="admin-page-title">
+          <h1>Churn Dashboard</h1>
+          <p>Subscription cancellations & retention analytics</p>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <select id="rangeSel" style="padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#e6f1f4;font-size:12px;border-radius:8px">
+          <option value="3">3 bulan terakhir</option>
+          <option value="6" selected>6 bulan terakhir</option>
+          <option value="12">12 bulan terakhir</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="stat-cards">
+      <div class="stat-card">
+        <div class="v" id="kpiActive">—</div>
+        <div class="k">Active Subscribers</div>
+        <div class="d up" id="kpiActiveDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiChurned">—</div>
+        <div class="k">Churned (30d)</div>
+        <div class="d down" id="kpiChurnedDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiRate">—</div>
+        <div class="k">Monthly Churn Rate</div>
+        <div class="d down" id="kpiRateDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiLTV">—</div>
+        <div class="k">Avg LTV (Pro)</div>
+        <div class="d up" id="kpiLTVDelta">—</div>
+      </div>
+    </section>
+
+    <div class="chart-row">
+      <section class="card aura-coral" style="padding:18px">
+        <h3 style="font-size:14px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase;margin:0 0 4px">Monthly Churn Rate</h3>
+        <p style="font-size:12px;color:#7d8d94;margin:0">Trend persentase user yang batal langganan tiap bulan.</p>
+        <div class="bar-chart" id="churnBars"></div>
+        <div style="display:flex;gap:10px" id="churnLabels"></div>
+      </section>
+      <section class="card" style="padding:18px">
+        <h3 style="font-size:14px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase;margin:0 0 4px">Cancellation Reasons</h3>
+        <p style="font-size:12px;color:#7d8d94;margin:0 0 10px">Survey saat user batal langganan.</p>
+        <ul class="reason-list" id="reasonList"></ul>
+      </section>
+    </div>
+
+    <section class="card" style="padding:18px;margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h3 style="font-size:14px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase;margin:0">Recent Cancellations</h3>
+        <span style="font-size:11px;color:#7d8d94">Dummy data — terhubung ke <code>subscriptions/</code> setelah produksi</span>
+      </div>
+      <table class="churn-table">
+        <thead>
+          <tr><th>User</th><th>Plan</th><th>Tenure</th><th>Reason</th><th>Canceled At</th><th>Status</th></tr>
+        </thead>
+        <tbody id="cancelTbody"></tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+  (function () {
+    'use strict';
+
+    // ── Dummy data — replace with Firestore aggregation ──
+    const KPI = {
+      6: { active: 4218, churned: 184, rate: 4.2, ltv: 'Rp 412k', activeDelta: '+12.4%', churnedDelta: '+8.1%', rateDelta: '-0.6pp', ltvDelta: '+Rp 38k' },
+      3: { active: 4218, churned: 91, rate: 3.8, ltv: 'Rp 402k', activeDelta: '+6.2%', churnedDelta: '+4.2%', rateDelta: '-0.3pp', ltvDelta: '+Rp 18k' },
+      12: { active: 4218, churned: 412, rate: 4.6, ltv: 'Rp 458k', activeDelta: '+88.4%', churnedDelta: '+22.1%', rateDelta: '-1.1pp', ltvDelta: '+Rp 124k' },
+    };
+
+    const CHURN_HISTORY = [
+      { month: 'Dec', rate: 5.8 }, { month: 'Jan', rate: 5.2 }, { month: 'Feb', rate: 4.9 },
+      { month: 'Mar', rate: 4.7 }, { month: 'Apr', rate: 4.4 }, { month: 'May', rate: 4.2 },
+    ];
+
+    const REASONS = [
+      { label: 'Terlalu mahal', count: 62, pct: 34 },
+      { label: 'Tidak terpakai cukup sering', count: 41, pct: 22 },
+      { label: 'Switch ke kompetitor', count: 28, pct: 15 },
+      { label: 'Fitur kurang sesuai kebutuhan', count: 24, pct: 13 },
+      { label: 'Masalah teknis / bug', count: 17, pct: 9 },
+      { label: 'Lainnya', count: 12, pct: 7 },
+    ];
+
+    const RECENT = [
+      { name: 'Andi P.',      plan: 'PRO',    tenure: '4 bln', reason: 'Terlalu mahal',          when: '2 jam lalu',  st: 'danger', stLabel: 'Churned' },
+      { name: 'Siti R.',      plan: 'PRO',    tenure: '2 bln', reason: 'Tidak terpakai',         when: '5 jam lalu',  st: 'danger', stLabel: 'Churned' },
+      { name: 'Bagus T.',     plan: 'FAMILY', tenure: '8 bln', reason: 'Switch ke kompetitor',   when: '1 hari lalu', st: 'warn',   stLabel: 'Win-back' },
+      { name: 'Maya K.',      plan: 'PRO',    tenure: '1 bln', reason: 'Trial expired',          when: '1 hari lalu', st: 'danger', stLabel: 'Churned' },
+      { name: 'Rizki H.',     plan: 'PRO',    tenure: '6 bln', reason: 'Masalah teknis',         when: '2 hari lalu', st: 'ok',     stLabel: 'Recovered' },
+      { name: 'Dewi A.',      plan: 'PRO',    tenure: '3 bln', reason: 'Fitur kurang sesuai',    when: '3 hari lalu', st: 'danger', stLabel: 'Churned' },
+    ];
+
+    function renderKPI(k) {
+      document.getElementById('kpiActive').textContent = k.active.toLocaleString('id-ID');
+      document.getElementById('kpiChurned').textContent = k.churned.toLocaleString('id-ID');
+      document.getElementById('kpiRate').textContent = k.rate + '%';
+      document.getElementById('kpiLTV').textContent = k.ltv;
+      document.getElementById('kpiActiveDelta').textContent = k.activeDelta;
+      document.getElementById('kpiChurnedDelta').textContent = k.churnedDelta;
+      document.getElementById('kpiRateDelta').textContent = k.rateDelta;
+      document.getElementById('kpiLTVDelta').textContent = k.ltvDelta;
+    }
+
+    function renderChart() {
+      const max = Math.max(...CHURN_HISTORY.map(c => c.rate));
+      const bars = document.getElementById('churnBars');
+      bars.innerHTML = CHURN_HISTORY.map(c => `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center">
+          <div style="flex:1;width:100%;display:flex;align-items:flex-end;position:relative">
+            <div class="bar" style="height:${(c.rate / max) * 200}px;width:100%">
+              <div class="bar-val">${c.rate}%</div>
+            </div>
+          </div>
+          <div class="bar-label">${c.month}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderReasons() {
+      document.getElementById('reasonList').innerHTML = REASONS.map(r => `
+        <li class="reason-row">
+          <span style="flex:0 0 160px;color:#c8d6dc">${r.label}</span>
+          <span class="reason-bar-track"><span class="reason-bar-fill" style="width:${r.pct * 2.5}%"></span></span>
+          <span class="reason-count">${r.count} <small style="color:#7d8d94">(${r.pct}%)</small></span>
+        </li>
+      `).join('');
+    }
+
+    function renderTable() {
+      document.getElementById('cancelTbody').innerHTML = RECENT.map(r => `
+        <tr>
+          <td><strong style="color:#e6f1f4">${r.name}</strong></td>
+          <td>${r.plan}</td>
+          <td>${r.tenure}</td>
+          <td style="color:#9aabb2">${r.reason}</td>
+          <td style="color:#7d8d94">${r.when}</td>
+          <td><span class="pill ${r.st}">${r.stLabel}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function load() {
+      const months = parseInt(document.getElementById('rangeSel').value, 10);
+      renderKPI(KPI[months] || KPI[6]);
+      renderChart();
+      renderReasons();
+      renderTable();
+    }
+
+    document.getElementById('rangeSel').addEventListener('change', load);
+    load();
+  })();
+</script>
+</body>
+</html>

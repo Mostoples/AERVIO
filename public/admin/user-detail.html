@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Detail — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="users">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <a href="/admin/users.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+        <div class="admin-page-title"><h1 id="uName">User Detail</h1><p id="uId">u_8a1b · adia@gmail.com</p></div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="btn-pill" id="btnSuspend"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg><span>Suspend</span></button>
+        <button class="btn-pill primary" id="btnEdit"><svg viewBox="0 0 24 24" class="ico"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span></button>
+        <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+      </div>
+    </div>
+
+    <div class="admin-cols cols-2-1">
+      <section class="card aura-cyan">
+        <div style="display:flex;align-items:center;gap:18px">
+          <div class="tbl-avatar-circle" style="width:72px;height:72px;font-size:24px">AA</div>
+          <div style="flex:1">
+            <h2 style="font-size:22px;font-weight:800">Adia Amaranta</h2>
+            <p style="color:var(--text-muted);font-size:13px">adia@gmail.com · ID: <span class="mono">u_8a1b</span></p>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <span class="tbl-status ok">Active</span>
+              <span class="kpi-trend up" style="background:rgba(167,139,250,0.15);color:rgb(180,160,255)">PREMIUM</span>
+              <span class="kpi-trend" style="background:rgba(0,229,212,0.12);color:var(--accent)">SINCE 4 Mei 2026</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="card aura-amber">
+        <h3 class="section-title">Lokasi terkini</h3>
+        <p style="font-size:13px"><strong>Jakarta Pusat (Menteng)</strong></p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:4px">Stasiun BMKG Kemayoran · 2.3 km</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:2px">Update terakhir: 4 menit lalu</p>
+      </section>
+    </div>
+
+    <div class="admin-cols cols-1-1-1">
+      <div class="card aura-coral kpi-card"><div class="kpi-head"><div class="kpi-icon">❤️</div></div><div class="kpi-value">76</div><div class="kpi-label">Sessions Total</div></div>
+      <div class="card aura-violet kpi-card"><div class="kpi-head"><div class="kpi-icon">📊</div></div><div class="kpi-value">42</div><div class="kpi-label">TEPRS Avg</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">🏃</div></div><div class="kpi-value">128 km</div><div class="kpi-label">Run · 30 hari</div></div>
+    </div>
+
+    <div class="admin-cols cols-1-1">
+      <section class="card aura-blue">
+        <h3 class="section-title">Device Tertaut</h3>
+        <div class="list-card" style="padding:0">
+          <a class="list-row" href="/admin/device-detail.html?id=4f72" style="text-decoration:none;color:inherit">
+            <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/></svg></div>
+            <div class="list-row-body"><p class="list-row-title">AERVINEX Watch · AVX-W1</p><p class="list-row-sub">SN: 4f72-A3D8 · Firmware v1.0.3</p></div>
+            <span class="tbl-status ok">Active</span>
+          </a>
+          <div class="list-row"><div class="list-row-icon">📱</div><div class="list-row-body"><p class="list-row-title">iPhone 15</p><p class="list-row-sub">iOS 17.4 · last sync 2 mnt lalu</p></div><span class="tbl-status ok">Paired</span></div>
+        </div>
+      </section>
+      <section class="card aura-pink">
+        <h3 class="section-title">Aktivitas (7 hari)</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">🏃</div><div class="list-row-body"><p class="list-row-title">Morning Run 5.2 km</p><p class="list-row-sub">28 Mei · 28:14 · Z2</p></div><span class="list-row-meta">+12 RRSS</span></div>
+          <div class="list-row"><div class="list-row-icon">💪</div><div class="list-row-body"><p class="list-row-title">Recovery Session</p><p class="list-row-sub">27 Mei · HRV +8 ms</p></div><span class="list-row-meta">86</span></div>
+          <div class="list-row"><div class="list-row-icon">🏃</div><div class="list-row-body"><p class="list-row-title">Tempo Run 7.8 km</p><p class="list-row-sub">26 Mei · 36:42 · Z3-Z4</p></div><span class="list-row-meta">+18</span></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3 class="section-title">Audit Trail (admin actions)</h3>
+      <div class="list-card" style="padding:0">
+        <div class="list-row"><div class="list-row-icon">📝</div><div class="list-row-body"><p class="list-row-title">Role diubah ke Premium</p><p class="list-row-sub mono">admin: fadli.rahman · 14 Mei 2026 10:23</p></div></div>
+        <div class="list-row"><div class="list-row-icon">📧</div><div class="list-row-body"><p class="list-row-title">Reset password dikirim</p><p class="list-row-sub mono">system · 10 Mei 2026 08:01</p></div></div>
+        <div class="list-row"><div class="list-row-icon">⌚</div><div class="list-row-body"><p class="list-row-title">Device AVX-W1 4f72 di-pair</p><p class="list-row-sub mono">user action · 6 Mei 2026 19:48</p></div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnSuspend').addEventListener('click', () => {
+    if (confirm('Suspend user ini? Akses login akan ditolak hingga di-unsuspend.')) {
+      AervinexToast('User di-suspend (demo)', 'warn');
+    }
+  });
+  document.getElementById('btnEdit').addEventListener('click', () => AervinexToast('Form edit user akan muncul di sidebar', 'info'));
+</script>
+</body>
+</html>

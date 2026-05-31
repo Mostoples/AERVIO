@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Assessment — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .q-card { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .q-num { font-size: 10px; color: var(--accent); font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+    .q-text { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+    .scale-row { display: flex; gap: 8px; align-items: center; }
+    .scale-btn {
+      flex: 1;
+      padding: 12px 0;
+      border-radius: 12px;
+      background: var(--bg);
+      box-shadow: var(--shadow-raised-sm);
+      color: var(--text-muted);
+      font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .scale-btn:hover { color: var(--text); }
+    .scale-btn.selected {
+      background: var(--accent);
+      color: #06222a;
+      box-shadow: var(--shadow-accent);
+      border-color: var(--accent);
+    }
+    .scale-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+    .yn-row { display: flex; gap: 10px; }
+    .yn-btn {
+      flex: 1;
+      padding: 14px 0;
+      border-radius: var(--radius);
+      background: var(--bg);
+      box-shadow: var(--shadow-raised-sm);
+      color: var(--text-muted);
+      font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .yn-btn.selected.yes { background: var(--accent); color: #06222a; border-color: var(--accent); }
+    .yn-btn.selected.no { background: var(--bg-soft); color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+    .multi-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .multi-chip {
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--bg);
+      box-shadow: var(--shadow-raised-sm);
+      color: var(--text-muted);
+      font-size: 12px; font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .multi-chip.selected {
+      background: var(--accent);
+      color: #06222a;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-accent);
+    }
+
+    .radio-list { display: flex; flex-direction: column; gap: 8px; }
+    .radio-opt {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      background: var(--bg);
+      box-shadow: var(--shadow-raised-sm);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .radio-opt::before {
+      content: ""; width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--text-dim);
+      flex-shrink: 0;
+    }
+    .radio-opt.selected {
+      border-color: var(--accent);
+      background: rgba(0,229,212,0.08);
+    }
+    .radio-opt.selected::before {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: inset 0 0 0 3px var(--bg);
+    }
+
+    .num-input-wrap { display: flex; align-items: center; gap: 10px; }
+    .num-input-wrap input {
+      flex: 1; padding: 14px 18px;
+      background: var(--bg); color: var(--text);
+      border: 0; outline: 0;
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-inset);
+      font-size: 18px; font-weight: 700;
+      text-align: center;
+    }
+    .num-range { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+
+    .progress-track {
+      height: 6px;
+      background: var(--bg-soft);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), rgba(167,139,250,0.9));
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .result-ring-wrap {
+      width: 200px; height: 200px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .result-ring-text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .result-pct { font-size: 56px; font-weight: 800; color: var(--accent); letter-spacing: -2px; line-height: 1; }
+    .result-sub { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
+
+    .comparison-card {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      padding: 16px; background: var(--bg-soft); border-radius: var(--radius);
+    }
+    .comp-block { text-align: center; }
+    .comp-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    .comp-val { font-size: 24px; font-weight: 800; margin-top: 4px; }
+    .comp-val.user { color: rgb(167,139,250); }
+    .comp-val.ml   { color: var(--accent); }
+  </style>
+</head>
+<body class="theme-dark" data-page="assessment">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/risk-list.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2 id="assessTitle">Assessment</h2>
+        <p id="assessSub">—</p>
+      </div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <!-- Intro -->
+    <section class="card aura-violet" id="introCard" style="padding:24px;text-align:center">
+      <div id="introIcon" style="font-size:48px;margin-bottom:8px">🔬</div>
+      <h2 id="introTitle" style="font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px">—</h2>
+      <p id="introDesc" style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:14px">—</p>
+      <p style="font-size:11px;color:var(--text-dim);margin-bottom:18px">⚠️ Self-assessment ini bukan diagnosis medis. Hasil untuk skrining + tracking longitudinal.</p>
+      <button class="btn-block primary" id="btnStart">
+        <svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg>
+        <span>Mulai Assessment</span>
+      </button>
+    </section>
+
+    <!-- Questions wrapper -->
+    <div id="qWrapper" style="display:none;flex-direction:column;gap:16px">
+      <div class="progress-track"><div class="progress-bar-fill" id="qProgress" style="width:0%"></div></div>
+      <p style="text-align:center;font-size:11px;color:var(--text-muted)"><span id="qIdx">1</span> dari <span id="qTotal">5</span></p>
+      <section class="card aura-cyan q-card" id="qCard"></section>
+      <div style="display:flex;gap:10px">
+        <button class="btn-pill" id="btnBack"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg><span>Back</span></button>
+        <button class="btn-pill primary" id="btnNext" style="flex:1"><span id="btnNextLabel">Lanjut</span><svg viewBox="0 0 24 24" class="ico"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="resultWrapper" style="display:none;flex-direction:column;gap:16px">
+      <section class="card aura-violet" style="padding:24px;text-align:center">
+        <span style="display:inline-block;padding:4px 12px;border-radius:var(--radius-pill);background:rgba(167,139,250,0.15);color:rgb(180,160,255);font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Hasil Self-Assessment</span>
+        <div class="result-ring-wrap">
+          <svg viewBox="0 0 200 200" style="transform:rotate(-90deg)">
+            <circle cx="100" cy="100" r="86" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+            <circle id="resultRing" cx="100" cy="100" r="86" fill="none" stroke="rgb(167,139,250)" stroke-width="10" stroke-linecap="round" stroke-dasharray="540" stroke-dashoffset="540" style="transition:stroke-dashoffset 1.2s cubic-bezier(0.6,0.15,0.1,1);filter:drop-shadow(0 0 8px rgb(167,139,250))"/>
+          </svg>
+          <div class="result-ring-text">
+            <div class="result-pct" id="resultPct">0%</div>
+            <div class="result-sub" id="resultLevel">—</div>
+          </div>
+        </div>
+        <p id="resultMsg" style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:14px">—</p>
+        <div class="comparison-card">
+          <div class="comp-block"><div class="comp-label">Your Self-Score</div><div class="comp-val user" id="compUser">0%</div></div>
+          <div class="comp-block"><div class="comp-label">ML Sensor Score</div><div class="comp-val ml" id="compML">0%</div></div>
+        </div>
+      </section>
+
+      <section class="card list-card" id="actionList">
+        <!-- recommended actions populated by JS -->
+      </section>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn-pill" id="btnRetake"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12a9 9 0 11-3-6.7M21 3v6h-6"/></svg><span>Retake</span></button>
+        <a class="btn-pill primary" id="btnViewML" href="#"><svg viewBox="0 0 24 24" class="ico"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg><span>ML Detail</span></a>
+      </div>
+    </div>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/risk-list.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Risks</span></a>
+      <a href="/running.html" class="nav-item fab"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/icon-lib.js"></script>
+  <script src="js/disease-list.js"></script>
+  <script src="js/assessments.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    const ICO = (emoji) => (window.AervinexIcons?.fromEmoji(emoji)) || emoji;
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || 'asma';
+    const A = window.ASSESSMENTS[id];
+    const D = window.DISEASE_LIST.find(d => d.id === id);
+
+    if (!A) {
+      document.getElementById('introCard').innerHTML = '<p style="color:var(--text-muted)">Assessment untuk kondisi ini belum tersedia.</p><a href="/risk-list.html" class="auth-link">Kembali ke daftar →</a>';
+    } else {
+      document.getElementById('assessTitle').textContent = A.name.split('·')[0].trim();
+      document.getElementById('assessSub').textContent = 'Self-Assessment · ' + A.questions.length + ' pertanyaan';
+      const introIconEl = document.getElementById('introIcon');
+      introIconEl.innerHTML = ICO(A.icon);
+      introIconEl.style.color = 'var(--accent)';
+      introIconEl.style.width = '64px';
+      introIconEl.style.height = '64px';
+      introIconEl.style.display = 'inline-flex';
+      introIconEl.style.alignItems = 'center';
+      introIconEl.style.justifyContent = 'center';
+      introIconEl.style.margin = '0 auto 8px';
+      document.getElementById('introTitle').textContent = A.name;
+      document.getElementById('introDesc').textContent = A.desc;
+      document.getElementById('qTotal').textContent = A.questions.length;
+      document.getElementById('btnViewML').href = '/risk-detail.html?id=' + id;
+    }
+
+    let idx = 0;
+    const answers = {};
+
+    document.getElementById('btnStart').addEventListener('click', () => {
+      document.getElementById('introCard').style.display = 'none';
+      document.getElementById('qWrapper').style.display = 'flex';
+      renderQ();
+    });
+
+    function renderQ() {
+      const q = A.questions[idx];
+      document.getElementById('qIdx').textContent = idx + 1;
+      document.getElementById('qProgress').style.width = ((idx + 1) / A.questions.length * 100) + '%';
+      document.getElementById('btnNextLabel').textContent = idx === A.questions.length - 1 ? 'Selesai' : 'Lanjut';
+      document.getElementById('btnBack').style.visibility = idx > 0 ? 'visible' : 'hidden';
+
+      const card = document.getElementById('qCard');
+      let body = '';
+      const ans = answers[q.id];
+
+      if (q.type === 'yn') {
+        body = `<div class="yn-row">
+          <button class="yn-btn yes ${ans === 1 ? 'selected' : ''}" data-val="1">✓ Ya</button>
+          <button class="yn-btn no ${ans === 0 ? 'selected' : ''}" data-val="0">✗ Tidak</button>
+        </div>`;
+      } else if (q.type === 'scale') {
+        body = `<div class="scale-row">
+          ${[0,1,2,3,4,5].map(v => `<button class="scale-btn ${ans === v ? 'selected' : ''}" data-val="${v}">${v}</button>`).join('')}
+        </div>
+        <div class="scale-labels"><span>${q.labels?.[0] || 'Tidak pernah'}</span><span>${q.labels?.[1] || 'Sangat sering'}</span></div>`;
+      } else if (q.type === 'multi') {
+        const selected = Array.isArray(ans) ? ans : [];
+        body = `<div class="multi-grid">
+          ${q.opts.map((o, i) => `<span class="multi-chip ${selected.includes(i) ? 'selected' : ''}" data-val="${i}">${o}</span>`).join('')}
+        </div>
+        <p style="font-size:11px;color:var(--text-dim);text-align:center;margin-top:6px">Pilih semua yang relevan · ${selected.length}/${q.opts.length}</p>`;
+      } else if (q.type === 'radio') {
+        body = `<div class="radio-list">
+          ${q.options.map((o, i) => `<div class="radio-opt ${ans === i ? 'selected' : ''}" data-val="${i}">${o[0]}</div>`).join('')}
+        </div>`;
+      } else if (q.type === 'num') {
+        body = `<div class="num-input-wrap">
+          <input type="number" id="numInput" min="${q.min}" max="${q.max}" value="${ans ?? Math.round((q.min + q.max) / 2)}" />
+          <span class="num-range">Range ${q.min}-${q.max}</span>
+        </div>`;
+      }
+
+      card.innerHTML = `
+        <span class="q-num">Pertanyaan ${idx + 1} / ${A.questions.length}</span>
+        <p class="q-text">${q.q}</p>
+        ${body}
+      `;
+
+      // Wire events
+      if (q.type === 'yn') {
+        card.querySelectorAll('.yn-btn').forEach(b => b.addEventListener('click', () => {
+          answers[q.id] = parseInt(b.dataset.val);
+          renderQ();
+        }));
+      } else if (q.type === 'scale') {
+        card.querySelectorAll('.scale-btn').forEach(b => b.addEventListener('click', () => {
+          answers[q.id] = parseInt(b.dataset.val);
+          renderQ();
+        }));
+      } else if (q.type === 'multi') {
+        card.querySelectorAll('.multi-chip').forEach(c => c.addEventListener('click', () => {
+          const v = parseInt(c.dataset.val);
+          const cur = Array.isArray(answers[q.id]) ? answers[q.id] : [];
+          const idx2 = cur.indexOf(v);
+          if (idx2 > -1) cur.splice(idx2, 1); else cur.push(v);
+          answers[q.id] = cur;
+          renderQ();
+        }));
+      } else if (q.type === 'radio') {
+        card.querySelectorAll('.radio-opt').forEach(o => o.addEventListener('click', () => {
+          answers[q.id] = parseInt(o.dataset.val);
+          renderQ();
+        }));
+      } else if (q.type === 'num') {
+        document.getElementById('numInput').addEventListener('input', (e) => {
+          answers[q.id] = parseFloat(e.target.value);
+        });
+        if (answers[q.id] === undefined) answers[q.id] = parseFloat(document.getElementById('numInput').value);
+      }
+    }
+
+    document.getElementById('btnBack').addEventListener('click', () => {
+      if (idx > 0) { idx--; renderQ(); }
+    });
+
+    document.getElementById('btnNext').addEventListener('click', () => {
+      const q = A.questions[idx];
+      if (answers[q.id] === undefined || (Array.isArray(answers[q.id]) && answers[q.id].length === 0 && q.type === 'multi')) {
+        AervinexToast('Mohon jawab dulu pertanyaan ini', 'warn');
+        return;
+      }
+      if (idx === A.questions.length - 1) { computeResult(); return; }
+      idx++; renderQ();
+    });
+
+    function computeResult() {
+      let total = 0;
+      A.questions.forEach(q => {
+        const a = answers[q.id];
+        let v = 0;
+        if (q.type === 'yn') v = a;
+        else if (q.type === 'scale') v = a / 5;
+        else if (q.type === 'multi') v = a.length / q.opts.length;
+        else if (q.type === 'radio') v = q.options[a][1];
+        else if (q.type === 'num') v = Math.max(0, Math.min(1, (a - q.min) / (q.max - q.min)));
+        if (q.inverted) v = 1 - v;
+        total += v * q.weight;
+      });
+      const score = Math.round(total * 100);
+      showResult(score);
+      // Save to Firestore
+      const user = AERVINEXAuth.currentUser;
+      if (user && window.db) {
+        window.db.collection('assessments').add({
+          uid: user.uid,
+          diseaseId: id,
+          name: A.name,
+          score,
+          mlBaseline: D?.baseline ?? null,
+          answers,
+          ts: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
+    }
+
+    function showResult(score) {
+      document.getElementById('qWrapper').style.display = 'none';
+      document.getElementById('resultWrapper').style.display = 'flex';
+      document.getElementById('resultPct').textContent = score + '%';
+      document.getElementById('compUser').textContent = score + '%';
+      document.getElementById('compML').textContent = (D?.baseline ?? '—') + (D ? '%' : '');
+      document.getElementById('resultRing').setAttribute('stroke-dashoffset', 540 - 540 * score / 100);
+
+      let level, msg, ringColor;
+      if (score < 25)      { level = 'RENDAH';  msg = 'Risiko ringan. Lanjutkan gaya hidup sehat & monitoring rutin.'; ringColor = 'rgb(74,222,128)'; }
+      else if (score < 50) { level = 'SEDANG';  msg = 'Risiko moderat. Pertimbangkan modifikasi gaya hidup + konsultasi preventif.'; ringColor = 'rgb(255,181,71)'; }
+      else if (score < 75) { level = 'TINGGI';  msg = 'Risiko cukup tinggi. Sangat disarankan konsultasi medis untuk evaluasi.'; ringColor = 'rgb(255,181,71)'; }
+      else                 { level = 'KRITIS';  msg = 'Risiko sangat tinggi. Konsultasi medis sesegera mungkin.'; ringColor = 'rgb(255,92,124)'; }
+      document.getElementById('resultLevel').textContent = level;
+      document.getElementById('resultMsg').textContent = msg;
+      document.getElementById('resultRing').setAttribute('stroke', ringColor);
+      document.getElementById('resultRing').style.filter = `drop-shadow(0 0 8px ${ringColor})`;
+
+      // Recommended actions (simple defaults; for premium: pull from risk-detail registry)
+      const actions = [
+        { ic: 'shield',     t: 'Konsultasi dokter',    s: 'Validasi screening dengan pemeriksaan klinis' },
+        { ic: 'chart-bar',  t: 'Lihat ML Detail',      s: 'Bandingkan dengan sensor reading + faktor kontribusi' },
+        { ic: 'calendar',   t: 'Re-take 30 hari',      s: 'Tracking perubahan longitudinal' },
+      ];
+      document.getElementById('actionList').innerHTML = actions.map(a => `
+        <div class="list-row">
+          <div class="list-row-icon">${AervinexIcons.get(a.ic)}</div>
+          <div class="list-row-body">
+            <p class="list-row-title">${a.t}</p>
+            <p class="list-row-sub">${a.s}</p>
+          </div>
+        </div>
+      `).join('');
+
+      AervinexToast('Assessment tersimpan · skor ' + score + '%', 'success', 4000);
+    }
+
+    document.getElementById('btnRetake').addEventListener('click', () => {
+      idx = 0;
+      Object.keys(answers).forEach(k => delete answers[k]);
+      document.getElementById('resultWrapper').style.display = 'none';
+      document.getElementById('introCard').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Device Detail — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="devices">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <a href="/admin/devices.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+        <div class="admin-page-title"><h1>Device <span class="mono">4f72-A3D8</span></h1><p>AVX-W1 · Adia Amaranta</p></div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="btn-pill" id="btnRevoke"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><span>Unpair</span></button>
+        <button class="btn-pill primary" id="btnUpdate"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v8m0 0l3-3m-3 3l-3-3M5 20h14"/></svg><span>Force OTA</span></button>
+        <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+      </div>
+    </div>
+
+    <div class="admin-cols cols-2-1">
+      <section class="card aura-cyan">
+        <h3 class="section-title">Spesifikasi</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;font-size:13px">
+          <div><div style="color:var(--text-dim);font-size:11px">Serial Number</div><div class="mono" style="font-weight:600">4f72-A3D8-E12C</div></div>
+          <div><div style="color:var(--text-dim);font-size:11px">Model</div><div style="font-weight:600">AVX-W1 (gen 1)</div></div>
+          <div><div style="color:var(--text-dim);font-size:11px">MAC Address</div><div class="mono">AA:BB:CC:11:22:33</div></div>
+          <div><div style="color:var(--text-dim);font-size:11px">Firmware</div><div style="font-weight:600">v1.0.3 <span class="kpi-trend up">UP-TO-DATE</span></div></div>
+          <div><div style="color:var(--text-dim);font-size:11px">Owner</div><a href="/admin/user-detail.html?id=u_8a1b" style="font-weight:600;color:var(--accent);text-decoration:none">Adia Amaranta →</a></div>
+          <div><div style="color:var(--text-dim);font-size:11px">Aktivasi</div><div>4 Mei 2026</div></div>
+        </div>
+      </section>
+      <section class="card aura-green">
+        <h3 class="section-title">Battery & Energy</h3>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:8px"><div style="font-size:36px;font-weight:800;color:rgb(74,222,128)">78%</div><div><div style="font-size:11px;color:var(--text-muted)">~22 jam tersisa</div><div style="font-size:11px;color:var(--text-muted)">Thermoelectric: +3.2 mW</div><div style="font-size:11px;color:var(--text-muted)">Biofuel cell: standby</div></div></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h3 class="section-title">Status Sensor</h3>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Sensor</th><th>Fungsi</th><th>Sampling</th><th>Last Read</th><th>Last Calibrate</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Optical Heart Sensor</strong></td><td>HR · HRV · SpO₂ · RR · Hydration</td><td>100 Hz</td><td>2s lalu</td><td>14 hari lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+            <tr><td><strong>Body Temperature</strong></td><td>Skin temp · sirkulasi</td><td>1 Hz</td><td>4s lalu</td><td>14 hari lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+            <tr><td><strong>UV Sensor</strong></td><td>UV-A + UV-B exposure</td><td>0.5 Hz</td><td>6s lalu</td><td>30 hari lalu</td><td><span class="tbl-status warn">RECALIB</span></td></tr>
+            <tr><td><strong>Particulate Matter</strong></td><td>PM1.0 · PM2.5 · PM10</td><td>0.2 Hz</td><td>8s lalu</td><td>2h lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+            <tr><td><strong>Main Controller (BLE)</strong></td><td>Edge inference · BLE 5.2</td><td>—</td><td>RSSI -58</td><td>—</td><td><span class="tbl-status ok">12 mA</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="admin-cols cols-1-1">
+      <section class="card aura-violet">
+        <h3 class="section-title">Riwayat Kalibrasi</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">🟢</div><div class="list-row-body"><p class="list-row-title">Optical + Temp</p><p class="list-row-sub">14 Mei 2026 · admin trigger</p></div><span class="list-row-meta">98.2%</span></div>
+          <div class="list-row"><div class="list-row-icon">🟢</div><div class="list-row-body"><p class="list-row-title">Particulate</p><p class="list-row-sub">28 Mei 2026 · auto (chamber wash)</p></div><span class="list-row-meta">94.8%</span></div>
+          <div class="list-row"><div class="list-row-icon">🟡</div><div class="list-row-body"><p class="list-row-title">UV (overdue)</p><p class="list-row-sub">14 Mei 2026 · perlu re-calibrate</p></div><span class="list-row-meta">—</span></div>
+        </div>
+      </section>
+      <section class="card aura-amber">
+        <h3 class="section-title">Firmware History</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">📦</div><div class="list-row-body"><p class="list-row-title">v1.0.3 <span class="kpi-trend up">CURRENT</span></p><p class="list-row-sub">12 hari lalu · OTA push</p></div></div>
+          <div class="list-row"><div class="list-row-icon">📦</div><div class="list-row-body"><p class="list-row-title">v1.0.2</p><p class="list-row-sub">28 hari lalu</p></div></div>
+          <div class="list-row"><div class="list-row-icon">📦</div><div class="list-row-body"><p class="list-row-title">v1.0.1</p><p class="list-row-sub">45 hari lalu</p></div></div>
+          <div class="list-row"><div class="list-row-icon">📦</div><div class="list-row-body"><p class="list-row-title">v1.0.0</p><p class="list-row-sub">60 hari lalu · aktivasi</p></div></div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnRevoke').addEventListener('click', () => { if (confirm('Unpair device dari user? User harus pair ulang.')) AervinexToast('Device di-unpair', 'warn'); });
+  document.getElementById('btnUpdate').addEventListener('click', () => AervinexToast('OTA v1.0.3 push dijadwalkan saat charging', 'success'));
+</script>
+</body>
+</html>

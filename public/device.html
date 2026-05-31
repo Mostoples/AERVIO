@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Device Manager — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .device-hero {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 24px;
+    }
+    .watch-illu {
+      width: 90px; height: 110px;
+      border: 6px solid var(--bg-soft);
+      border-radius: 22px;
+      background: linear-gradient(180deg, #0f1923 0%, #1a2433 100%);
+      box-shadow: inset 0 0 20px rgba(0,229,212,0.15), var(--shadow-raised-sm);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .watch-illu::before, .watch-illu::after {
+      content: "";
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      width: 32px; height: 10px;
+      background: var(--bg-soft);
+      border-radius: 4px;
+    }
+    .watch-illu::before { top: -16px; }
+    .watch-illu::after  { bottom: -16px; }
+    .watch-screen-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 8px var(--accent);
+    }
+    .watch-illu .brand-text {
+      font-size: 7px; letter-spacing: 2px; font-weight: 800;
+      color: var(--accent);
+    }
+    .device-info { flex: 1; min-width: 0; }
+    .device-name { font-size: 20px; font-weight: 700; color: var(--text); }
+    .device-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .conn-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px; padding: 4px 10px; border-radius: var(--radius-pill);
+      background: rgba(74,222,128,0.15); color: rgb(74,222,128);
+      font-size: 11px; font-weight: 700;
+    }
+    .conn-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: rgb(74,222,128); box-shadow: 0 0 6px rgb(74,222,128); animation: pulse 1.6s infinite; }
+
+    .battery-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 0;
+    }
+    .battery-visual {
+      width: 70px; height: 30px;
+      border: 2px solid var(--text-muted);
+      border-radius: 4px;
+      position: relative; padding: 2px;
+    }
+    .battery-visual::after {
+      content: ""; position: absolute;
+      right: -6px; top: 50%; transform: translateY(-50%);
+      width: 4px; height: 14px;
+      background: var(--text-muted); border-radius: 0 2px 2px 0;
+    }
+    .battery-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgb(74,222,128), rgb(120,255,180));
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(74,222,128,0.5);
+      transition: width 0.6s;
+    }
+    .battery-pct { font-size: 28px; font-weight: 800; color: var(--text); font-family: 'Inter', sans-serif; }
+    .battery-info { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .sensor-tile {
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .sensor-tile-head {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sensor-icon-wrap {
+      width: 36px; height: 36px; border-radius: 12px;
+      background: var(--bg);
+      box-shadow: var(--shadow-raised-sm);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--accent);
+    }
+    .sensor-icon-wrap .ico { width: 18px; height: 18px; }
+    .sensor-status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgb(74,222,128);
+      box-shadow: 0 0 6px rgb(74,222,128);
+    }
+    .sensor-status-dot.warn   { background: rgb(255,181,71); box-shadow: 0 0 6px rgb(255,181,71); }
+    .sensor-status-dot.error  { background: rgb(255,92,124); box-shadow: 0 0 6px rgb(255,92,124); }
+    .sensor-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .sensor-role { font-size: 11px; color: var(--text-muted); }
+    .sensor-meta { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+  </style>
+</head>
+<body class="theme-dark" data-page="device">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Device Manager</h2>
+        <p>Status perangkat &amp; sensor</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card aura-cyan device-hero">
+      <div class="watch-illu">
+        <span class="watch-screen-dot"></span>
+        <span class="brand-text">AERVINEX</span>
+      </div>
+      <div class="device-info">
+        <h2 class="device-name">AERVINEX Watch</h2>
+        <p class="device-meta">Model AVX-W1 · Firmware v1.0.3</p>
+        <span class="conn-pill"><span class="dot"></span> BLE Connected</span>
+      </div>
+    </section>
+
+    <h3 class="section-title">Baterai &amp; Energi</h3>
+    <section class="card aura-green">
+      <div class="battery-row">
+        <div class="battery-visual"><div class="battery-fill" id="battFill" style="width:78%"></div></div>
+        <div>
+          <div class="battery-pct"><span id="battPct">78</span>%</div>
+          <div class="battery-info"><span id="battEta">~22 jam</span> tersisa</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+          <div>
+            <p class="setting-title">Thermoelectric Harvest</p>
+            <p class="setting-sub" id="thermoSub">Aktif · +<span id="thermoVal">3.2</span> mW dari panas tubuh</p>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.5s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/></svg></div>
+          <div>
+            <p class="setting-title">Biofuel Cell (Keringat)</p>
+            <p class="setting-sub" id="bfcSub">Standby · butuh keringat lebih</p>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg></div>
+          <div>
+            <p class="setting-title">Power Save Mode</p>
+            <p class="setting-sub">Polling sensor turun 50% saat baterai &lt; 20%</p>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+    </section>
+
+    <h3 class="section-title">Status Sensor</h3>
+    <section class="sensor-grid">
+
+      <div class="card aura-coral sensor-tile">
+        <div class="sensor-tile-head">
+          <div class="sensor-icon-wrap"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <span class="sensor-status-dot" id="dotOptical"></span>
+        </div>
+        <div>
+          <p class="sensor-name">Optical Heart Sensor</p>
+          <p class="sensor-role">PPG · HR, HRV, SpO₂, RR</p>
+        </div>
+        <p class="sensor-meta">Sampling 100 Hz · last read <span id="optTime">2s</span></p>
+      </div>
+
+      <div class="card aura-coral sensor-tile">
+        <div class="sensor-tile-head">
+          <div class="sensor-icon-wrap"><svg viewBox="0 0 24 24" class="ico"><path d="M14 4v10.5a4.5 4.5 0 11-4 0V4a2 2 0 014 0z"/></svg></div>
+          <span class="sensor-status-dot" id="dotTemp"></span>
+        </div>
+        <div>
+          <p class="sensor-name">Body Temperature</p>
+          <p class="sensor-role">Skin temp · sirkulasi</p>
+        </div>
+        <p class="sensor-meta">Akurasi ±0.1°C · last read <span id="tempTime">4s</span></p>
+      </div>
+
+      <div class="card aura-amber sensor-tile">
+        <div class="sensor-tile-head">
+          <div class="sensor-icon-wrap"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <span class="sensor-status-dot" id="dotUV"></span>
+        </div>
+        <div>
+          <p class="sensor-name">UV Sensor</p>
+          <p class="sensor-role">UV-A + UV-B exposure</p>
+        </div>
+        <p class="sensor-meta">Range 0-11+ · last read <span id="uvTime">6s</span></p>
+      </div>
+
+      <div class="card aura-violet sensor-tile">
+        <div class="sensor-tile-head">
+          <div class="sensor-icon-wrap"><svg viewBox="0 0 24 24" class="ico"><circle cx="6" cy="14" r="2"/><circle cx="14" cy="8" r="3"/><circle cx="18" cy="17" r="2"/><circle cx="9" cy="6" r="1.5"/></svg></div>
+          <span class="sensor-status-dot" id="dotPM"></span>
+        </div>
+        <div>
+          <p class="sensor-name">Particulate Matter</p>
+          <p class="sensor-role">PM1.0 · PM2.5 · PM10</p>
+        </div>
+        <p class="sensor-meta">Kalibrasi 2h lalu · last read <span id="pmTime">8s</span></p>
+      </div>
+
+      <div class="card aura-blue sensor-tile" style="grid-column:1/-1">
+        <div class="sensor-tile-head">
+          <div class="sensor-icon-wrap"><svg viewBox="0 0 24 24" class="ico"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg></div>
+          <span class="sensor-status-dot" id="dotMCU"></span>
+        </div>
+        <div>
+          <p class="sensor-name">Main Controller (BLE)</p>
+          <p class="sensor-role">Edge inference · BLE 5.2 · low-power</p>
+        </div>
+        <p class="sensor-meta">RSSI <span id="rssiVal">-58</span> dBm · arus rata-rata <span id="mcuMa">12</span> mA</p>
+      </div>
+
+    </section>
+
+    <h3 class="section-title">Sinkronisasi</h3>
+    <section class="card aura-cyan list-card">
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12a9 9 0 11-3-6.7M21 3v6h-6"/></svg></div>
+          <div>
+            <p class="setting-title">Auto Sync</p>
+            <p class="setting-sub">Tiap 30 detik via BLE</p>
+          </div>
+        </div>
+        <label class="toggle"><input type="checkbox" checked /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="divider"></div>
+      <div class="list-row" style="padding:14px 0">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v6m0 8v6m10-10h-6M8 12H2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Sinkronisasi terakhir</p>
+          <p class="list-row-sub" id="lastSync">12 detik lalu</p>
+        </div>
+        <button class="btn-icon" id="btnSync" aria-label="Sync now"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12a9 9 0 11-3-6.7M21 3v6h-6"/></svg></button>
+      </div>
+    </section>
+
+    <h3 class="section-title">Firmware &amp; Tindakan</h3>
+    <section class="card aura-violet list-card">
+      <div class="list-row" id="rowFirmware" style="cursor:pointer">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v8m0 0l3-3m-3 3l-3-3M5 20h14"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Firmware v1.0.3</p>
+          <p class="list-row-sub">Up-to-date · cek pembaruan</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="list-row" id="rowCalibrate" style="cursor:pointer">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Kalibrasi Sensor</p>
+          <p class="list-row-sub">Optical &amp; particulate · rekomendasi tiap 30 hari</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+      <div class="list-row" id="rowRepair" style="cursor:pointer">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12a9 9 0 11-9-9M21 3v6h-6"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Pair Ulang Device</p>
+          <p class="list-row-sub">Reset koneksi BLE</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </div>
+    </section>
+
+    <button class="btn-block ghost" id="btnReset" style="border-color:rgba(255,92,124,.4);color:rgb(255,130,150)">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      <span>Factory Reset Device</span>
+    </button>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+
+    // Battery sim (slow drain + energy harvest)
+    let batt = 78;
+    let lastSync = 12;
+    let optAge = 2, tempAge = 4, uvAge = 6, pmAge = 8;
+    let rssi = -58, mcuMa = 12;
+    let thermoMw = 3.2;
+
+    function fmt(s) { return s < 60 ? `${s} detik lalu` : `${Math.floor(s/60)} menit lalu`; }
+    function fmtEta(p) {
+      const hours = p * 0.28; // ~28 hours from 100%
+      return `~${Math.round(hours)} jam`;
+    }
+
+    function tick() {
+      // Battery: slow drain net of harvest
+      batt = Math.max(0, batt - 0.02 + Math.random() * 0.005);
+      document.getElementById('battPct').textContent = batt.toFixed(0);
+      document.getElementById('battFill').style.width = batt + '%';
+      document.getElementById('battEta').textContent = fmtEta(batt);
+
+      // Energy harvest readouts
+      thermoMw = Math.max(0.5, Math.min(6, thermoMw + (Math.random() - 0.5) * 0.4));
+      document.getElementById('thermoVal').textContent = thermoMw.toFixed(1);
+      document.getElementById('bfcSub').textContent = Math.random() < 0.3
+        ? `Aktif · +${(Math.random() * 1.2 + 0.3).toFixed(2)} mW dari elektrolit keringat`
+        : 'Standby · butuh keringat lebih';
+
+      // Sensor ages
+      optAge  = optAge >= 6  ? 1 : optAge + 1;
+      tempAge = tempAge >= 8 ? 1 : tempAge + 1;
+      uvAge   = uvAge >= 12  ? 1 : uvAge + 1;
+      pmAge   = pmAge >= 15  ? 1 : pmAge + 1;
+      document.getElementById('optTime').textContent  = optAge  + 's';
+      document.getElementById('tempTime').textContent = tempAge + 's';
+      document.getElementById('uvTime').textContent   = uvAge   + 's';
+      document.getElementById('pmTime').textContent   = pmAge   + 's';
+
+      // RSSI fluctuation
+      rssi = Math.max(-85, Math.min(-45, rssi + Math.round((Math.random() - 0.5) * 4)));
+      mcuMa = Math.max(8, Math.min(22, mcuMa + (Math.random() - 0.5) * 1.5));
+      document.getElementById('rssiVal').textContent = rssi;
+      document.getElementById('mcuMa').textContent   = mcuMa.toFixed(0);
+
+      // Last sync tick (auto-sync every 30s)
+      lastSync++;
+      if (lastSync > 30) lastSync = 0;
+      document.getElementById('lastSync').textContent = fmt(lastSync);
+    }
+    tick();
+    const ticker = setInterval(tick, 1500);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) clearInterval(ticker); });
+
+    // Actions
+    document.getElementById('btnSync').addEventListener('click', () => {
+      lastSync = 0;
+      document.getElementById('lastSync').textContent = 'Baru saja';
+      AervinexToast('Sinkronisasi manual berhasil', 'success');
+    });
+    // ── Modal builder ───────────────────────────────────────
+    function buildModal(html) {
+      const modal = document.createElement('div');
+      modal.className = 'aervinex-modal';
+      modal.innerHTML = `<div class="aervinex-modal-card">${html}</div>`;
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal); });
+      document.body.appendChild(modal);
+      requestAnimationFrame(() => modal.classList.add('active'));
+      return modal;
+    }
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      setTimeout(() => modal.remove(), 320);
+    }
+
+    // ── Calibration modal ────────────────────────────────────
+    function openCalibrationModal() {
+      const modal = buildModal(`
+        <h2 class="modal-title">Kalibrasi Sensor</h2>
+        <p class="modal-sub">Letakkan watch di permukaan datar &amp; jangan gerakkan selama proses</p>
+        <div class="calib-ring-wrap">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="86" class="calib-ring-bg"/>
+            <circle cx="100" cy="100" r="86" class="calib-ring-fg" id="calibRing"
+                    stroke-dasharray="540" stroke-dashoffset="540"/>
+          </svg>
+          <div class="calib-ring-text">
+            <div class="calib-pct" id="calibPct">0%</div>
+            <div class="calib-sub" id="calibStep">Memulai...</div>
+          </div>
+        </div>
+        <p class="calib-countdown" id="calibCountdown">30 detik tersisa</p>
+        <div class="calib-instruction" id="calibInstr">Pastikan watch terpasang pada pergelangan tangan, tidak terlalu longgar</div>
+        <button class="btn-block ghost" id="calibAction">Batalkan</button>
+      `);
+
+      const ring  = modal.querySelector('#calibRing');
+      const pctEl = modal.querySelector('#calibPct');
+      const stepEl = modal.querySelector('#calibStep');
+      const cdEl  = modal.querySelector('#calibCountdown');
+      const instrEl = modal.querySelector('#calibInstr');
+      const actionBtn = modal.querySelector('#calibAction');
+
+      const totalMs = 30000;
+      const steps = [
+        { until: 0.10, name: 'Memulai...', instr: 'Pastikan watch terpasang pada pergelangan tangan' },
+        { until: 0.40, name: 'Optical Sensor', instr: 'Sensor PPG sedang diukur — jangan gerakkan tangan' },
+        { until: 0.75, name: 'Particulate Matter', instr: 'Sensor partikel sedang membersihkan chamber via micro-fan' },
+        { until: 1.00, name: 'Body Temperature', instr: 'Suhu kulit diukur — tunggu beberapa detik lagi' },
+      ];
+
+      let start = performance.now();
+      let cancelled = false;
+      let done = false;
+
+      actionBtn.addEventListener('click', () => {
+        if (done) { closeModal(modal); }
+        else { cancelled = true; closeModal(modal); AervinexToast('Kalibrasi dibatalkan', 'warn'); }
+      });
+
+      function frame(now) {
+        if (cancelled) return;
+        const elapsed = now - start;
+        const p = Math.min(1, elapsed / totalMs);
+        const pct = Math.round(p * 100);
+        pctEl.textContent = pct + '%';
+        ring.setAttribute('stroke-dashoffset', (540 - 540 * p).toFixed(1));
+
+        const remain = Math.max(0, Math.ceil((1 - p) * 30));
+        cdEl.textContent = remain > 0 ? `${remain} detik tersisa` : 'Selesai';
+
+        const step = steps.find(s => p <= s.until);
+        if (step) {
+          stepEl.textContent = step.name;
+          instrEl.textContent = step.instr;
+        }
+
+        if (p < 1) requestAnimationFrame(frame);
+        else {
+          done = true;
+          stepEl.textContent = '✓ SELESAI';
+          stepEl.style.color = 'rgb(74,222,128)';
+          pctEl.style.color = 'rgb(74,222,128)';
+          ring.style.stroke = 'rgb(74,222,128)';
+          ring.style.filter = 'drop-shadow(0 0 12px rgb(74,222,128))';
+          cdEl.textContent = 'Semua sensor terkalibrasi';
+          instrEl.style.background = 'rgba(74,222,128,0.1)';
+          instrEl.style.borderColor = 'rgba(74,222,128,0.3)';
+          instrEl.textContent = 'Akurasi sensor optimal · drift terkoreksi · valid 30 hari';
+          actionBtn.textContent = 'Selesai';
+          actionBtn.className = 'btn-block primary';
+          AervinexToast('Kalibrasi berhasil — akurasi sensor optimal', 'success');
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // ── Pairing modal ────────────────────────────────────────
+    function openPairingModal() {
+      const modal = buildModal(`
+        <h2 class="modal-title">Pair Device</h2>
+        <p class="modal-sub">Pastikan AERVINEX Watch dalam mode pairing (tahan tombol crown 3 detik)</p>
+        <div class="radar-wrap">
+          <div class="radar-pulse"></div>
+          <div class="radar-pulse"></div>
+          <div class="radar-pulse"></div>
+          <div class="radar-dot"></div>
+        </div>
+        <p class="pair-status" id="pairStatus">Memindai perangkat BLE...</p>
+        <div class="pair-list" id="pairList">
+          <div class="pair-empty" id="pairEmpty">Belum ada perangkat terdeteksi</div>
+        </div>
+        <button class="btn-block ghost" id="pairClose">Tutup</button>
+      `);
+
+      const list = modal.querySelector('#pairList');
+      const empty = modal.querySelector('#pairEmpty');
+      const status = modal.querySelector('#pairStatus');
+
+      const devices = [
+        { delay: 1400, name: 'AERVINEX Watch · AVX-W1', meta: 'BLE 5.2 · -58 dBm · firmware v1.0.3', primary: true, icon: '<svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/></svg>' },
+        { delay: 2800, name: 'Unknown BLE Device',      meta: '-72 dBm · sinyal lemah · tidak dikenal',          icon: '<svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>' },
+        { delay: 4200, name: 'Pixel Watch (Adia)',      meta: '-65 dBm · sudah pernah pair',                    icon: '<svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/></svg>' },
+      ];
+
+      let cancelled = false;
+      let found = 0;
+
+      devices.forEach(d => {
+        setTimeout(() => {
+          if (cancelled) return;
+          found++;
+          if (empty) empty.remove();
+          status.textContent = `${found} perangkat ditemukan · masih memindai...`;
+          const row = document.createElement('div');
+          row.className = 'pair-device';
+          row.innerHTML = `
+            <div class="pair-device-icon">${d.icon}</div>
+            <div class="pair-device-info">
+              <p class="pair-device-name">${d.name}</p>
+              <p class="pair-device-meta">${d.meta}</p>
+            </div>
+            ${d.primary ? '<span class="pair-device-badge">REKOM</span>' : ''}
+          `;
+          row.addEventListener('click', () => {
+            if (row.classList.contains('connected') || row.classList.contains('connecting')) return;
+            row.classList.add('connecting');
+            row.querySelector('.pair-device-meta').textContent = 'Menghubungkan...';
+            const badge = row.querySelector('.pair-device-badge');
+            if (badge) badge.remove();
+            setTimeout(() => {
+              row.classList.remove('connecting');
+              row.classList.add('connected');
+              row.querySelector('.pair-device-icon').innerHTML = '<svg viewBox="0 0 24 24" class="ico"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>';
+              row.querySelector('.pair-device-meta').textContent = '✓ Terhubung · BLE handshake selesai';
+              AervinexToast(`Pair berhasil: ${d.name}`, 'success', 4000);
+              setTimeout(() => { if (!cancelled) closeModal(modal); }, 1800);
+            }, 1600);
+          });
+          list.appendChild(row);
+          if (found === devices.length) {
+            setTimeout(() => { if (!cancelled) status.textContent = 'Pemindaian selesai · tap untuk hubungkan'; }, 1500);
+          }
+        }, d.delay);
+      });
+
+      modal.querySelector('#pairClose').addEventListener('click', () => {
+        cancelled = true;
+        closeModal(modal);
+      });
+    }
+
+    // ── Firmware check (lightweight modal too) ───────────────
+    function openFirmwareModal() {
+      const modal = buildModal(`
+        <h2 class="modal-title">Firmware</h2>
+        <p class="modal-sub">Memeriksa pembaruan dari server AERVINEX...</p>
+        <div style="text-align:center;padding:24px 0">
+          <div class="radar-dot" style="margin:0 auto;width:32px;height:32px"></div>
+        </div>
+        <p id="fwResult" style="text-align:center;color:var(--text);font-size:13px;font-weight:600;margin-bottom:18px">Mengecek...</p>
+        <button class="btn-block primary" id="fwClose">Tutup</button>
+      `);
+      modal.querySelector('#fwClose').addEventListener('click', () => closeModal(modal));
+      setTimeout(() => {
+        modal.querySelector('#fwResult').innerHTML = '✓ Firmware <strong>v1.0.3</strong> sudah versi terbaru<br><span style="color:var(--text-muted);font-size:11px;font-weight:400">Update terakhir 12 hari lalu · release notes</span>';
+      }, 1800);
+    }
+
+    document.getElementById('rowFirmware').addEventListener('click', openFirmwareModal);
+    document.getElementById('rowCalibrate').addEventListener('click', openCalibrationModal);
+    document.getElementById('rowRepair').addEventListener('click', openPairingModal);
+    document.getElementById('btnReset').addEventListener('click', () => {
+      if (confirm('Hapus semua data device dan reset ke pengaturan pabrik? Tindakan ini tidak bisa dibatalkan.')) {
+        AervinexToast('Factory reset dibatalkan (demo mode)', 'warn');
+      }
+    });
+  </script>
+</body>
+</html>

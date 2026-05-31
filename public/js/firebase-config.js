@@ -1,10 +1,10 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyAAEYxWofEE3k0K57nssUKgEYUNU4ZJXrg",
-  authDomain: "aervio-id.firebaseapp.com",
-  projectId: "aervio-id",
-  storageBucket: "aervio-id.firebasestorage.app",
-  messagingSenderId: "788636909860",
-  appId: "1:788636909860:web:b6b1d1ec31b591037cb3b1"
+  apiKey: "AIzaSyAYFfmwVacq1sZN296YacTfS2J34ZQmagM",
+  authDomain: "aervinex.firebaseapp.com",
+  projectId: "aervinex",
+  storageBucket: "aervinex.firebasestorage.app",
+  messagingSenderId: "1032158217152",
+  appId: "1:1032158217152:web:3f3b436fe7c50023077e25"
 };
 
 if (!firebase.apps.length) {

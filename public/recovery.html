@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Recovery — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="recovery">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Recovery</h2>
+        <p>RRSS · HRV-based</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card hero-card aura-green">
+      <div class="hero-left">
+        <p class="hero-label">RRSS Recovery Score</p>
+        <div class="hero-value">
+          <span class="hero-num">86</span>
+          <span class="hero-unit">/100</span>
+        </div>
+        <p class="hero-desc">Siap untuk latihan intensitas tinggi besok pagi</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:86%"></div></div>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" style="stroke-dasharray:314;stroke-dashoffset:44"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num">86</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub">READY</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <a class="card metric-card aura-cyan" href="/metric-detail.html?id=rmssd" style="text-decoration:none;color:inherit">
+        <p class="metric-label">RMSSD</p>
+        <div class="metric-value"><span>62</span><span class="metric-unit">ms</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:78%"></div></div>
+      </a>
+      <a class="card metric-card aura-violet" href="/metric-detail.html?id=sdnn" style="text-decoration:none;color:inherit">
+        <p class="metric-label">SDNN</p>
+        <div class="metric-value"><span>78</span><span class="metric-unit">ms</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:82%"></div></div>
+      </a>
+      <a class="card metric-card aura-blue" href="/metric-detail.html?id=lfhf" style="text-decoration:none;color:inherit">
+        <p class="metric-label">LF/HF</p>
+        <div class="metric-value"><span>1.4</span><span class="metric-unit">ratio</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:55%"></div></div>
+      </a>
+      <a class="card metric-card aura-pink" href="/metric-detail.html?id=rest" style="text-decoration:none;color:inherit">
+        <p class="metric-label">Rest HR</p>
+        <div class="metric-value"><span>58</span><span class="metric-unit">bpm</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:35%"></div></div>
+      </a>
+    </section>
+
+    <section class="card aura-cyan list-card">
+      <div class="list-row">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18M5 12h14"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Latihan intensitas tinggi besok</p>
+          <p class="list-row-sub">Recovery cukup, target Z3-Z4 aman</p>
+        </div>
+        <span class="list-row-meta">OK</span>
+      </div>
+      <div class="list-row">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Tidur ≥ 7 jam malam ini</p>
+          <p class="list-row-sub">Trend HRV menunjukkan butuh konsolidasi</p>
+        </div>
+        <span class="list-row-meta">REC</span>
+      </div>
+      <div class="list-row">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Hidrasi 2L sebelum sesi</p>
+          <p class="list-row-sub">Heat index sore besok ≥ 32°C</p>
+        </div>
+        <span class="list-row-meta">TIPS</span>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ml-client.js"></script>
+  <script src="js/tour.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(() => {
+      setTimeout(() => AervinexTour.startRecoveryTour(), 1500);
+    });
+
+    // ── ML-driven RRSS (Recovery Readiness Score) ──
+    // Simulasi HRV metrics dengan random walk untuk demo
+    (function () {
+      const initial = { meanRR: 850, sdrr: 78, rmssd: 62, hr: 58, pnn50: 22, pnn25: 30, sd1: 27, sd2: 61, lf: 380, hf: 320, vlf: 110, lfHf: 1.4, sampen: 1.8, higuci: 1.7 };
+      const state = { ...initial };
+
+      function tick() {
+        // Small random walk on key HRV vars
+        state.rmssd = Math.max(15, Math.min(90, state.rmssd + (Math.random() - 0.5) * 4));
+        state.sdrr  = Math.max(20, Math.min(110, state.sdrr + (Math.random() - 0.5) * 5));
+        state.hr    = Math.max(48, Math.min(78, state.hr + (Math.random() - 0.5) * 1.2));
+        state.lfHf  = Math.max(0.5, Math.min(3, state.lfHf + (Math.random() - 0.5) * 0.15));
+
+        if (!window.MLClient) return;
+        const r = MLClient.predictRecovery(state);
+
+        // Update hero card
+        const hero = document.querySelector('.hero-card.aura-green');
+        if (!hero) return;
+        const heroNum = hero.querySelector('.hero-num');
+        const heroDesc = hero.querySelector('.hero-desc');
+        const heroBar = hero.querySelector('.progress-fill');
+        const ringFill = hero.querySelector('.ring-fill');
+        const ringNum = hero.querySelector('.ring-num');
+        const ringSub = hero.querySelector('.ring-sub');
+
+        if (heroNum) heroNum.textContent = r.recovery_score;
+        if (heroBar) heroBar.style.width = r.recovery_score + '%';
+        if (ringFill) ringFill.setAttribute('style', `stroke-dasharray:314;stroke-dashoffset:${(314 - 314 * r.recovery_score / 100).toFixed(0)}`);
+        if (ringNum) ringNum.textContent = r.recovery_score;
+        if (ringSub) ringSub.textContent = r.status === 'RECOVERED' ? 'READY' : 'REST';
+        if (heroDesc) {
+          heroDesc.innerHTML = r.recovery_score >= 80
+            ? 'Siap untuk latihan intensitas tinggi · <strong>ML XGBoost ' + r.status + '</strong>'
+            : r.recovery_score >= 60
+              ? 'Latihan moderate disarankan · <strong>ML ' + r.status + '</strong>'
+              : 'Recovery diperlukan · <strong>ML ' + r.status + '</strong> · hindari Z4-Z5';
+        }
+
+        // Update HRV cards
+        const cards = document.querySelectorAll('.grid-2 .metric-card');
+        if (cards[0]) cards[0].querySelector('.metric-value span').textContent = Math.round(state.rmssd);
+        if (cards[1]) cards[1].querySelector('.metric-value span').textContent = Math.round(state.sdrr);
+        if (cards[2]) cards[2].querySelector('.metric-value span').textContent = state.lfHf.toFixed(1);
+        if (cards[3]) cards[3].querySelector('.metric-value span').textContent = Math.round(state.hr);
+
+        // Update progress bars
+        const bars = document.querySelectorAll('.grid-2 .progress-fill');
+        if (bars[0]) bars[0].style.width = Math.min(100, state.rmssd / 80 * 100) + '%';
+        if (bars[1]) bars[1].style.width = Math.min(100, state.sdrr / 100 * 100) + '%';
+        if (bars[2]) bars[2].style.width = Math.min(100, state.lfHf / 3 * 100) + '%';
+        if (bars[3]) bars[3].style.width = Math.min(100, (78 - state.hr) / 30 * 100) + '%';
+      }
+      tick();
+      const ticker = setInterval(tick, 2500);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) clearInterval(ticker); });
+    })();
+  </script>
+</body>
+</html>

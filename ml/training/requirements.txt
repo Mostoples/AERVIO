@@ -1,0 +1,28 @@
+# AERVINEX ML training pipeline — Python 3.10+
+# Install:  python -m pip install -r requirements.txt
+#
+# Core models
+xgboost>=2.0.0,<3.0.0
+lightgbm>=4.3.0
+scikit-learn>=1.4.0,<1.6.0
+
+# ONNX export
+onnx>=1.16.0
+onnxmltools>=1.12.0
+onnxruntime>=1.17.0
+skl2onnx>=1.16.0
+
+# Data wrangling
+pandas>=2.1.0
+numpy>=1.26.0
+scipy>=1.11.0
+
+# PhysioNet datasets (ECG / PPG)
+wfdb>=4.1.0
+neurokit2>=0.2.7
+
+# Experiment tracking (optional but recommended)
+mlflow>=2.10.0
+
+# Plotting (debug only)
+matplotlib>=3.8.0

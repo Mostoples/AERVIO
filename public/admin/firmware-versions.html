@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Firmware Versions — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .ver-card { padding: 16px; }
+    .ver-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .ver-tag { font-size: 18px; font-weight: 800; color: var(--accent); font-family: 'Inter', monospace; letter-spacing: 1px; }
+    .ver-channel { font-size: 10px; padding:3px 8px;border-radius:var(--radius-pill); background: rgba(0,229,212,0.15); color: var(--accent); font-weight: 700; text-transform: uppercase; }
+    .ver-channel.beta { background: rgba(255,181,71,0.15); color: rgb(255,181,71); }
+    .ver-channel.canary { background: rgba(255,92,124,0.15); color: rgb(255,130,150); }
+    .ver-notes { font-size: 12px; color: var(--text-muted); white-space: pre-wrap; line-height: 1.6; margin: 8px 0; }
+    .ver-meta { font-size: 11px; color: var(--text-dim); }
+  </style>
+</head>
+<body class="theme-dark" data-page="firmware-versions">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div class="admin-page-title"><h1>Firmware Versions</h1><p>Manage release channels &amp; changelogs</p></div>
+      <a href="/admin/firmware-ota.html" class="btn-block primary" style="width:auto">+ Upload Versi Baru</a>
+    </div>
+
+    <div id="versions"><p style="font-size:12px;color:var(--text-muted);padding:20px">Loading...</p></div>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/firmware-ota.js"></script>
+<script>
+  AERVINEXAuth.requireAuth();
+  async function load() {
+    try {
+      const list = await AervinexFirmwareOTA.listVersions(50);
+      const box = document.getElementById('versions');
+      if (!list.length) { box.innerHTML = '<p style="font-size:12px;color:var(--text-muted);padding:20px">Belum ada firmware. <a href="/admin/firmware-ota.html" style="color:var(--accent)">Upload sekarang →</a></p>'; return; }
+      box.innerHTML = list.map((v) => {
+        const releasedDate = v.releasedAt && v.releasedAt.toDate ? v.releasedAt.toDate().toLocaleString() : '—';
+        return `
+        <section class="card ver-card" style="margin-bottom:12px">
+          <div class="ver-head">
+            <span class="ver-tag">v${v.version}</span>
+            <span class="ver-channel ${v.channel || 'stable'}">${v.channel || 'stable'}</span>
+          </div>
+          <p class="ver-notes">${(v.releaseNotes || '— no changelog —').slice(0, 600)}</p>
+          <p class="ver-meta">Released: ${releasedDate} · By: ${v.releasedBy || '—'}</p>
+          <p class="ver-meta">Size: ${v.sizeBytes ? (v.sizeBytes/1024).toFixed(1) + ' KB' : '—'} · SHA256: ${(v.sha256||'').slice(0,16)}...</p>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <a class="btn-block ghost" href="${v.downloadURL}" target="_blank" style="flex:1;padding:8px;font-size:12px">Download .bin</a>
+            <button class="btn-block ghost" data-notify="${v.version}" data-channel="${v.channel||'stable'}" style="flex:1;padding:8px;font-size:12px">Notify Fleet</button>
+            <button class="btn-block ghost" data-del="${v.version}" style="flex:1;padding:8px;font-size:12px;border-color:rgba(255,92,124,.4);color:rgb(255,130,150)">Delete</button>
+          </div>
+        </section>`;
+      }).join('');
+      box.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
+        const ver = b.getAttribute('data-del');
+        if (!confirm(`Hapus firmware v${ver}?`)) return;
+        await AervinexFirmwareOTA.deleteVersion(ver);
+        load();
+      }));
+      box.querySelectorAll('[data-notify]').forEach((b) => b.addEventListener('click', async () => {
+        const ver = b.getAttribute('data-notify');
+        const ch = b.getAttribute('data-channel');
+        const r = await AervinexFirmwareOTA.notifyFleet(ver, ch);
+        alert(r.ok ? `Notified ${r.queued} devices.` : `Skipped: ${r.note || 'function not deployed'}`);
+      }));
+    } catch (e) {
+      document.getElementById('versions').innerHTML = '<p style="color:rgb(255,130,150);padding:20px">Load error: ' + e.message + '</p>';
+    }
+  }
+  load();
+</script>
+</body>
+</html>

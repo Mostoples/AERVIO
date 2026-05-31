@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Admin Overview — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="overview">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham" aria-label="Menu"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <div class="admin-page-title">
+          <h1>Overview</h1>
+          <p>Status sistem AERVINEX · update real-time</p>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="btn-icon theme-toggle" aria-label="Theme">
+          <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+        <a href="/admin/alerts.html" class="btn-icon notif"><svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg><span class="badge-dot"></span></a>
+        <button class="btn-icon" data-action="logout" aria-label="Logout"><svg viewBox="0 0 24 24" class="ico"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <section class="kpi-grid">
+      <a class="card aura-cyan kpi-card" href="/admin/users.html" style="text-decoration:none;color:inherit">
+        <div class="kpi-head">
+          <div class="kpi-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0114 0"/></svg></div>
+          <span class="kpi-trend up" id="kpiUsersTrend">+8.2%</span>
+        </div>
+        <div class="kpi-value" id="kpiUsers">12,438</div>
+        <div class="kpi-label">Total Users</div>
+      </a>
+      <a class="card aura-green kpi-card" href="/admin/devices.html" style="text-decoration:none;color:inherit">
+        <div class="kpi-head">
+          <div class="kpi-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/></svg></div>
+          <span class="kpi-trend up" id="kpiActiveTrend">+12%</span>
+        </div>
+        <div class="kpi-value" id="kpiActive">8,219</div>
+        <div class="kpi-label">Active Devices (24h)</div>
+      </a>
+      <a class="card aura-coral kpi-card" href="/admin/alerts.html" style="text-decoration:none;color:inherit">
+        <div class="kpi-head">
+          <div class="kpi-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg></div>
+          <span class="kpi-trend down" id="kpiAlertsTrend">-4.1%</span>
+        </div>
+        <div class="kpi-value" id="kpiAlerts">347</div>
+        <div class="kpi-label">Alerts Hari Ini</div>
+      </a>
+      <a class="card aura-violet kpi-card" href="/admin/ml-models.html" style="text-decoration:none;color:inherit">
+        <div class="kpi-head">
+          <div class="kpi-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/><path d="M6 12h3M15 12h3"/></svg></div>
+          <span class="kpi-trend up">+0.4%</span>
+        </div>
+        <div class="kpi-value" id="kpiAccuracy">94.2%</div>
+        <div class="kpi-label">ML Avg Accuracy</div>
+      </a>
+    </section>
+
+    <div class="admin-cols cols-2-1">
+
+      <!-- Chart -->
+      <section class="card aura-cyan chart-card">
+        <div class="tab-nav">
+          <button class="tab active" data-tab="24h">24 jam</button>
+          <button class="tab" data-tab="7d">7 hari</button>
+          <button class="tab" data-tab="30d">30 hari</button>
+        </div>
+        <div class="chart-head">
+          <div>
+            <p class="chart-label">User Activity vs Alerts</p>
+            <p class="chart-sub"><span class="dot-cyan"></span>Active Users <span class="dot-muted"></span>Alerts</p>
+          </div>
+          <div class="chart-figure">
+            <span class="chart-num" id="chartLast">8.2k</span>
+            <span class="chart-delta up">+12%</span>
+          </div>
+        </div>
+        <div class="chart-area">
+          <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+            <defs>
+              <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#00e5d4" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <polyline class="chart-line-muted" id="alertLine" points=""/>
+            <polyline class="chart-line"        id="userLine"  points=""/>
+            <polygon  class="chart-fill"        id="userFill"  points=""/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Recent activity feed -->
+      <section class="card aura-violet">
+        <h3 class="section-title" style="margin-bottom:8px">Aktivitas Terbaru</h3>
+        <div class="list-card" id="activityFeed" style="padding:0">
+          <!-- populated via JS -->
+        </div>
+      </section>
+
+    </div>
+
+    <div class="admin-cols cols-1-1-1">
+      <a class="card aura-coral" href="/admin/data.html" style="text-decoration:none;color:inherit;display:block">
+        <h3 class="section-title">Disease Risk · 24 jam <span style="float:right;font-size:11px;color:var(--accent)">Detail →</span></h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Asma / ISPA</span><span style="font-weight:700">128</span></div><div class="progress-bar small"><div class="progress-fill" style="width:78%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Heatstroke</span><span style="font-weight:700">94</span></div><div class="progress-bar small"><div class="progress-fill" style="width:62%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Dehidrasi</span><span style="font-weight:700">76</span></div><div class="progress-bar small"><div class="progress-fill" style="width:50%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">AFib</span><span style="font-weight:700">28</span></div><div class="progress-bar small"><div class="progress-fill" style="width:18%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text-muted)">Sunburn</span><span style="font-weight:700">21</span></div><div class="progress-bar small"><div class="progress-fill" style="width:14%"></div></div></div>
+        </div>
+      </a>
+      <a class="card aura-blue" href="/admin/geo.html" style="text-decoration:none;color:inherit;display:block">
+        <h3 class="section-title">Top BMKG Stations <span style="float:right;font-size:11px;color:var(--accent)">Lihat semua →</span></h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico ico-anim-bounce"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="list-row-body"><p class="list-row-title">Jakarta Pusat (Kemayoran)</p><p class="list-row-sub">PM2.5 42 μg/m³ · 4,128 users</p></div><span class="list-row-meta">PRIMARY</span></div>
+          <div class="list-row"><div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="list-row-body"><p class="list-row-title">Bandung (Husein S.)</p><p class="list-row-sub">PM2.5 28 μg/m³ · 1,892 users</p></div><span class="list-row-meta">OK</span></div>
+          <div class="list-row"><div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="list-row-body"><p class="list-row-title">Surabaya (Juanda)</p><p class="list-row-sub">PM2.5 38 μg/m³ · 1,304 users</p></div><span class="list-row-meta">OK</span></div>
+        </div>
+      </a>
+      <a class="card aura-amber" href="/admin/system.html" style="text-decoration:none;color:inherit;display:block">
+        <h3 class="section-title">System Health <span style="float:right;font-size:11px;color:var(--accent)">Detail →</span></h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon" style="color:rgb(74,222,128)"><svg viewBox="0 0 24 24" class="ico ico-anim-pulse"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div><div class="list-row-body"><p class="list-row-title">Firebase Hosting</p><p class="list-row-sub">99.99% uptime · 12ms p50</p></div><span class="tbl-status ok">OK</span></div>
+          <div class="list-row"><div class="list-row-icon" style="color:rgb(74,222,128)"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div><div class="list-row-body"><p class="list-row-title">Firestore</p><p class="list-row-sub">62% quota · 24ms p95</p></div><span class="tbl-status ok">OK</span></div>
+          <div class="list-row"><div class="list-row-icon" style="color:rgb(255,181,71)"><svg viewBox="0 0 24 24" class="ico ico-anim-flash"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div><div class="list-row-body"><p class="list-row-title">BMKG API</p><p class="list-row-sub">latency naik · 280ms p95</p></div><span class="tbl-status warn">WARN</span></div>
+          <div class="list-row"><div class="list-row-icon" style="color:rgb(74,222,128)"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg></div><div class="list-row-body"><p class="list-row-title">ML Inference</p><p class="list-row-sub">edge mode aktif</p></div><span class="tbl-status ok">OK</span></div>
+        </div>
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<script src="/js/icon-lib.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+  const ICO = (e) => (window.AervinexIcons?.fromEmoji(e)) || e;
+  // Live KPI tick
+  (function () {
+    let users = 12438, active = 8219, alerts = 347;
+    setInterval(() => {
+      users += Math.round(Math.random() * 5 - 1);
+      active += Math.round(Math.random() * 12 - 4);
+      alerts += Math.round(Math.random() * 3 - 1);
+      document.getElementById('kpiUsers').textContent  = users.toLocaleString();
+      document.getElementById('kpiActive').textContent = active.toLocaleString();
+      document.getElementById('kpiAlerts').textContent = alerts.toLocaleString();
+    }, 2500);
+  })();
+
+  // Activity feed populate
+  (function () {
+    const acts = [
+      { t: 'User baru terdaftar', s: 'adia.amaranta@gmail.com · via Google', time: 'baru saja', icon: '👤' },
+      { t: 'Device pair berhasil', s: 'AVX-W1 #4f72 → user budi.santoso', time: '3 menit lalu', icon: '⌚' },
+      { t: 'Alert L3 trigger', s: 'PM2.5 spike Jakarta Pusat 168 μg/m³', time: '8 menit lalu', icon: '🚨' },
+      { t: 'ML model retrain', s: 'TEPRS v2.4.1 dideploy · acc 94.2%', time: '14 menit lalu', icon: '🤖' },
+      { t: 'Firmware OTA push', s: 'v1.0.3 → 8,219 devices', time: '32 menit lalu', icon: '📦' },
+      { t: 'Support ticket dibuka', s: '#1284 · Pair gagal repeated', time: '1 jam lalu', icon: '💬' },
+    ];
+    const feed = document.getElementById('activityFeed');
+    const actHrefs = ['/admin/users.html', '/admin/devices.html', '/admin/alerts.html', '/admin/ml-models.html', '/admin/devices.html', '/admin/support.html'];
+    feed.innerHTML = acts.map((a, i) => `
+      <a class="list-row" href="${actHrefs[i] || '#'}" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon">${ICO(a.icon)}</div>
+        <div class="list-row-body">
+          <p class="list-row-title">${a.t}</p>
+          <p class="list-row-sub">${a.s}</p>
+        </div>
+        <span class="list-row-meta" style="font-size:10px;color:var(--text-dim)">${a.time}</span>
+      </a>
+    `).join('');
+  })();
+
+  // Animated chart
+  (function () {
+    const VB_W = 320, VB_H = 120;
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    let users = [], alerts = [];
+    for (let i = 0; i < 18; i++) { users.push(60 + Math.random() * 30); alerts.push(20 + Math.random() * 20); }
+    const toY = v => VB_H - 10 - (v / 100) * 100;
+    const pts = arr => arr.map((v, i) => `${(i / (arr.length - 1)) * VB_W},${toY(v)}`).join(' ');
+    const fill = arr => pts(arr) + ` ${VB_W},${VB_H} 0,${VB_H}`;
+    function render() {
+      document.getElementById('userLine').setAttribute('points',  pts(users));
+      document.getElementById('userFill').setAttribute('points',  fill(users));
+      document.getElementById('alertLine').setAttribute('points', pts(alerts));
+    }
+    render();
+    let h = null;
+    function animateTo(targetU, targetA, dur = 1300) {
+      if (h) cancelAnimationFrame(h);
+      const fU = [...users], fA = [...alerts];
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min(1, (now - start) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        users  = fU.map((v, i) => v + (targetU[i] - v) * e);
+        alerts = fA.map((v, i) => v + (targetA[i] - v) * e);
+        render();
+        if (p < 1) h = requestAnimationFrame(step);
+      }
+      h = requestAnimationFrame(step);
+    }
+    setInterval(() => {
+      const nU = clamp(users[users.length - 1] + (Math.random() - 0.4) * 8, 30, 100);
+      const nA = clamp(alerts[alerts.length - 1] + (Math.random() - 0.5) * 6, 5, 50);
+      animateTo([...users.slice(1), nU], [...alerts.slice(1), nA]);
+    }, 1800);
+  })();
+</script>
+</body>
+</html>

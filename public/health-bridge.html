@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Health Bridge — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .bridge-tile { padding: 18px; display:flex; gap:14px; align-items:center; }
+    .bridge-logo { width: 54px; height: 54px; border-radius: 16px; display:flex; align-items:center; justify-content:center;
+      background: var(--bg); box-shadow: var(--shadow-raised-sm); font-size: 22px; font-weight: 800; color: var(--accent); }
+    .bridge-info { flex:1; }
+    .bridge-status { font-size: 11px; padding: 3px 10px; border-radius: var(--radius-pill); font-weight: 700; }
+    .bridge-status.off  { background: rgba(255,181,71,0.15); color: rgb(255,181,71); }
+    .bridge-status.on   { background: rgba(74,222,128,0.15); color: rgb(74,222,128); }
+    .bridge-status.todo { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+  </style>
+</head>
+<body class="theme-dark" data-page="health-bridge">
+  <div class="app-shell">
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Health Bridge</h2><p>Integrasi data wearable eksternal</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="card aura-cyan" style="padding:20px">
+      <p style="font-size:13px;color:var(--text-muted);line-height:1.6">
+        AERVINEX dapat membaca data dari wearable lain (Garmin, Apple Watch, Fitbit) untuk cross-validation
+        dan kelengkapan data saat AERVINEX device tidak dipakai. Semua integrasi opt-in.
+      </p>
+    </section>
+
+    <h3 class="section-title">Integrasi Tersedia</h3>
+
+    <div class="card list-card" style="margin-bottom:10px">
+      <div class="bridge-tile">
+        <div class="bridge-logo">⌚</div>
+        <div class="bridge-info">
+          <p class="list-row-title">Garmin Health API</p>
+          <p class="list-row-sub">HR, HRV, SpO₂, sleep, activities (OAuth 2.0)</p>
+        </div>
+        <span class="bridge-status off" id="garminStatus">Belum konek</span>
+      </div>
+      <button class="btn-block primary" id="btnGarmin" style="margin-top:8px">Connect Garmin</button>
+    </div>
+
+    <div class="card list-card" style="margin-bottom:10px">
+      <div class="bridge-tile">
+        <div class="bridge-logo">🍎</div>
+        <div class="bridge-info">
+          <p class="list-row-title">Apple HealthKit</p>
+          <p class="list-row-sub">Import via iOS Shortcuts atau native bridge (TBD)</p>
+        </div>
+        <span class="bridge-status todo">Native bridge</span>
+      </div>
+      <button class="btn-block ghost" id="btnApple" style="margin-top:8px">Pelajari Cara Import</button>
+    </div>
+
+    <div class="card list-card" style="margin-bottom:10px">
+      <div class="bridge-tile">
+        <div class="bridge-logo">🟢</div>
+        <div class="bridge-info">
+          <p class="list-row-title">Fitbit / Google Fit</p>
+          <p class="list-row-sub">OAuth 2.0 — heart rate &amp; activity steps</p>
+        </div>
+        <span class="bridge-status off" id="fitbitStatus">Belum konek</span>
+      </div>
+      <button class="btn-block primary" id="btnFitbit" style="margin-top:8px">Connect Fitbit</button>
+    </div>
+
+    <h3 class="section-title">Catatan</h3>
+    <section class="card aura-amber" style="padding:18px">
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6">
+        Integrasi ini saat ini bersifat <strong>scaffold</strong>: OAuth flow belum live di production.
+        Lihat <a href="/docs/external-api-integration.md" style="color:var(--accent)">dokumentasi integrasi</a>
+        untuk detail OAuth callback, scope, dan rate-limit per provider.
+      </p>
+    </section>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    function stubConnect(name) {
+      alert(`${name} OAuth belum live di build ini.\n\nDeveloper harus:\n1. Register OAuth app di portal provider\n2. Set CLIENT_ID + CLIENT_SECRET di Cloud Function env\n3. Implement callback handler\n\nLihat docs/external-api-integration.md`);
+    }
+    document.getElementById('btnGarmin').addEventListener('click', () => stubConnect('Garmin'));
+    document.getElementById('btnFitbit').addEventListener('click', () => stubConnect('Fitbit'));
+    document.getElementById('btnApple').addEventListener('click', () => {
+      alert('Apple HealthKit hanya bisa diakses dari native iOS app.\nWorkaround: gunakan iOS Shortcuts → export CSV → upload ke AERVINEX (fitur upload akan rilis di Phase 2).');
+    });
+  </script>
+</body>
+</html>

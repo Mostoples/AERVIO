@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Firmware OTA — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .ota-input { display: block; width: 100%; padding: 10px 12px; border-radius: var(--radius-md);
+      background: var(--bg); color: var(--text); border: 1px solid rgba(255,255,255,0.08); margin-top: 6px; font: inherit; }
+    body.theme-light .ota-input { border-color: rgba(0,0,0,0.08); }
+    .ota-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; }
+    .ota-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .progress-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+    .progress-fill  { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+    .ver-row { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ver-row:last-child { border-bottom: 0; }
+    body.theme-light .ver-row { border-bottom-color: rgba(0,0,0,0.06); }
+    .ver-tag { font-weight: 800; color: var(--accent); font-family: 'Inter', monospace; }
+    .ver-meta { font-size: 11px; color: var(--text-dim); }
+  </style>
+</head>
+<body class="theme-dark" data-page="firmware-ota">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div class="admin-page-title"><h1>Firmware OTA</h1><p>Upload &amp; publish ESP32 firmware versions</p></div>
+    </div>
+
+    <section class="card aura-violet" style="padding:20px">
+      <h3 style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px">Upload Versi Baru</h3>
+
+      <div class="ota-row">
+        <div>
+          <label class="ota-label">Versi (semver)</label>
+          <input class="ota-input" id="otaVersion" placeholder="1.0.4" />
+        </div>
+        <div>
+          <label class="ota-label">Channel</label>
+          <select class="ota-input" id="otaChannel">
+            <option value="stable">stable</option>
+            <option value="beta">beta</option>
+            <option value="canary">canary</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="ota-label">Firmware (.bin)</label>
+      <input class="ota-input" type="file" id="otaFile" accept=".bin" />
+
+      <label class="ota-label" style="margin-top:14px;display:block">Release Notes</label>
+      <textarea class="ota-input" id="otaNotes" rows="4" placeholder="Changelog: improved PPG SNR, fixed BLE reconnect bug..."></textarea>
+
+      <div class="progress-track"><div class="progress-fill" id="otaProgress"></div></div>
+      <p id="otaStatus" style="font-size:12px;color:var(--text-muted);margin-top:8px">Siap upload.</p>
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-block primary" id="btnUpload" style="flex:1">Upload &amp; Publish</button>
+        <button class="btn-block ghost"   id="btnNotify" style="flex:1">Notify Fleet (FCM)</button>
+      </div>
+    </section>
+
+    <h3 class="section-title">Versi Tersedia</h3>
+    <section class="card" id="versionList" style="padding:18px">
+      <p style="font-size:12px;color:var(--text-muted)">Memuat...</p>
+    </section>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/firmware-ota.js"></script>
+<script>
+  AERVINEXAuth.requireAuth();
+  const $ = (id) => document.getElementById(id);
+
+  let lastVersion = null;
+
+  async function refresh() {
+    try {
+      const list = await AervinexFirmwareOTA.listVersions(30);
+      const box = $('versionList');
+      if (!list.length) { box.innerHTML = '<p style="font-size:12px;color:var(--text-muted)">Belum ada firmware ter-publish.</p>'; return; }
+      box.innerHTML = list.map((v) => `
+        <div class="ver-row">
+          <div style="flex:1">
+            <p><span class="ver-tag">v${v.version}</span> <span class="ver-meta">· ${v.channel || 'stable'}</span></p>
+            <p class="ver-meta">size: ${v.sizeBytes ? (v.sizeBytes/1024).toFixed(1) + ' KB' : '?'} · sha256: ${(v.sha256||'').slice(0,12)}... · by ${v.releasedBy || '—'}</p>
+            <p class="ver-meta" style="white-space:pre-wrap;margin-top:6px">${(v.releaseNotes||'').slice(0,200)}</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <a class="btn-block ghost" href="${v.downloadURL}" target="_blank" style="padding:6px 10px;font-size:11px">Download</a>
+            <button class="btn-block ghost" data-del="${v.version}" style="padding:6px 10px;font-size:11px;border-color:rgba(255,92,124,.4);color:rgb(255,130,150)">Delete</button>
+          </div>
+        </div>`).join('');
+      box.querySelectorAll('[data-del]').forEach((btn) => btn.addEventListener('click', async () => {
+        const ver = btn.getAttribute('data-del');
+        if (!confirm(`Hapus firmware v${ver}? Tindakan ini permanen.`)) return;
+        try { await AervinexFirmwareOTA.deleteVersion(ver); refresh(); }
+        catch (e) { alert('Delete gagal: ' + e.message); }
+      }));
+    } catch (e) {
+      $('versionList').innerHTML = '<p style="color:rgb(255,130,150);font-size:12px">Gagal load: ' + e.message + '</p>';
+    }
+  }
+
+  $('btnUpload').addEventListener('click', async () => {
+    const file = $('otaFile').files[0];
+    const version = $('otaVersion').value.trim();
+    const channel = $('otaChannel').value;
+    const releaseNotes = $('otaNotes').value;
+    if (!file) { $('otaStatus').textContent = 'Pilih file .bin dulu.'; return; }
+    $('btnUpload').disabled = true;
+    $('otaStatus').textContent = 'Uploading...';
+    try {
+      const result = await AervinexFirmwareOTA.uploadFirmware({ file, version, channel, releaseNotes }, (pct) => {
+        $('otaProgress').style.width = pct.toFixed(1) + '%';
+        $('otaStatus').textContent = `Uploading ${pct.toFixed(0)}%`;
+      });
+      $('otaStatus').textContent = `Published v${result.version} · sha256 ${(result.sha256||'').slice(0,12)}...`;
+      lastVersion = result.version;
+      refresh();
+    } catch (e) {
+      $('otaStatus').textContent = 'Error: ' + e.message;
+    } finally {
+      $('btnUpload').disabled = false;
+    }
+  });
+
+  $('btnNotify').addEventListener('click', async () => {
+    const version = $('otaVersion').value.trim() || lastVersion;
+    const channel = $('otaChannel').value;
+    if (!version) { $('otaStatus').textContent = 'Isi versi yang akan dinotifikasi.'; return; }
+    $('otaStatus').textContent = 'Memanggil Cloud Function...';
+    const result = await AervinexFirmwareOTA.notifyFleet(version, channel);
+    $('otaStatus').textContent = result.ok
+      ? `FCM dikirim ke ${result.queued || 0} device.`
+      : `Notify dilewati: ${result.note || 'function tidak tersedia'} (versi tetap dapat dipull manual).`;
+  });
+
+  refresh();
+</script>
+</body>
+</html>

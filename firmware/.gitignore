@@ -1,0 +1,20 @@
+# AERVINEX firmware - ignored artefacts
+
+# Secrets: WiFi creds, OTA password, Firebase keys
+aervinex-sensor/secrets.h
+
+# Arduino build output
+build/
+*.bin
+*.elf
+*.map
+*.hex
+*.partitions.bin
+*.bootloader.bin
+
+# arduino-cli / IDE caches
+.cache/
+.vscode/
+.idea/
+*.tmp
+*~

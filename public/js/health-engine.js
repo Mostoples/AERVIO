@@ -1,5 +1,5 @@
 /**
- * AERVIO Health Feature Engine
+ * AERVINEX Health Feature Engine
  * Derives advanced health features from multi-sensor fusion.
  */
 window.HealthEngine = {
@@ -145,11 +145,16 @@ window.HealthEngine = {
   },
 
   // ── FULL ANALYSIS SNAPSHOT ───────────────────────────────────────────────
+  // context may include optional ML fields:
+  //   aqi, humidity, windSpeed  → for TEPRS
+  //   activityLevel, uvi        → for MCD
+  //   userProfile               → for AIRI { age, position, gender, loadBalance… }
   analyze(sensorData, context) {
     const { hr, rmssd, sdnn, spo2, skinTemp, coreTemp, eda, sympathetic,
             hydration, sweatOnset, imu } = sensorData;
-    const { age, pm25, uvi, ambientTemp, paceSecPerKm, elapsed, restHR } = context;
-    const mhr = 220 - age;
+    const { age, pm25, uvi, ambientTemp, paceSecPerKm, elapsed, restHR,
+            aqi, humidity, windSpeed, activityLevel, userProfile } = context;
+    const mhr   = 220 - age;
     const hrPct = hr / mhr;
 
     const rsi     = this.getRSI(pm25, hrPct, spo2);
@@ -168,6 +173,29 @@ window.HealthEngine = {
     const vo2max  = this.getVO2max(mhr, restHR);
     const aerobic = paceSecPerKm ? this.getAerobicEfficiency(hr, mhr, paceSecPerKm) : null;
 
-    return { rsi, css, hsi, dehydr, risk, hrvSc, stress, autonom, rdy, rec, gait, nmf, lactat, vo2max, aerobic };
+    // ── ML Proxy Assessment (runs when ml-client.js is loaded) ───────────
+    let ml = null;
+    if (typeof MLClient !== 'undefined') {
+      const envData = {
+        pm25:        pm25        ?? 15,
+        aqi:         aqi         ?? (pm25 ?? 15) * 4,
+        temperature: ambientTemp ?? 28,
+        humidity:    humidity    ?? 70,
+        windSpeed:   windSpeed   ?? 5,
+        uvi:         uvi         ?? 4,
+      };
+      const sdData = {
+        ...sensorData,
+        activityLevel: activityLevel ?? sensorData.activityLevel ?? 0,
+        nmf,
+      };
+      const profile = userProfile
+        ? { ...userProfile, age: userProfile.age ?? age }
+        : { age };
+      ml = MLClient.fullAssessment(sdData, envData, profile);
+    }
+
+    return { rsi, css, hsi, dehydr, risk, hrvSc, stress, autonom, rdy, rec,
+             gait, nmf, lactat, vo2max, aerobic, ml };
   }
 };

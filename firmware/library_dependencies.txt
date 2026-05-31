@@ -1,0 +1,14 @@
+# AERVINEX firmware - pinned Arduino libraries
+# Format:  <Library Name>@<version>
+# These names match the strings Arduino Library Manager / arduino-cli use.
+# Update only after a successful local compile.
+
+ArduinoJson@7.0.4
+SparkFun MAX3010x Pulse and Proximity Sensor Library@1.1.2
+Adafruit BME280 Library@2.2.4
+Adafruit Unified Sensor@1.1.14
+Adafruit BusIO@1.16.1
+Nova Fitness Sds dust sensors library@1.5.0
+NimBLE-Arduino@1.4.1
+OneWire@2.3.8
+DallasTemperature@3.11.0

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Devices — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="devices">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <div class="admin-page-title"><h1>Devices</h1><p>Fleet management AERVINEX Watch</p></div>
+      </div>
+      <div class="admin-header-actions">
+        <button class="btn-pill primary" id="btnOTA"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v8m0 0l3-3m-3 3l-3-3M5 20h14"/></svg><span>Push OTA</span></button>
+        <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+      </div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">⌚</div></div><div class="kpi-value">8,219</div><div class="kpi-label">Devices Online</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">📦</div></div><div class="kpi-value">v1.0.3</div><div class="kpi-label">Latest Firmware</div></div>
+      <div class="card aura-coral kpi-card"><div class="kpi-head"><div class="kpi-icon">⚠️</div></div><div class="kpi-value">42</div><div class="kpi-label">Need Calibration</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">🔋</div></div><div class="kpi-value">76%</div><div class="kpi-label">Avg Battery</div></div>
+    </section>
+
+    <div class="filter-bar">
+      <div class="filter-search"><svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="devSearch" placeholder="SN, owner, model..." /></div>
+      <select class="filter-select" id="filterModel">
+        <option value="">Semua model</option><option>AVX-W1</option><option>AVX-W1 Pro</option>
+      </select>
+      <select class="filter-select" id="filterStatus">
+        <option value="">Semua status</option><option value="ok">Active</option><option value="warn">Idle</option><option value="danger">Offline</option>
+      </select>
+    </div>
+
+    <section class="card">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Device</th><th>Owner</th><th>Firmware</th><th>Battery</th><th>Last Sync</th><th>Status</th><th></th></tr></thead>
+          <tbody id="devTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  const DEVS = [
+    { sn: '4f72-A3D8', model: 'AVX-W1', owner: 'Adia Amaranta',   fw: 'v1.0.3', batt: 78, sync: '2 mnt lalu',  status: 'ok' },
+    { sn: '2a91-B7C4', model: 'AVX-W1', owner: 'Budi Santoso',    fw: 'v1.0.3', batt: 64, sync: '12 mnt lalu', status: 'ok' },
+    { sn: '8b34-D1E9', model: 'AVX-W1', owner: 'Citra Wulandari', fw: 'v1.0.3', batt: 32, sync: '34 mnt lalu', status: 'warn' },
+    { sn: '1c08-F5A0', model: 'AVX-W1', owner: 'Eka Putri',       fw: 'v1.0.2', batt: 88, sync: '1 jam lalu',  status: 'ok' },
+    { sn: '6e22-C8B3', model: 'AVX-W1', owner: 'Fadli Rahman',    fw: 'v1.0.3', batt: 92, sync: '5 mnt lalu',  status: 'ok' },
+    { sn: '9d15-A2F7', model: 'AVX-W1', owner: 'Gita Lestari',    fw: 'v1.0.2', batt: 14, sync: '2 hari lalu', status: 'danger' },
+    { sn: '3f88-D6E1', model: 'AVX-W1', owner: 'Hendra Wijaya',   fw: 'v1.0.3', batt: 81, sync: '8 mnt lalu',  status: 'ok' },
+    { sn: '7a44-B0C8', model: 'AVX-W1', owner: 'Indah Kusuma',    fw: 'v1.0.3', batt: 56, sync: '45 mnt lalu', status: 'ok' },
+    { sn: '5c91-E3D5', model: 'AVX-W1', owner: 'Kartika Dewi',    fw: 'v1.0.3', batt: 71, sync: '18 mnt lalu', status: 'ok' },
+    { sn: '0a17-F9B2', model: 'AVX-W1 Pro', owner: 'Lukman Hadi', fw: 'v1.0.3', batt: 49, sync: '1 jam lalu',  status: 'ok' },
+  ];
+  function statusLbl(s){ return s==='ok'?'Active':s==='warn'?'Idle':'Offline'; }
+  function battColor(b){ return b<20?'rgb(255,92,124)':b<40?'rgb(255,181,71)':'rgb(74,222,128)'; }
+  function render(list){
+    document.getElementById('devTbody').innerHTML = list.map(d => `
+      <tr>
+        <td><a href="/admin/device-detail.html?sn=${d.sn}" style="text-decoration:none;color:inherit"><div class="tbl-name mono">${d.sn}</div><div class="tbl-sub">${d.model}</div></a></td>
+        <td>${d.owner}</td>
+        <td><span class="mono">${d.fw}</span></td>
+        <td><div style="display:flex;align-items:center;gap:8px"><div style="width:50px;height:6px;background:var(--bg-soft);border-radius:3px;overflow:hidden"><div style="width:${d.batt}%;height:100%;background:${battColor(d.batt)}"></div></div><span>${d.batt}%</span></div></td>
+        <td style="color:var(--text-muted)">${d.sync}</td>
+        <td><span class="tbl-status ${d.status}">${statusLbl(d.status)}</span></td>
+        <td><button class="tbl-action" onclick="location.href='/admin/device-detail.html?sn=${d.sn}'"><svg viewBox="0 0 24 24" class="ico"><path d="M9 6l6 6-6 6"/></svg></button></td>
+      </tr>`).join('');
+  }
+  function flt(){
+    const q = document.getElementById('devSearch').value.toLowerCase();
+    const m = document.getElementById('filterModel').value;
+    const s = document.getElementById('filterStatus').value;
+    let list = DEVS;
+    if (q) list = list.filter(d => d.sn.toLowerCase().includes(q) || d.owner.toLowerCase().includes(q));
+    if (m) list = list.filter(d => d.model === m);
+    if (s) list = list.filter(d => d.status === s);
+    render(list);
+  }
+  ['devSearch','filterModel','filterStatus'].forEach(id => document.getElementById(id).addEventListener('input', flt));
+  document.getElementById('filterModel').addEventListener('change', flt);
+  document.getElementById('filterStatus').addEventListener('change', flt);
+  document.getElementById('btnOTA').addEventListener('click', () => AervinexToast('OTA push v1.0.3 dijadwalkan ke 8,219 devices', 'success'));
+  render(DEVS);
+</script>
+</body>
+</html>

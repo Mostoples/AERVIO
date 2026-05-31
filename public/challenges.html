@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Community Challenges — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    .ch-shell { max-width: 720px; margin: 0 auto; padding: 18px 18px 120px; }
+    .ch-card {
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(0,229,212,0.10), rgba(15,25,35,0.95));
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 14px;
+      position: relative; overflow: hidden;
+    }
+    .ch-card.violet { background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(15,25,35,0.95)); }
+    .ch-card.coral { background: linear-gradient(135deg, rgba(255,92,124,0.10), rgba(15,25,35,0.95)); }
+    .ch-card.amber { background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(15,25,35,0.95)); }
+    .ch-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .ch-emoji {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .ch-pill {
+      font-size: 10.5px; font-weight: 700; padding: 4px 9px;
+      border-radius: 999px; letter-spacing: 0.5px;
+      background: rgba(0,229,212,0.18); color: #00e5d4;
+    }
+    .ch-pill.live { animation: pulseDot 1.6s infinite; }
+    @keyframes pulseDot { 0%,100% { opacity:1 } 50% { opacity:0.5 } }
+    .ch-title { font-size: 16px; font-weight: 700; margin: 12px 0 4px; color: #e6f1f4; }
+    .ch-sub { font-size: 12.5px; color: #9aabb2; margin: 0; line-height: 1.5; }
+    .ch-stats { display: flex; gap: 18px; margin-top: 14px; }
+    .ch-stat .v { font-size: 16px; font-weight: 800; color: #e6f1f4; }
+    .ch-stat .k { font-size: 10.5px; color: #9aabb2; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ch-progress {
+      height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px;
+      overflow: hidden; margin-top: 12px;
+    }
+    .ch-progress > div {
+      height: 100%; background: linear-gradient(90deg, #00e5d4, #a78bfa); border-radius: 999px;
+      transition: width 0.6s;
+    }
+    .ch-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .ch-btn {
+      flex: 1; padding: 10px 14px; border-radius: 12px;
+      border: none; cursor: pointer;
+      font-weight: 700; font-size: 13px;
+      transition: transform 0.15s;
+    }
+    .ch-btn.primary { background: linear-gradient(135deg, #00e5d4, #a78bfa); color: #0f1923; }
+    .ch-btn.primary:hover { transform: translateY(-1px); }
+    .ch-btn.ghost { background: transparent; color: #c8d6dc; border: 1px solid rgba(255,255,255,0.12); }
+    .ch-btn.joined { background: rgba(0,229,212,0.16); color: #00e5d4; border: 1px solid rgba(0,229,212,0.3); }
+    .ch-meta { display: flex; gap: 14px; font-size: 11px; color: #7d8d94; margin-top: 8px; }
+  </style>
+</head>
+<body class="theme-dark" data-page="challenges">
+  <div class="app-shell ch-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Challenges</h2>
+        <p>Komunitas pelari &amp; warga urban</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <p style="font-size:12.5px;color:#9aabb2;margin:6px 0 18px">
+      Ikuti tantangan komunitas, dapatkan badge eksklusif, dan tetap termotivasi bersama ribuan pelari di seluruh Indonesia.
+    </p>
+
+    <section id="challengeList"></section>
+
+    <p style="text-align:center;font-size:11px;color:#7d8d94;margin-top:18px">
+      Reward berupa badge digital + diskon merchandise. Tidak ada hadiah uang tunai.
+    </p>
+
+    <div class="spacer-bottom"></div>
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      // ── Dummy challenges (akan diganti Firestore-driven nanti) ──
+      const CHALLENGES = [
+        {
+          id: 'weekly-50k',
+          emoji: '🏃‍♂️',
+          tone: '',
+          title: 'Weekly 50K Distance',
+          sub: 'Tempuh total 50 km running dalam 7 hari. Cocok untuk pelari intermediate.',
+          metric: 'distance',
+          goal: 50, unit: 'km',
+          participants: 2438,
+          deadline: 'Minggu depan',
+          reward: 'Badge "Distance Warrior" + diskon 15% Aervinex Strap',
+          progress: 12.4,
+        },
+        {
+          id: 'streak-30d',
+          emoji: '🔥',
+          tone: 'amber',
+          title: '30-Day Login Streak',
+          sub: 'Buka dashboard tiap hari selama 30 hari berturut-turut. Bangun konsistensi monitoring kesehatan.',
+          metric: 'streak',
+          goal: 30, unit: 'hari',
+          participants: 5712,
+          deadline: '30 hari berjalan',
+          reward: 'Badge "Iron Streak" + akses encyclopedia premium 1 bulan',
+          progress: 6,
+        },
+        {
+          id: 'clean-air-runs',
+          emoji: '🌿',
+          tone: 'violet',
+          title: 'Clean Air Runner',
+          sub: 'Selesaikan 10 sesi running saat AQI <50 (udara bersih). Optimasi timing aktivitas urban.',
+          metric: 'sessions_low_aqi',
+          goal: 10, unit: 'sesi',
+          participants: 1124,
+          deadline: '14 hari',
+          reward: 'Badge "Smart Timer" + voucher running shoes 100rb',
+          progress: 3,
+        },
+      ];
+
+      function fmtParticipants(n) {
+        if (n >= 1000) return (n/1000).toFixed(1).replace('.0','') + 'k';
+        return String(n);
+      }
+
+      const joinedSet = new Set();
+      try {
+        JSON.parse(localStorage.getItem('aervinex-challenges-joined') || '[]').forEach(id => joinedSet.add(id));
+      } catch {}
+
+      function persistJoined() {
+        try { localStorage.setItem('aervinex-challenges-joined', JSON.stringify([...joinedSet])); } catch {}
+      }
+
+      function render() {
+        const host = document.getElementById('challengeList');
+        host.innerHTML = CHALLENGES.map(c => {
+          const joined = joinedSet.has(c.id);
+          const pct = Math.min(100, Math.round((c.progress / c.goal) * 100));
+          return `
+            <article class="ch-card ${c.tone}">
+              <div class="ch-head">
+                <div class="ch-emoji">${c.emoji}</div>
+                <span class="ch-pill live">LIVE</span>
+              </div>
+              <h3 class="ch-title">${c.title}</h3>
+              <p class="ch-sub">${c.sub}</p>
+              <div class="ch-stats">
+                <div class="ch-stat"><div class="v">${c.goal} ${c.unit}</div><div class="k">Target</div></div>
+                <div class="ch-stat"><div class="v">${fmtParticipants(c.participants)}</div><div class="k">Peserta</div></div>
+                <div class="ch-stat"><div class="v">${c.deadline}</div><div class="k">Berakhir</div></div>
+              </div>
+              ${joined ? `
+                <div class="ch-progress"><div style="width:${pct}%"></div></div>
+                <div class="ch-meta">
+                  <span>Progress Anda: ${c.progress} / ${c.goal} ${c.unit} (${pct}%)</span>
+                </div>` : ''}
+              <p style="font-size:11.5px;color:#9aabb2;margin:10px 0 0">
+                <strong style="color:#e6f1f4">Reward:</strong> ${c.reward}
+              </p>
+              <div class="ch-actions">
+                ${joined
+                  ? `<button class="ch-btn joined" data-action="leave" data-id="${c.id}">✓ Sudah Join</button>`
+                  : `<button class="ch-btn primary" data-action="join" data-id="${c.id}">Join Challenge</button>`}
+                <button class="ch-btn ghost" data-action="details" data-id="${c.id}">Detail</button>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      async function writeJoin(id, joining) {
+        const u = window.auth?.currentUser;
+        if (!u || !window.db) return;
+        const ref = window.db.collection('challenges').doc(id).collection('participants').doc(u.uid);
+        try {
+          if (joining) {
+            await ref.set({
+              uid: u.uid,
+              name: u.displayName || 'Pelari',
+              joinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+              progress: 0,
+            }, { merge: true });
+          } else {
+            await ref.delete();
+          }
+        } catch (e) { console.warn('[challenges] write failed', e); }
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const id = btn.dataset.id;
+        const action = btn.dataset.action;
+        if (action === 'join') {
+          joinedSet.add(id); persistJoined(); writeJoin(id, true); render();
+        } else if (action === 'leave') {
+          if (confirm('Keluar dari challenge ini?')) {
+            joinedSet.delete(id); persistJoined(); writeJoin(id, false); render();
+          }
+        } else if (action === 'details') {
+          alert('Halaman detail challenge akan tersedia di versi berikutnya.');
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

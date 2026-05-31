@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Running — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <style>
+    .run-map-card { padding: 6px; position: relative; }
+    .run-map { width: 100%; height: 240px; border-radius: 18px; overflow: hidden; z-index: 0; }
+    .run-map-overlay {
+      position: absolute; top: 14px; left: 14px;
+      display: flex; gap: 8px; pointer-events: none; z-index: 1;
+    }
+    .map-chip {
+      padding: 6px 10px; border-radius: var(--radius-pill);
+      background: rgba(15, 25, 35, 0.85); color: #fff;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .map-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: rgb(74, 222, 128); box-shadow: 0 0 6px rgb(74, 222, 128); }
+    .map-chip.warn .dot { background: rgb(255, 181, 71); box-shadow: 0 0 6px rgb(255, 181, 71); }
+    .map-chip.danger .dot { background: rgb(255, 92, 124); box-shadow: 0 0 6px rgb(255, 92, 124); }
+    body.theme-light .run-map { filter: none; }
+    body.theme-dark  .run-map { filter: saturate(0.85) brightness(0.85); }
+  </style>
+</head>
+<body class="theme-dark" data-page="running">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Running Mode</h2>
+        <p>EPO + RPAE active</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card aura-cyan run-map-card">
+      <div id="runMap" class="run-map"></div>
+      <div class="run-map-overlay">
+        <span class="map-chip"><span class="dot"></span> Live GPS</span>
+        <span class="map-chip" id="airChip"><span class="dot"></span> PM2.5 <span id="airChipVal">38</span></span>
+      </div>
+    </section>
+
+    <section class="card hero-card aura-amber" style="flex-direction:column;align-items:stretch;text-align:center">
+      <p class="hero-label">Active Session</p>
+      <div class="hero-value" style="justify-content:center">
+        <span class="hero-num" id="runDistance">0.00</span>
+        <span class="hero-unit">km</span>
+      </div>
+      <p class="hero-desc"><span id="runTime">00:00:00</span> · Pace <span id="runPace">--:--</span> /km</p>
+    </section>
+
+    <section class="grid-2">
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=hr" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <span class="metric-trend up">Z3</span>
+        </div>
+        <p class="metric-label">Heart Rate</p>
+        <div class="metric-value"><span id="runHR">142</span><span class="metric-unit">bpm</span></div>
+      </a>
+      <a class="card metric-card aura-blue" href="/metric-detail.html?id=heat" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
+          <span class="metric-trend">EPO</span>
+        </div>
+        <p class="metric-label">Heat Index</p>
+        <div class="metric-value"><span>31</span><span class="metric-unit">°C</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:62%"></div></div>
+      </a>
+      <a class="card metric-card aura-violet" href="/metric-detail.html?id=hr" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+          <span class="metric-trend">POWER</span>
+        </div>
+        <p class="metric-label">Output</p>
+        <div class="metric-value"><span>245</span><span class="metric-unit">W</span></div>
+      </a>
+      <a class="card metric-card aura-green" href="/risk-detail.html?id=heatstroke" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg></div>
+          <span class="metric-trend">SAFE</span>
+        </div>
+        <p class="metric-label">AIRI Injury</p>
+        <div class="metric-value"><span>12</span><span class="metric-unit">%</span></div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:12%"></div></div>
+      </a>
+    </section>
+
+    <section class="card aura-cyan">
+      <h3 class="section-title">RPAE Zone Timer</h3>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span style="color:var(--text-muted)">Z1 Recovery</span>
+          <span>2:14</span>
+        </div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:18%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span style="color:var(--text-muted)">Z2 Endurance</span>
+          <span>6:32</span>
+        </div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:52%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span style="color:var(--text-muted)">Z3 Tempo</span>
+          <span>3:48</span>
+        </div>
+        <div class="progress-bar small"><div class="progress-fill" style="width:30%"></div></div>
+      </div>
+    </section>
+
+    <section class="action-grid" style="grid-template-columns:1fr 1fr">
+      <button class="btn-pill" id="btn-pause"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg><span>Pause</span></button>
+      <button class="btn-pill primary" id="btn-stop"><svg viewBox="0 0 24 24" class="ico ico-fill"><rect x="6" y="6" width="12" height="12"/></svg><span>Stop & Save</span></button>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ml-client.js"></script>
+  <script src="js/tour.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(() => {
+      setTimeout(() => AervinexTour.startRunningTour(), 1500);
+    });
+
+    // ── Smart Route Map (Leaflet) + REAL GPS tracking when available + voice cues ──
+    (function () {
+      const FALLBACK = [-6.2088, 106.8456];
+      let map, polyline, currentMarker, route = [], totalDist = 0;
+      let usingRealGPS = false, watchId = null;
+      const sessionId = 's_' + Date.now();
+
+      // Haversine distance (meters)
+      function haversine(a, b) {
+        const R = 6371e3, toRad = (d) => d * Math.PI / 180;
+        const dLat = toRad(b[0] - a[0]), dLng = toRad(b[1] - a[1]);
+        const x = Math.sin(dLat/2)**2 + Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLng/2)**2;
+        return 2 * R * Math.asin(Math.sqrt(x));
+      }
+
+      function initMap(lat, lng) {
+        map = L.map('runMap', { zoomControl: false, attributionControl: false, dragging: false }).setView([lat, lng], 17);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+        route = [[lat, lng]];
+        L.circleMarker(route[0], { radius: 6, color: '#fff', weight: 2, fillColor: '#00e5d4', fillOpacity: 1 }).addTo(map);
+        polyline      = L.polyline(route, { color: '#00e5d4', weight: 4, opacity: 0.9 }).addTo(map);
+        currentMarker = L.circleMarker(route[0], { radius: 8, color: '#fff', weight: 2, fillColor: '#ff5470', fillOpacity: 1 }).addTo(map);
+
+        // Try REAL GPS tracking first
+        if (navigator.geolocation && navigator.geolocation.watchPosition) {
+          try {
+            watchId = navigator.geolocation.watchPosition(
+              (pos) => {
+                usingRealGPS = true;
+                const next = [pos.coords.latitude, pos.coords.longitude];
+                addPoint(next, true);
+              },
+              () => { /* permission denied — keep simulated */ },
+              { enableHighAccuracy: true, maximumAge: 5000, timeout: 8000 }
+            );
+          } catch (_) {}
+        }
+
+        // Simulated walk (only kicks in if no real GPS update received)
+        setInterval(() => {
+          if (usingRealGPS) return;
+          const last = route[route.length - 1];
+          const dLat = (Math.random() - 0.4) * 0.00018;
+          const dLng = (Math.random() - 0.35) * 0.00022;
+          addPoint([last[0] + dLat, last[1] + dLng], false);
+        }, 1500);
+
+        // Voice + badge milestones — every 1km
+        let lastKmAnnounced = 0;
+        setInterval(() => {
+          const km = totalDist / 1000;
+          if (Math.floor(km) > lastKmAnnounced && km - lastKmAnnounced >= 1) {
+            lastKmAnnounced = Math.floor(km);
+            if (window.AervinexVoice) AervinexVoice.speak(`${lastKmAnnounced} kilometer tercapai. Pertahankan pace.`);
+            if (window.AervinexHaptic) AervinexHaptic.success();
+            if (lastKmAnnounced === 5 && window.AervinexBadges) AervinexBadges.award('distance_5k');
+            if (lastKmAnnounced === 10 && window.AervinexBadges) AervinexBadges.award('distance_10k');
+          }
+        }, 1500);
+
+        // Air quality overlay + voice warning
+        const chip = document.getElementById('airChip');
+        const chipVal = document.getElementById('airChipVal');
+        let pm = 38, lastPmAlert = 0;
+        setInterval(() => {
+          pm = Math.max(8, Math.min(180, pm + (Math.random() - 0.5) * 6));
+          chipVal.textContent = Math.round(pm);
+          chip.classList.toggle('warn',   pm > 35 && pm <= 55);
+          chip.classList.toggle('danger', pm > 55);
+          // Voice warning untuk PM2.5 spike (max 1x per 60 detik)
+          const now = Date.now();
+          if (pm > 100 && now - lastPmAlert > 60000) {
+            lastPmAlert = now;
+            if (window.AervinexVoice) AervinexVoice.speak('Peringatan. Kualitas udara buruk. Pertimbangkan pindah area atau pakai masker.');
+            if (window.AervinexHaptic) AervinexHaptic.heavy();
+          }
+        }, 2200);
+      }
+
+      function addPoint(next, real) {
+        if (route.length) totalDist += haversine(route[route.length - 1], next);
+        route.push(next);
+        if (route.length > 200) route.shift();
+        polyline.setLatLngs(route);
+        currentMarker.setLatLng(next);
+        map.panTo(next, { animate: true, duration: 1.2 });
+        // Save to Firestore every 10 points
+        if (real && route.length % 10 === 0 && window.AERVINEXAuth?.currentUser && window.db) {
+          db.collection('sessions').doc(sessionId).set({
+            uid: AERVINEXAuth.currentUser.uid,
+            type: 'running',
+            ts: firebase.firestore.FieldValue.serverTimestamp(),
+            distance: totalDist,
+            pointsCount: route.length,
+            lastLat: next[0], lastLng: next[1],
+          }, { merge: true }).catch(() => {});
+        }
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => initMap(pos.coords.latitude, pos.coords.longitude),
+          ()    => initMap(FALLBACK[0], FALLBACK[1]),
+          { timeout: 4000, maximumAge: 60000 }
+        );
+      } else {
+        initMap(FALLBACK[0], FALLBACK[1]);
+      }
+
+      // Voice on session start
+      setTimeout(() => {
+        if (window.AervinexVoice) AervinexVoice.speak('Sesi running dimulai. GPS tracking aktif. Selamat berlari.');
+      }, 1200);
+
+      // Cleanup on unload
+      window.addEventListener('beforeunload', () => {
+        if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId);
+      });
+    })();
+
+    // Demo: tick timer + distance + ML-driven AIRI
+    (function () {
+      const dEl = document.getElementById('runDistance');
+      const tEl = document.getElementById('runTime');
+      const pEl = document.getElementById('runPace');
+      const hEl = document.getElementById('runHR');
+      let start = Date.now();
+      let dist = 0;
+      // Simulated user profile for AIRI prediction
+      const profile = { age: 25, gender: 1, weight: 65, height: 170, fitnessLevel: 70, restingHR: 60 };
+      setInterval(() => {
+        const sec = Math.floor((Date.now() - start) / 1000);
+        const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+        const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        tEl.textContent = `${h}:${m}:${s}`;
+        dist += 0.0035 + Math.random() * 0.002;
+        dEl.textContent = dist.toFixed(2);
+        let paceSecPerKm = 360;
+        if (dist > 0.05) {
+          paceSecPerKm = sec / dist;
+          const pm = Math.floor(paceSecPerKm / 60);
+          const ps = String(Math.floor(paceSecPerKm % 60)).padStart(2, '0');
+          pEl.textContent = `${pm}:${ps}`;
+        }
+        const hr = 138 + Math.round(Math.random() * 10 - 5);
+        hEl.textContent = hr;
+
+        // ── ML-driven AIRI (Athlete Injury Risk Index) ──
+        if (window.MLClient && window.Utils) {
+          const durHr = sec / 3600;
+          const fatigue = Math.min(100, Math.round((hr - 100) * 1.2 + durHr * 25));
+          const airi = MLClient.predictInjuryRisk({
+            age: profile.age, heightCm: profile.height, weightKg: profile.weight,
+            trainingIntensity: Math.min(100, (hr - 80) * 1.5),
+            trainingHoursPW: 5 + durHr,
+            recoveryDaysPW: 2,
+            fatigueScore: fatigue,
+            performanceScore: 70,
+            loadBalance: 80,
+          });
+          if (airi) {
+            const riskPct = Math.round(airi.risk_probability * 100);
+            const card = document.querySelector('.aura-green.metric-card');
+            const numEl = card?.querySelector('.metric-value span');
+            const barEl = card?.querySelector('.progress-fill');
+            const trendEl = card?.querySelector('.metric-trend');
+            if (numEl)  numEl.textContent = riskPct;
+            if (barEl)  barEl.style.width = riskPct + '%';
+            if (trendEl) {
+              trendEl.textContent = airi.risk_level;
+              trendEl.style.color = airi.risk_level === 'HIGH' ? 'rgb(255,92,124)' : airi.risk_level === 'MEDIUM' ? 'rgb(255,181,71)' : 'rgb(74,222,128)';
+            }
+          }
+        }
+      }, 1000);
+    })();
+
+    document.getElementById('btn-stop').addEventListener('click', () => {
+      AervinexToast('Sesi disimpan ke history', 'success');
+      setTimeout(() => location.href = '/dashboard.html', 800);
+    });
+    document.getElementById('btn-pause').addEventListener('click', () => {
+      AervinexToast('Sesi di-pause', 'warn');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Subscription — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    .sub-shell { max-width: 720px; margin: 0 auto; padding: 18px 18px 120px; }
+    .plan-card {
+      padding: 22px 20px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(15,25,35,0.85), rgba(15,25,35,1));
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .plan-card.active {
+      border-color: rgba(0,229,212,0.4);
+      box-shadow: 0 0 32px rgba(0,229,212,0.18);
+    }
+    .plan-badge {
+      position: absolute; top: -10px; right: 16px;
+      padding: 4px 10px; border-radius: 999px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; font-size: 10.5px; font-weight: 800; letter-spacing: 0.5px;
+    }
+    .plan-name { font-size: 13px; letter-spacing: 2.5px; font-weight: 800; color: #9aabb2; text-transform: uppercase; }
+    .plan-price { font-size: 28px; font-weight: 800; margin-top: 6px; }
+    .plan-price small { font-size: 13px; font-weight: 500; color: #9aabb2; }
+    .plan-feats { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 7px; }
+    .plan-feats li { font-size: 13px; color: #c8d6dc; display:flex; gap:8px; }
+    .plan-feats li::before { content: '✓'; color: #00e5d4; font-weight: 700; }
+    .plan-feats li.muted { color: #6e7d83; }
+    .plan-feats li.muted::before { content: '·'; color: #4d585d; }
+    .plan-cta {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 100%; padding: 12px 16px; border-radius: 12px;
+      font-weight: 700; font-size: 14px; margin-top: 16px;
+      cursor: pointer; border: none;
+    }
+    .plan-cta.primary { background: linear-gradient(135deg, #00e5d4, #a78bfa); color: #0f1923; }
+    .plan-cta.ghost { background: transparent; color: #c8d6dc; border: 1px solid rgba(255,255,255,0.12); }
+    .plan-cta.danger { background: transparent; color: rgb(255,130,150); border: 1px solid rgba(255,92,124,0.4); }
+    .status-row {
+      display: flex; align-items: center; gap: 10px; margin-top: 8px;
+      font-size: 12px; color: #9aabb2;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #00e5d4; box-shadow: 0 0 10px #00e5d4; }
+    .status-dot.warn { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+    .status-dot.muted { background: #4d585d; box-shadow: none; }
+    .billing-card {
+      padding: 16px; border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-top: 16px;
+    }
+    .billing-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+    .billing-row .k { color: #9aabb2; }
+    .billing-row .v { color: #e6f1f4; font-weight: 600; }
+    .pm-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pm-chip {
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 11.5px; color: #c8d6dc;
+    }
+  </style>
+</head>
+<body class="theme-dark" data-page="subscription">
+  <div class="app-shell sub-shell">
+
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Langganan</h2>
+        <p>Kelola plan AERVINEX Anda</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <!-- Current Plan Card -->
+    <section class="plan-card active" id="currentPlanCard">
+      <div class="plan-badge">PLAN AKTIF</div>
+      <div class="plan-name" id="currentPlanName">FREE</div>
+      <div class="plan-price" id="currentPlanPrice">Rp0 <small>/selamanya</small></div>
+      <div class="status-row">
+        <span class="status-dot muted" id="currentStatusDot"></span>
+        <span id="currentStatusText">Tidak ada langganan aktif</span>
+      </div>
+      <div class="billing-card" id="billingCard" style="display:none">
+        <div class="billing-row"><span class="k">Status</span><span class="v" id="billStatus">—</span></div>
+        <div class="billing-row"><span class="k">Berlaku sampai</span><span class="v" id="billExpiry">—</span></div>
+        <div class="billing-row"><span class="k">Auto-renewal</span><span class="v" id="billAuto">—</span></div>
+      </div>
+    </section>
+
+    <h3 style="margin:24px 0 10px;font-size:13px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase">Pilih Plan</h3>
+
+    <!-- Free Plan -->
+    <section class="plan-card" data-plan="free">
+      <div class="plan-name">FREE</div>
+      <div class="plan-price">Rp0 <small>/selamanya</small></div>
+      <ul class="plan-feats">
+        <li>Monitoring HR, SpO₂, langkah</li>
+        <li>5 risk score harian</li>
+        <li>Alert PM2.5 &amp; heat dasar</li>
+        <li>History 30 hari</li>
+        <li class="muted">35 risk score lengkap</li>
+        <li class="muted">EPO running adaptive</li>
+      </ul>
+      <button class="plan-cta ghost" data-action="select-free">Tetap di Free</button>
+    </section>
+
+    <!-- Pro Plan -->
+    <section class="plan-card" data-plan="pro">
+      <div class="plan-name">PRO <span style="color:#00e5d4">⚡</span></div>
+      <div class="plan-price"><span data-pricing-pro>Rp49.000</span> <small>/bulan</small></div>
+      <ul class="plan-feats">
+        <li>Semua fitur Free</li>
+        <li>35 risk score (semua kondisi)</li>
+        <li>EPO + RPAE Running Engine</li>
+        <li>History 1 tahun + insight pattern</li>
+        <li>XAI feature attribution lengkap</li>
+        <li>Priority customer support</li>
+      </ul>
+      <button class="plan-cta primary" data-action="upgrade" data-plan-id="pro" data-pricing-track="click_upgrade_pro">Mulai 7 Hari Gratis</button>
+      <p style="font-size:11px;color:#7d8d94;margin-top:8px;text-align:center">Tidak ada kartu kredit untuk trial · Auto-renew Rp<span data-pricing-pro></span> setelah 7 hari</p>
+    </section>
+
+    <!-- Family Plan -->
+    <section class="plan-card" data-plan="family">
+      <div class="plan-name">FAMILY / TEAM</div>
+      <div class="plan-price"><span data-pricing-family>Rp149.000</span> <small>/bulan · 6 akun</small></div>
+      <ul class="plan-feats">
+        <li>Semua fitur Pro × 6 akun</li>
+        <li>Family dashboard</li>
+        <li>Alert emergency cross-account</li>
+        <li>Team training plan &amp; leaderboard</li>
+        <li>Admin &amp; permission control</li>
+      </ul>
+      <button class="plan-cta ghost" data-action="upgrade" data-plan-id="family" data-pricing-track="click_upgrade_family">Pilih Family</button>
+    </section>
+
+    <!-- Payment Methods info -->
+    <section class="billing-card">
+      <p style="font-size:12px;color:#9aabb2;margin:0 0 8px">Metode pembayaran yang didukung (via Midtrans)</p>
+      <div class="pm-list">
+        <span class="pm-chip">QRIS</span>
+        <span class="pm-chip">GoPay</span>
+        <span class="pm-chip">OVO</span>
+        <span class="pm-chip">Dana</span>
+        <span class="pm-chip">ShopeePay</span>
+        <span class="pm-chip">Kartu Kredit</span>
+        <span class="pm-chip">Transfer Bank</span>
+      </div>
+    </section>
+
+    <!-- Cancel zone -->
+    <section class="plan-card" id="cancelZone" style="display:none;border-color:rgba(255,92,124,0.2)">
+      <h3 style="font-size:14px;margin:0 0 6px;color:#e6f1f4">Batal langganan?</h3>
+      <p style="font-size:12.5px;color:#9aabb2;margin:0 0 12px">
+        Anda akan tetap dapat akses Pro/Family sampai akhir periode billing.
+        Setelah itu otomatis turun ke Free, data Anda aman.
+      </p>
+      <button class="plan-cta danger" data-action="cancel">Batalkan Langganan</button>
+    </section>
+
+    <p style="text-align:center;font-size:11px;color:#7d8d94;margin-top:20px">
+      Powered by <strong>Midtrans</strong> · Pembayaran terenkripsi PCI-DSS Level 1
+    </p>
+
+    <div class="spacer-bottom"></div>
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab"><svg viewBox="0 0 24 24" class="ico ico-fill"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item active"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <!-- Firebase + Midtrans Snap -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-PLACEHOLDER"></script>
+  <script src="/js/pricing-ab.js" defer></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const PLAN_LABELS = {
+        free: { name: 'FREE', price: 'Rp0 /selamanya' },
+        pro: { name: 'PRO', price: () => 'Rp' + (window.AervinexPricingAB?.price().pro || 49000).toLocaleString('id-ID') + ' /bulan' },
+        family: { name: 'FAMILY', price: () => 'Rp' + (window.AervinexPricingAB?.price().family || 149000).toLocaleString('id-ID') + ' /bulan' },
+      };
+
+      function fmtDate(d) {
+        if (!d) return '—';
+        try {
+          const dt = d.toDate ? d.toDate() : new Date(d);
+          return dt.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+        } catch { return '—'; }
+      }
+
+      function renderCurrent(sub) {
+        const plan = sub?.plan || 'free';
+        const label = PLAN_LABELS[plan];
+        document.getElementById('currentPlanName').textContent = label.name;
+        document.getElementById('currentPlanPrice').innerHTML = typeof label.price === 'function' ? label.price() : label.price;
+        const statusText = document.getElementById('currentStatusText');
+        const dot = document.getElementById('currentStatusDot');
+        const billCard = document.getElementById('billingCard');
+
+        if (plan === 'free') {
+          statusText.textContent = 'Tidak ada langganan aktif';
+          dot.className = 'status-dot muted';
+          billCard.style.display = 'none';
+          document.getElementById('cancelZone').style.display = 'none';
+        } else {
+          const isTrial = sub.trial_until && new Date(sub.trial_until.toDate ? sub.trial_until.toDate() : sub.trial_until) > new Date();
+          const isActive = sub.status === 'active' || sub.status === 'settlement' || sub.status === 'capture' || isTrial;
+          statusText.textContent = isTrial ? `Free trial — sampai ${fmtDate(sub.trial_until)}` :
+                                   isActive ? `Aktif — berakhir ${fmtDate(sub.expiry)}` :
+                                   `${sub.status || 'tidak aktif'}`;
+          dot.className = 'status-dot' + (isActive ? '' : ' warn');
+          billCard.style.display = '';
+          document.getElementById('billStatus').textContent = isTrial ? 'Trial' : (sub.status || 'pending');
+          document.getElementById('billExpiry').textContent = fmtDate(isTrial ? sub.trial_until : sub.expiry);
+          document.getElementById('billAuto').textContent = sub.auto_renew === false ? 'Off' : 'On';
+          document.getElementById('cancelZone').style.display = '';
+        }
+      }
+
+      async function loadSub() {
+        const u = auth.currentUser;
+        if (!u) { renderCurrent(null); return; }
+        try {
+          const doc = await db.collection('subscriptions').doc(u.uid).get();
+          renderCurrent(doc.exists ? doc.data() : null);
+        } catch (e) {
+          console.warn('[sub] load failed', e);
+          renderCurrent(null);
+        }
+      }
+
+      // Cloud Function endpoint (placeholder — replace once deployed)
+      const FN_REGION = 'asia-southeast2';
+      const FN_PROJECT = 'aervinex';
+      const FN_CREATE_URL = `https://${FN_REGION}-${FN_PROJECT}.cloudfunctions.net/createSubscription`;
+      const FN_CANCEL_URL = `https://${FN_REGION}-${FN_PROJECT}.cloudfunctions.net/cancelSubscription`;
+
+      async function upgrade(planId) {
+        const u = auth.currentUser;
+        if (!u) { location.href = '/login.html?next=/subscription.html'; return; }
+        const btn = document.querySelector(`[data-action="upgrade"][data-plan-id="${planId}"]`);
+        if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
+        try {
+          const token = await u.getIdToken();
+          const res = await fetch(FN_CREATE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ plan: planId, variant: window.AervinexPricingAB?.variant() }),
+          });
+          const data = await res.json();
+          if (!data.snapToken) throw new Error(data.error || 'No token');
+          if (window.snap) {
+            window.snap.pay(data.snapToken, {
+              onSuccess: () => { window.AervinexPricingAB?.track('payment_success', { plan: planId }); loadSub(); },
+              onPending: () => { window.AervinexPricingAB?.track('payment_pending', { plan: planId }); loadSub(); },
+              onError: (e) => { console.warn('Snap error', e); alert('Pembayaran gagal'); },
+              onClose: () => {},
+            });
+          } else {
+            window.open(data.redirectUrl || '#', '_blank');
+          }
+        } catch (e) {
+          console.warn('[upgrade] failed', e);
+          alert('Gagal memulai pembayaran. Pastikan Cloud Function sudah deploy.');
+        } finally {
+          if (btn) { btn.disabled = false; }
+          // refresh label
+          setTimeout(loadSub, 1500);
+        }
+      }
+
+      async function cancelSub() {
+        if (!confirm('Batalkan langganan? Akses Pro tetap aktif sampai akhir periode.')) return;
+        const u = auth.currentUser;
+        if (!u) return;
+        try {
+          const token = await u.getIdToken();
+          await fetch(FN_CANCEL_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          });
+          alert('Langganan dibatalkan. Akan tetap aktif sampai akhir periode billing.');
+          loadSub();
+        } catch (e) { console.warn(e); }
+      }
+
+      document.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]')?.dataset.action;
+        if (!action) return;
+        if (action === 'upgrade') {
+          const planId = e.target.closest('[data-plan-id]')?.dataset.planId;
+          if (planId) upgrade(planId);
+        } else if (action === 'cancel') {
+          cancelSub();
+        } else if (action === 'select-free') {
+          location.href = '/dashboard.html';
+        }
+      });
+
+      auth.onAuthStateChanged((u) => {
+        if (u) loadSub();
+        else renderCurrent(null);
+      });
+    })();
+  </script>
+</body>
+</html>

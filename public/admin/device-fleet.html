@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Device Fleet — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .fleet-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+    .fleet-table th { text-align: left; padding: 10px 8px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; font-size: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08); }
+    body.theme-light .fleet-table th { border-bottom-color: rgba(0,0,0,0.06); }
+    .fleet-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); vertical-align: middle; }
+    body.theme-light .fleet-table td { border-bottom-color: rgba(0,0,0,0.04); }
+    .batt-pill { display:inline-block; padding:3px 8px; border-radius: var(--radius-pill); font-weight:700; font-size:11px; }
+    .batt-pill.ok    { background: rgba(74,222,128,0.15); color: rgb(74,222,128); }
+    .batt-pill.warn  { background: rgba(255,181,71,0.15); color: rgb(255,181,71); }
+    .batt-pill.crit  { background: rgba(255,92,124,0.18); color: rgb(255,130,150); }
+    .filter-bar { display:flex; gap:8px; margin: 12px 0; }
+    .filter-bar select, .filter-bar input { padding: 8px 10px; border-radius: var(--radius-md); background: var(--bg); color: var(--text); border: 1px solid rgba(255,255,255,0.08); font:inherit; font-size:12px; }
+  </style>
+</head>
+<body class="theme-dark" data-page="device-fleet">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div class="admin-page-title"><h1>Device Fleet</h1><p>Status semua paired AERVINEX devices</p></div>
+      <div>
+        <span style="font-size:12px;color:var(--text-muted)">Total: <strong id="totalCount" style="color:var(--text)">0</strong></span>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select id="sortMode">
+        <option value="battery_asc">Sort: Low battery first</option>
+        <option value="last_seen_desc">Sort: Recently active</option>
+        <option value="firmware_asc">Sort: Firmware version</option>
+      </select>
+      <input id="searchBox" placeholder="Cari deviceId / firmware..." style="flex:1" />
+    </div>
+
+    <section class="card" style="padding:8px">
+      <div style="overflow-x:auto">
+        <table class="fleet-table">
+          <thead>
+            <tr>
+              <th>Device ID</th>
+              <th>Owner UID</th>
+              <th>Battery</th>
+              <th>Firmware</th>
+              <th>Last Seen</th>
+              <th>Paired</th>
+            </tr>
+          </thead>
+          <tbody id="fleetBody">
+            <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.6">
+      Battery low alert: &lt; 20% → kritis · 20-40% → warning · &gt; 40% → ok.
+      Last seen &gt; 48 jam → device kemungkinan offline.
+    </p>
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+  AERVINEXAuth.requireAuth();
+  let devices = [];
+
+  function battClass(pct) {
+    if (pct == null) return '';
+    if (pct < 20) return 'crit';
+    if (pct < 40) return 'warn';
+    return 'ok';
+  }
+  function fmtTime(ts) {
+    if (!ts) return '—';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    const diff = Date.now() - d.getTime();
+    if (diff < 60_000) return 'baru saja';
+    if (diff < 3_600_000) return Math.floor(diff/60_000) + ' menit lalu';
+    if (diff < 86_400_000) return Math.floor(diff/3_600_000) + ' jam lalu';
+    return Math.floor(diff/86_400_000) + ' hari lalu';
+  }
+
+  function render() {
+    const mode = document.getElementById('sortMode').value;
+    const term = document.getElementById('searchBox').value.toLowerCase();
+    let list = devices.filter((d) =>
+      !term ||
+      (d.deviceId || '').toLowerCase().includes(term) ||
+      (d.firmware_version || '').toLowerCase().includes(term)
+    );
+    if (mode === 'battery_asc')      list.sort((a,b) => (a.battery ?? 999) - (b.battery ?? 999));
+    if (mode === 'last_seen_desc')   list.sort((a,b) => (b.last_seen?.toMillis?.() || 0) - (a.last_seen?.toMillis?.() || 0));
+    if (mode === 'firmware_asc')     list.sort((a,b) => (a.firmware_version || '').localeCompare(b.firmware_version || ''));
+
+    const body = document.getElementById('fleetBody');
+    if (!list.length) { body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Tidak ada device.</td></tr>'; return; }
+
+    body.innerHTML = list.map((d) => `
+      <tr>
+        <td>${d.deviceId || d.id || '—'}</td>
+        <td style="font-family:monospace;font-size:11px;color:var(--text-muted)">${(d.uid || '').slice(0,12)}…</td>
+        <td><span class="batt-pill ${battClass(d.battery)}">${d.battery != null ? d.battery + '%' : '—'}</span></td>
+        <td>${d.firmware_version || '—'}</td>
+        <td>${fmtTime(d.last_seen)}</td>
+        <td>${fmtTime(d.pairedAt)}</td>
+      </tr>
+    `).join('');
+    document.getElementById('totalCount').textContent = list.length;
+  }
+
+  async function load() {
+    try {
+      const snap = await db.collection('paired_devices').limit(500).get();
+      devices = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      render();
+    } catch (e) {
+      document.getElementById('fleetBody').innerHTML =
+        `<tr><td colspan="6" style="color:rgb(255,130,150);padding:24px;text-align:center">Load error: ${e.message}</td></tr>`;
+    }
+  }
+
+  document.getElementById('sortMode').addEventListener('change', render);
+  document.getElementById('searchBox').addEventListener('input', render);
+  load();
+</script>
+</body>
+</html>

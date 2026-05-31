@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Syarat & Ketentuan — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .legal-content { padding: 24px; }
+    .legal-content h2 { font-size: 17px; font-weight: 800; color: var(--text); margin: 22px 0 8px; }
+    .legal-content p, .legal-content li { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+    .legal-content ul { padding-left: 22px; margin: 6px 0; }
+    .legal-content strong { color: var(--text); }
+  </style>
+</head>
+<body class="theme-dark" data-page="terms">
+  <div class="app-shell">
+    <header class="top-bar">
+      <a href="javascript:history.back()" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Syarat &amp; Ketentuan</h2><p>Versi 1.0 · 29 Mei 2026</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+    <section class="card legal-content">
+      <p>Dengan menggunakan AERVINEX, Anda setuju dengan syarat berikut. Baca sebelum melanjutkan.</p>
+      <h2>1. Definisi</h2>
+      <p>"AERVINEX" merujuk pada aplikasi mobile + smartwatch yang dioperasikan oleh penelitian skripsi independen. "Layanan" mencakup semua fitur app + cloud sync + ML inference.</p>
+      <h2>2. Lisensi Penggunaan</h2>
+      <p>Kami memberi Anda lisensi non-eksklusif untuk menggunakan AERVINEX sesuai dengan kebijakan ini. Anda TIDAK boleh: reverse-engineer, jual data Anda ke pihak ketiga via API kami, atau menggunakan layanan untuk tujuan ilegal.</p>
+      <h2>3. Bukan Pengganti Konsultasi Medis</h2>
+      <p>AERVINEX adalah <strong>tool skrining wearable berbasis riset</strong>. Hasil tidak menggantikan diagnosis dari tenaga medis berlisensi. Selalu konsultasi dokter untuk kondisi yang Anda alami.</p>
+      <h2>4. Disclaimer Risiko</h2>
+      <ul>
+        <li>ML predictions adalah estimasi statistik, bukan kepastian klinis</li>
+        <li>Sensor onboard ada toleransi error (±0.1°C suhu, ±2% SpO₂, ±10% PM2.5)</li>
+        <li>Alert L3 (kritis) wajib direspons — tidak menerima alert bukan jaminan aman</li>
+        <li>Untuk gejala akut: panggil 119 (BSMI/Ambulans) atau ke IGD terdekat</li>
+      </ul>
+      <h2>5. Akun &amp; Keamanan</h2>
+      <ul>
+        <li>Anda bertanggung jawab atas keamanan password akun</li>
+        <li>Anda harus berusia 13 tahun atau lebih untuk membuat akun</li>
+        <li>Kami berhak menonaktifkan akun yang melanggar kebijakan tanpa pemberitahuan</li>
+      </ul>
+      <h2>6. Konten Pengguna</h2>
+      <p>Data sensor + assessment Anda tetap milik Anda. Dengan opt-in riset agregat, Anda memberi lisensi non-eksklusif untuk pemakaian data anonymized dalam publikasi akademis.</p>
+      <h2>7. Pembatasan Layanan</h2>
+      <ul>
+        <li>Firebase Spark plan: 50K Firestore reads/hari, 20K writes</li>
+        <li>BMKG API: rate-limit 10K calls/hari (shared)</li>
+        <li>BLE inference: latency tergantung quality koneksi</li>
+      </ul>
+      <h2>8. Perubahan Layanan</h2>
+      <p>Fitur dapat ditambah, diubah, atau dihapus dengan notifikasi 7-30 hari (tergantung kritikalitas).</p>
+      <h2>9. Limit of Liability</h2>
+      <p>Sebagai project riset akademis non-komersial, kami tidak bertanggung jawab atas kerugian langsung/tidak langsung dari penggunaan AERVINEX. Layanan disediakan "as-is".</p>
+      <h2>10. Hukum yang Berlaku</h2>
+      <p>Syarat ini diatur oleh hukum Republik Indonesia. Sengketa diselesaikan melalui musyawarah atau pengadilan negeri Jakarta Selatan.</p>
+      <h2>11. Kontak</h2>
+      <p>Pertanyaan: <a href="mailto:legal@aervinex.app" class="auth-link">legal@aervinex.app</a></p>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,0.05);margin:20px 0">
+      <p style="font-size:11px;color:var(--text-dim)">Lihat juga: <a href="/privacy-policy.html" class="auth-link">Kebijakan Privasi</a> · <a href="/consent.html" class="auth-link">Research Consent</a></p>
+    </section>
+    <div class="spacer-bottom"></div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+</body>
+</html>

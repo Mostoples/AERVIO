@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Onboarding Funnel — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <style>
+    .funnel-bar { display:flex; align-items:flex-end; gap: 14px; padding: 24px 0; min-height: 280px; }
+    .funnel-step {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      position: relative;
+    }
+    .funnel-rect {
+      width: 100%; max-width: 110px;
+      background: linear-gradient(180deg, #00e5d4, #a78bfa);
+      border-radius: 12px 12px 4px 4px;
+      transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 0 20px rgba(0,229,212,0.2);
+      position: relative;
+    }
+    .funnel-rect.danger { background: linear-gradient(180deg, #f59e0b, #ef4444); }
+    .funnel-rect-value {
+      position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+      font-size: 13px; font-weight: 800; color: #e6f1f4;
+      white-space: nowrap;
+    }
+    .funnel-name {
+      font-size: 11px; color: #9aabb2; text-align: center; line-height: 1.3;
+      max-width: 100px; word-break: break-word;
+    }
+    .funnel-drop {
+      font-size: 11px; font-weight: 700; color: #ef4444;
+      background: rgba(239,68,68,0.12);
+      padding: 3px 8px; border-radius: 999px;
+    }
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .stat-card {
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+    }
+    .stat-card .v { font-size: 24px; font-weight: 800; color: #e6f1f4; }
+    .stat-card .k { font-size: 11px; color: #9aabb2; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+    .stat-card .d { font-size: 12px; margin-top: 6px; }
+    .stat-card .d.up { color: #00e5d4; }
+    .stat-card .d.down { color: #ef4444; }
+    table.funnel-table {
+      width: 100%; border-collapse: collapse; margin-top: 14px;
+    }
+    table.funnel-table th, table.funnel-table td {
+      padding: 10px 12px; text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+    table.funnel-table th { font-size: 11px; color: #9aabb2; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-dim { padding: 3px 8px; border-radius: 999px; font-size: 11px; background: rgba(0,229,212,0.12); color: #00e5d4; }
+  </style>
+</head>
+<body class="theme-dark" data-page="onboarding-funnel">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="admin-ham" aria-label="Menu"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <div class="admin-page-title">
+          <h1>Onboarding Funnel</h1>
+          <p>Dropoff analytics · 7-step personalization</p>
+        </div>
+      </div>
+      <div class="admin-header-actions">
+        <select id="rangeSel" class="btn-pill" style="padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#e6f1f4;font-size:12px">
+          <option value="7">7 hari terakhir</option>
+          <option value="30" selected>30 hari terakhir</option>
+          <option value="90">90 hari terakhir</option>
+        </select>
+        <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <section class="stat-cards" style="margin-bottom: 20px">
+      <div class="stat-card">
+        <div class="v" id="kpiStarted">—</div>
+        <div class="k">Mulai Onboarding</div>
+        <div class="d up" id="kpiStartedDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiCompleted">—</div>
+        <div class="k">Selesai (7 step)</div>
+        <div class="d up" id="kpiCompletedDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiRate">—</div>
+        <div class="k">Completion Rate</div>
+        <div class="d up" id="kpiRateDelta">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="v" id="kpiTime">—</div>
+        <div class="k">Median Time</div>
+        <div class="d" id="kpiTimeDelta">—</div>
+      </div>
+    </section>
+
+    <!-- Funnel Bars -->
+    <section class="card aura-cyan" style="padding: 18px 18px 24px">
+      <h3 style="font-size:14px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase;margin:0 0 4px">Step-by-step Dropoff</h3>
+      <p style="font-size:12px;color:#7d8d94;margin:0 0 14px">Persentase user yang menyelesaikan setiap step relatif terhadap user yang masuk onboarding.</p>
+      <div class="funnel-bar" id="funnelBar"></div>
+    </section>
+
+    <!-- Detail Table -->
+    <section class="card" style="padding: 18px; margin-top: 18px">
+      <h3 style="font-size:14px;letter-spacing:1px;color:#9aabb2;text-transform:uppercase;margin:0 0 8px">Detail per Step</h3>
+      <table class="funnel-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Step</th>
+            <th>Reached</th>
+            <th>Completed</th>
+            <th>Conversion</th>
+            <th>Dropoff</th>
+            <th>Avg Time</th>
+          </tr>
+        </thead>
+        <tbody id="funnelTbody"></tbody>
+      </table>
+    </section>
+
+    <p style="font-size:11px;color:#7d8d94;margin-top:14px;text-align:center">
+      Data dummy untuk preview. Akan ter-update otomatis dari Firestore <code>onboarding_funnel/{uid}/{step}</code> setelah ada traffic.
+    </p>
+
+  </main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/admin.js"></script>
+<script>
+  (function () {
+    'use strict';
+
+    // ── 7 steps as defined in onboarding.js ──
+    const STEPS = [
+      { key: 'welcome',     label: 'Welcome',        avgTime: '8s' },
+      { key: 'profile',     label: 'Profile',        avgTime: '45s' },
+      { key: 'goals',       label: 'Goals',          avgTime: '22s' },
+      { key: 'conditions',  label: 'Health',         avgTime: '34s' },
+      { key: 'priorities',  label: 'Priorities',     avgTime: '18s' },
+      { key: 'permissions', label: 'Permissions',    avgTime: '12s' },
+      { key: 'done',        label: 'Done',           avgTime: '4s'  },
+    ];
+
+    // ── Dummy data — replace with Firestore aggregation when available ──
+    const DUMMY = {
+      7:  { totalStarted: 412,  reached: [412, 398, 322, 287, 256, 231, 219], time: '2m 18s' },
+      30: { totalStarted: 1842, reached: [1842, 1778, 1432, 1287, 1141, 1042, 988], time: '2m 22s' },
+      90: { totalStarted: 5341, reached: [5341, 5102, 4128, 3712, 3287, 3014, 2862], time: '2m 31s' },
+    };
+
+    async function fetchReal(daysBack) {
+      // Stub: try to read from Firestore, fall back to dummy
+      if (!window.db) return null;
+      try {
+        const since = Date.now() - daysBack * 86400000;
+        const snap = await window.db.collectionGroup('onboarding_funnel')
+          .where('ts', '>=', since).limit(2000).get();
+        if (snap.empty) return null;
+        const reached = STEPS.map(() => new Set());
+        snap.forEach(d => {
+          const data = d.data();
+          const idx = STEPS.findIndex(s => s.key === data.step);
+          if (idx >= 0) reached[idx].add(d.ref.parent.parent.id);
+        });
+        const counts = reached.map(s => s.size);
+        return { totalStarted: counts[0] || 0, reached: counts, time: '—' };
+      } catch (e) {
+        console.warn('[funnel] firestore query failed (using dummy)', e);
+        return null;
+      }
+    }
+
+    function render(data) {
+      const total = data.reached[0] || 1;
+      const completed = data.reached[data.reached.length - 1] || 0;
+      const rate = ((completed / total) * 100).toFixed(1);
+
+      document.getElementById('kpiStarted').textContent = total.toLocaleString('id-ID');
+      document.getElementById('kpiCompleted').textContent = completed.toLocaleString('id-ID');
+      document.getElementById('kpiRate').textContent = rate + '%';
+      document.getElementById('kpiTime').textContent = data.time;
+      document.getElementById('kpiStartedDelta').textContent = '+8.2%';
+      document.getElementById('kpiCompletedDelta').textContent = '+11.4%';
+      document.getElementById('kpiRateDelta').textContent = '+1.7pp';
+      document.getElementById('kpiTimeDelta').textContent = '-4s';
+
+      // Funnel bars
+      const maxCount = Math.max(...data.reached);
+      const bar = document.getElementById('funnelBar');
+      bar.innerHTML = STEPS.map((s, i) => {
+        const count = data.reached[i] || 0;
+        const heightPct = (count / maxCount) * 220;
+        const conv = ((count / total) * 100).toFixed(1);
+        const dropoff = i > 0 ? (((data.reached[i-1] - count) / data.reached[i-1]) * 100).toFixed(1) : '0';
+        const dangerous = parseFloat(dropoff) > 20;
+        return `
+          <div class="funnel-step">
+            <div class="funnel-rect ${dangerous ? 'danger' : ''}" style="height:${heightPct}px">
+              <div class="funnel-rect-value">${count.toLocaleString('id-ID')}<br><small style="font-size:10px;font-weight:500;color:#9aabb2">${conv}%</small></div>
+            </div>
+            <div class="funnel-name">${i+1}. ${s.label}</div>
+            ${i > 0 ? `<div class="funnel-drop">−${dropoff}%</div>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      // Detail Table
+      const tbody = document.getElementById('funnelTbody');
+      tbody.innerHTML = STEPS.map((s, i) => {
+        const count = data.reached[i] || 0;
+        const completedAt = i < STEPS.length - 1 ? (data.reached[i+1] || 0) : count;
+        const conv = ((completedAt / count) * 100).toFixed(1);
+        const dropoff = ((1 - completedAt / count) * 100).toFixed(1);
+        return `
+          <tr>
+            <td>${i+1}</td>
+            <td><strong style="color:#e6f1f4">${s.label}</strong></td>
+            <td>${count.toLocaleString('id-ID')}</td>
+            <td>${completedAt.toLocaleString('id-ID')}</td>
+            <td><span class="badge-dim">${conv}%</span></td>
+            <td style="color:${parseFloat(dropoff) > 15 ? '#ef4444' : '#9aabb2'}">${dropoff}%</td>
+            <td>${s.avgTime}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function load() {
+      const days = parseInt(document.getElementById('rangeSel').value, 10);
+      const real = await fetchReal(days);
+      render(real || DUMMY[days] || DUMMY[30]);
+    }
+
+    document.getElementById('rangeSel').addEventListener('change', load);
+    load();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Masuk — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Ganti tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <main class="auth-shell">
+    <div class="auth-brand">
+      <span class="brand-dot"></span>
+      <h1>AERVINEX</h1>
+      <p>From Detection to Action</p>
+    </div>
+
+    <section class="card aura-cyan" style="padding:28px;display:flex;flex-direction:column;gap:18px">
+      <div>
+        <h2 class="auth-title">Masuk</h2>
+        <p class="auth-sub">Lanjutkan monitoring kesehatan Anda</p>
+      </div>
+
+      <div id="error-box" class="form-error"></div>
+
+      <form id="login-form" style="display:flex;flex-direction:column;gap:14px" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" type="email" id="email" autocomplete="email" placeholder="nama@email.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" autocomplete="current-password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-block primary" id="btn-login">
+          <span>Masuk</span>
+        </button>
+        <button type="button" class="auth-link" id="btn-forgot" style="background:none;font-size:12px;align-self:flex-end">
+          Lupa password?
+        </button>
+      </form>
+
+      <div class="auth-divider">atau</div>
+
+      <button type="button" class="btn-block google" id="btn-google">
+        <svg viewBox="0 0 24 24" width="18" height="18" style="flex-shrink:0">
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.06 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.28 6.61l3.99 3.1C6.22 6.86 8.87 4.75 12 4.75z"/>
+          <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.28 1.5-1.12 2.77-2.39 3.62l3.86 3c2.26-2.09 3.55-5.17 3.55-8.86z"/>
+          <path fill="#FBBC05" d="M5.27 14.29a7.13 7.13 0 010-4.58l-3.99-3.1A12 12 0 000 12c0 1.93.46 3.75 1.28 5.39l3.99-3.1z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.94-2.91l-3.86-3c-1.07.72-2.44 1.16-4.08 1.16-3.13 0-5.78-2.11-6.73-4.96l-3.99 3.1C3.26 21.31 7.31 24 12 24z"/>
+        </svg>
+        <span>Lanjutkan dengan Google</span>
+      </button>
+
+      <button type="button" class="btn-block ghost" id="btn-guest">
+        <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><path d="M9 11l3 2 3-2" opacity="0.4"/></svg>
+        <span>Masuk sebagai Guest / Debug</span>
+      </button>
+    </section>
+
+    <p class="auth-foot">
+      Belum punya akun? <a href="/register.html" class="auth-link">Daftar gratis</a>
+    </p>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app-check.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector(s);
+      const errBox = $('#error-box');
+      const showError = (msg) => { errBox.textContent = msg; errBox.classList.add('show'); };
+      const clearError = () => errBox.classList.remove('show');
+
+      async function routeAfterAuth(user) {
+        if (!user) return;
+        let onboarded = localStorage.getItem('aervinex-onboarded') === '1';
+        if (!onboarded) {
+          try {
+            const snap = await db.collection('users').doc(user.uid).get();
+            onboarded = snap.exists && snap.data()?.onboarding?.completed === true;
+            if (onboarded) localStorage.setItem('aervinex-onboarded', '1');
+          } catch {}
+        }
+        location.replace(onboarded ? '/dashboard.html' : '/onboarding.html');
+      }
+
+      // If already logged in, route appropriately
+      auth.onAuthStateChanged(routeAfterAuth);
+
+      // Show confirmation toast if user just clicked verification link
+      try {
+        const params = new URLSearchParams(location.search);
+        if (params.get('verified') === '1' && typeof AervinexToast === 'function') {
+          AervinexToast('Email terverifikasi. Silakan masuk.', 'success', 3000);
+        }
+      } catch {}
+
+      $('#login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError();
+        const email = $('#email').value.trim();
+        const password = $('#password').value;
+        if (!email || !password) return showError('Email dan password wajib diisi.');
+        const btn = $('#btn-login');
+        btn.disabled = true;
+        try {
+          await AERVINEXAuth.loginEmail(email, password);
+          // Soft email-verification reminder (non-blocking)
+          if (auth.currentUser && !auth.currentUser.emailVerified && !auth.currentUser.isAnonymous) {
+            if (typeof AervinexToast === 'function') {
+              AervinexToast('Email belum diverifikasi. Cek inbox Anda.', 'warn', 4000);
+            }
+          }
+          await routeAfterAuth(auth.currentUser);
+        } catch (ex) {
+          if (AERVINEXAuth.isRateLimitError(ex.code)) {
+            showError('Terlalu banyak percobaan login. Tunggu beberapa menit, atau reset password.');
+          } else {
+            showError(AERVINEXAuth.friendlyError(ex.code));
+          }
+        } finally { btn.disabled = false; }
+      });
+
+      $('#btn-google').addEventListener('click', async () => {
+        clearError();
+        try {
+          await AERVINEXAuth.signInWithGoogle();
+          await routeAfterAuth(auth.currentUser);
+        } catch (ex) {
+          showError(AERVINEXAuth.friendlyError(ex.code));
+        }
+      });
+
+      $('#btn-guest').addEventListener('click', async () => {
+        clearError();
+        try {
+          await AERVINEXAuth.signInAsGuest();
+          await routeAfterAuth(auth.currentUser);
+        } catch (ex) {
+          showError(AERVINEXAuth.friendlyError(ex.code));
+        }
+      });
+
+      $('#btn-forgot').addEventListener('click', async () => {
+        const email = $('#email').value.trim();
+        if (!email) return showError('Isi email dulu, lalu klik "Lupa password?" untuk kirim link reset.');
+        try {
+          await AERVINEXAuth.sendPasswordReset(email);
+          AervinexToast('Link reset password dikirim ke ' + email, 'success');
+        } catch (ex) {
+          showError(AERVINEXAuth.friendlyError(ex.code));
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

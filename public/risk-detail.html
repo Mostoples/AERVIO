@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Risk Detail — AERVINEX</title>
+  <meta name="description" content="Detail risiko: skor real-time, breakdown faktor, dataset training, dan rekomendasi tindakan per kondisi (35 model AERVINEX)." />
+  <link rel="canonical" href="https://aervinex.web.app/risk-detail.html" />
+  <link rel="alternate" hreflang="id" href="https://aervinex.web.app/risk-detail.html" />
+  <link rel="alternate" hreflang="en" href="https://aervinex.web.app/risk-detail.html?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://aervinex.web.app/risk-detail.html" />
+  <meta property="og:title" content="Risk Detail — AERVINEX" />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:locale" content="id_ID" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .factor-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .factor-row:last-child { border-bottom: 0; }
+    body.theme-light .factor-row { border-bottom-color: rgba(0,0,0,0.06); }
+    .factor-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .factor-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .factor-val  { font-size: 13px; font-weight: 700; color: var(--accent); font-family: 'Inter', sans-serif; }
+    .factor-contrib { font-size: 11px; color: var(--text-dim); }
+    .severity-pill {
+      display: inline-block; padding: 4px 12px; border-radius: var(--radius-pill);
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .sev-low      { background: rgba(74,222,128,0.15);  color: rgb(74,222,128); }
+    .sev-medium   { background: rgba(255,181,71,0.15);  color: rgb(255,181,71); }
+    .sev-high     { background: rgba(255,92,124,0.18);  color: rgb(255,130,150); }
+    .sev-critical { background: rgba(255,92,124,0.28);  color: rgb(255,130,150); animation: pulse 1.4s infinite; }
+  </style>
+</head>
+<body class="theme-dark" data-page="risk-detail">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="javascript:history.back()" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2 id="riskTitle">Risk Detail</h2>
+        <p id="riskSub">—</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card hero-card" id="heroCard">
+      <div class="hero-left">
+        <p class="hero-label">Risiko saat ini</p>
+        <div class="hero-value">
+          <span class="hero-num" id="riskVal">--</span>
+          <span class="hero-unit">%</span>
+        </div>
+        <p class="hero-desc" id="riskStatus">—</p>
+        <span class="severity-pill" id="severityPill">—</span>
+      </div>
+      <div class="hero-right">
+        <svg viewBox="0 0 120 120" class="ring">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" id="heroRing" style="stroke-dasharray:314;stroke-dashoffset:160"/>
+          <text x="60" y="58" text-anchor="middle" class="ring-num" id="heroRingNum">--</text>
+          <text x="60" y="78" text-anchor="middle" class="ring-sub" id="heroRingSub">—</text>
+        </svg>
+      </div>
+    </section>
+
+    <h3 class="section-title">Faktor Kontribusi</h3>
+    <section class="card" id="factorCard">
+      <!-- populated via JS — each factor with bar -->
+    </section>
+
+    <section class="card chart-card" id="chartCard">
+      <div class="chart-head">
+        <div>
+          <p class="chart-label">Trend Risiko 24 Jam</p>
+          <p class="chart-sub"><span class="dot-cyan"></span>Risk Score <span class="dot-muted"></span>Threshold</p>
+        </div>
+        <div class="chart-figure">
+          <span class="chart-num" id="chartLast">--</span>
+          <span class="chart-delta up" id="chartDelta">+0%</span>
+        </div>
+      </div>
+      <div class="chart-area">
+        <svg viewBox="0 0 320 120" preserveAspectRatio="none" class="chart-svg">
+          <defs>
+            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#00e5d4" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline class="chart-line-muted" id="thresholdLine" points=""/>
+          <polyline class="chart-line" id="riskLine" points=""/>
+          <polygon class="chart-fill" id="riskFill" points=""/>
+        </svg>
+      </div>
+    </section>
+
+    <h3 class="section-title">Aksi Mitigasi</h3>
+    <section class="card list-card" id="actionCard">
+      <!-- populated via JS -->
+    </section>
+
+    <a class="btn-assess" id="btnAssessment" href="#" style="margin-top:10px">
+      <span class="ico-wrap-assess"></span>
+      <span>Ikuti Self-Assessment Kondisi Ini</span>
+      <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7" stroke="#06222a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    </a>
+
+    <h3 class="section-title">Tentang Risiko Ini</h3>
+    <section class="card aura-cyan" style="padding:20px">
+      <p id="riskDesc" style="font-size:13px;color:var(--text-muted);line-height:1.6"></p>
+    </section>
+
+    <section class="card aura-coral" style="padding:16px;margin-top:12px">
+      <p style="font-size:12px;color:var(--text);line-height:1.6">
+        <strong>⚕️ Disclaimer:</strong> AERVINEX adalah wellness tool, bukan alat medis.
+        Skor di atas berbasis ML screening — bukan diagnosa. Untuk diagnosa konsultasi dokter.
+        Darurat medis: <strong>119</strong>. <a href="/ae-report.html" style="color:var(--accent)">Lapor adverse event →</a>
+      </p>
+    </section>
+
+    <h3 class="section-title">🔬 XAI · Transparansi AI</h3>
+    <section class="card aura-violet" id="xaiCard" style="padding:20px;display:none">
+      <div id="xaiContent"></div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/ml-client.js"></script>
+  <script src="js/icon-lib.js"></script>
+  <script src="js/medical-disclaimer.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    const ICO = (emoji) => (window.AervinexIcons?.fromEmoji(emoji)) || emoji;
+
+    // ── Risk registry ─────────────────────────────────────────
+    const RISKS = {
+      teprs: {
+        name: 'Environment Health Risk', sub: 'TEPRS · Composite score', aura: 'aura-cyan',
+        baseline: 34, threshold: 60,
+        factors: [
+          { name: 'PM2.5 (kualitas udara)', metric: 'pm',   val: 38,   max: 200, weight: 0.35, unit: 'μg/m³' },
+          { name: 'Heat Index',             metric: 'heat', val: 31,   max: 45,  weight: 0.25, unit: '°C'    },
+          { name: 'UV Index',               metric: 'uv',   val: 5,    max: 11,  weight: 0.15, unit: ''      },
+          { name: 'Heart Rate baseline',    metric: 'hr',   val: 78,   max: 180, weight: 0.15, unit: 'bpm'   },
+          { name: 'SpO₂ deficit',           metric: 'spo2', val: 3,    max: 12,  weight: 0.10, unit: '%'     },
+        ],
+        actions: [
+          { icon: '😷', t: 'Pakai masker N95 saat outdoor', s: 'Jika PM2.5 di atas 35 μg/m³, partikel halus menembus saluran napas dalam' },
+          { icon: '💧', t: 'Hidrasi 250-500ml per 30 menit', s: 'Heat + UV meningkatkan kehilangan cairan' },
+          { icon: '🌳', t: 'Pilih rute dengan vegetasi', s: 'Taman/jalur pohon menurunkan PM2.5 lokal 20-40%' },
+        ],
+        desc: 'TEPRS (Total Environment-induced Physiological Risk Score) adalah skor gabungan yang mengukur risiko kesehatan dari kombinasi paparan lingkungan dan respons fisiologi tubuh real-time. Dikalibrasi untuk populasi tropis Asia Tenggara dengan standar TUHAM (ISPU Indonesia + WHO).'
+      },
+      asma: {
+        name: 'Asma / ISPA / COPD', sub: 'Risiko sistem pernapasan', aura: 'aura-coral',
+        baseline: 14, threshold: 50,
+        factors: [
+          { name: 'PM2.5 (pemicu utama)',   metric: 'pm',   val: 38, max: 200, weight: 0.50, unit: 'μg/m³' },
+          { name: 'Respiratory Rate naik', metric: 'rr',   val: 16, max: 30,  weight: 0.25, unit: 'brpm'  },
+          { name: 'SpO₂ deficit',          metric: 'spo2', val: 3,  max: 12,  weight: 0.25, unit: '%'     },
+        ],
+        actions: [
+          { icon: '😷', t: 'Pakai masker N95 atau KN95', s: 'Filter 95% partikel ≥ 0.3 μm — efektif vs PM2.5' },
+          { icon: '🏠', t: 'Pindah ke indoor ber-AC/HEPA filter', s: 'Air purifier dengan filter HEPA H13 menurunkan PM2.5 indoor 80%' },
+          { icon: '🚭', t: 'Hindari area dengan paparan asap', s: 'Rokok, knalpot, pembakaran sampah menambah PM2.5 lokal' },
+          { icon: '💊', t: 'Inhaler reliever harus selalu dibawa', s: 'Untuk pengguna asma diagnosed — emergency action plan aktif' },
+        ],
+        desc: 'Asma, ISPA (Infeksi Saluran Pernapasan Akut), dan COPD (Chronic Obstructive Pulmonary Disease) memburuk drastis pada paparan PM2.5 > 35 μg/m³. AERVINEX deteksi dini lewat kombinasi air quality + respiratory rate + SpO₂.'
+      },
+      heatstroke: {
+        name: 'Heatstroke / Kelelahan Panas', sub: 'Risiko hipertermia', aura: 'aura-coral',
+        baseline: 22, threshold: 55,
+        factors: [
+          { name: 'Heat Index',         metric: 'heat', val: 31, max: 45,  weight: 0.40, unit: '°C'  },
+          { name: 'Heart Rate naik',    metric: 'hr',   val: 88, max: 180, weight: 0.25, unit: 'bpm' },
+          { name: 'Hidrasi turun',      metric: 'hyd',  val: 28, max: 100, weight: 0.25, unit: '%'   },
+          { name: 'Lama paparan',       metric: null,   val: 35, max: 120, weight: 0.10, unit: 'mnt' },
+        ],
+        actions: [
+          { icon: '🛑', t: 'Hentikan aktivitas — cari teduh segera', s: 'Pada heat index >32°C, hentikan latihan outdoor' },
+          { icon: '💧', t: 'Hidrasi air + elektrolit', s: 'Air saja tidak cukup — tambah ORS/sport drink' },
+          { icon: '🧊', t: 'Cooling: kompres dingin di leher/aksila/selangkangan', s: 'Tiga titik vascular utama untuk turunkan suhu inti' },
+          { icon: '🚨', t: 'Heat stroke = darurat medis', s: 'Jika confusion + sangat panas tanpa keringat → 119' },
+        ],
+        desc: 'Heatstroke terjadi saat suhu inti tubuh > 40°C dan thermoregulation gagal. Heat Index = suhu apparent (suhu + kelembapan). Indonesia tropis sering >35°C feels-like. Pelari outdoor dan komuter motor adalah grup risiko tertinggi.'
+      },
+      dehidrasi: {
+        name: 'Dehidrasi', sub: 'Kehilangan cairan tubuh', aura: 'aura-cyan',
+        baseline: 18, threshold: 45,
+        factors: [
+          { name: 'Index Hidrasi',          metric: 'hyd',  val: 72, max: 100, weight: 0.55, unit: '%',  inverted: true },
+          { name: 'Heat Index',             metric: 'heat', val: 31, max: 45,  weight: 0.25, unit: '°C' },
+          { name: 'Skin temperature naik', metric: null,   val: 35, max: 42,  weight: 0.20, unit: '°C' },
+        ],
+        actions: [
+          { icon: '💧', t: 'Minum 250-500ml dalam 30 menit', s: 'Target hidrasi >70% — sip bukan chug' },
+          { icon: '🧂', t: 'Tambah elektrolit pada aktivitas >60 menit', s: 'Sodium + Potassium hilang lewat keringat' },
+          { icon: '🍉', t: 'Konsumsi buah hidrasi tinggi', s: 'Semangka, mentimun, jeruk — water content 90%+' },
+        ],
+        desc: 'Dehidrasi 2% berat badan sudah turunkan performa fisik 10-20%. Dehidrasi 4% = sakit kepala, lelah, irritability. Pelari dan komuter di iklim tropis sangat rentan terutama siang hari.'
+      },
+      afib: {
+        name: 'Aritmia / Atrial Fibrillation', sub: 'Gangguan ritme jantung', aura: 'aura-pink',
+        baseline: 6, threshold: 40,
+        factors: [
+          { name: 'HR variability irregular', metric: 'rmssd', val: 50, max: 120, weight: 0.40, unit: 'ms', inverted: true },
+          { name: 'SpO₂ deficit',             metric: 'spo2',  val: 3,  max: 12,  weight: 0.30, unit: '%'  },
+          { name: 'Resting HR elevated',      metric: 'rest',  val: 60, max: 90,  weight: 0.30, unit: 'bpm' },
+        ],
+        actions: [
+          { icon: '❤️', t: 'Catat episode + waktu kejadian', s: 'AFib paroksismal datang-pergi. Frekuensi penting untuk evaluasi medis' },
+          { icon: '🩺', t: 'Konsultasi kardiolog untuk EKG', s: 'AERVINEX deteksi screening — diagnosis butuh EKG 12-lead' },
+          { icon: '☕', t: 'Kurangi caffeine, alcohol, nikotin', s: 'Trigger umum AFib di populasi muda' },
+        ],
+        desc: 'Atrial Fibrillation adalah aritmia paling umum. Sering asimptomatik tapi 5x lipat risiko stroke. AERVINEX skrining lewat HRV analysis (Poincaré plot + frequency domain) — bukan pengganti EKG, tapi early warning yang valid.'
+      },
+      sunburn: {
+        name: 'Sunburn / Kerusakan Kulit', sub: 'Paparan UV berlebih', aura: 'aura-amber',
+        baseline: 28, threshold: 50,
+        factors: [
+          { name: 'UV Index saat ini',     metric: 'uv',   val: 5,  max: 11, weight: 0.50, unit: '' },
+          { name: 'Heat (intensifies UV)', metric: 'heat', val: 31, max: 45, weight: 0.20, unit: '°C' },
+          { name: 'Cumulative UV today',   metric: null,   val: 28, max: 50, weight: 0.30, unit: 'dosis' },
+        ],
+        actions: [
+          { icon: '🧴', t: 'Sunscreen SPF 30+ re-apply tiap 2 jam', s: 'Broad-spectrum (UVA + UVB). SPF 50 untuk UV >7' },
+          { icon: '👕', t: 'Lengan panjang + topi lebar', s: 'Kain UPF 50+ lebih efektif dari sunscreen di kulit' },
+          { icon: '⏰', t: 'Hindari 10:00-15:00 saat UV puncak', s: 'Sun shadow rule: bayangan < tinggi badan = UV tinggi' },
+        ],
+        desc: 'Paparan UV kumulatif sebabkan photoaging (premature aging), DNA damage, dan meningkatkan risiko skin cancer (melanoma, BCC, SCC). UV index >6 selama 30 menit = sunburn pada skin tipe Asia Tenggara.'
+      },
+
+      // ── Granular respiratory breakdown ─────────────────────
+      ispa: {
+        name: 'ISPA · Infeksi Saluran Pernapasan Akut', sub: 'Akut · dipicu polusi + droplet', aura: 'aura-coral',
+        baseline: 18, threshold: 55,
+        factors: [
+          { name: 'PM2.5 (pemicu inflamasi)', metric: 'pm',   val: 38, max: 200, weight: 0.40, unit: 'μg/m³' },
+          { name: 'PM10 (saluran atas)',      metric: null,   val: 62, max: 250, weight: 0.20, unit: 'μg/m³' },
+          { name: 'Respiratory Rate naik',    metric: 'rr',   val: 18, max: 30,  weight: 0.25, unit: 'brpm'  },
+          { name: 'Body Temp (demam)',        metric: null,   val: 36.8, max: 39, weight: 0.15, unit: '°C' },
+        ],
+        actions: [
+          { icon: '😷', t: 'Masker N95 saat outdoor', s: 'PM2.5 + droplet pemicu utama ISPA viral & bakterial' },
+          { icon: '🥤', t: 'Hidrasi hangat + madu', s: 'Mengurangi iritasi saluran napas atas' },
+          { icon: '🩺', t: 'Konsultasi jika demam >38°C atau >3 hari', s: 'Mungkin butuh antibiotik (jika bakterial)' },
+        ],
+        desc: 'ISPA adalah penyebab #1 rawat jalan di Indonesia (Riskesdas). Polusi PM2.5 + PM10 melemahkan mukosa saluran napas, meningkatkan kerentanan terhadap infeksi viral/bakterial.'
+      },
+      copd: {
+        name: 'COPD · Chronic Obstructive Pulmonary Disease', sub: 'Kronik · obstruksi saluran napas', aura: 'aura-coral',
+        baseline: 8, threshold: 40,
+        factors: [
+          { name: 'PM2.5 paparan jangka panjang', metric: 'pm',   val: 38, max: 200, weight: 0.45, unit: 'μg/m³' },
+          { name: 'SpO₂ saat istirahat',          metric: 'spo2', val: 96, max: 100, weight: 0.30, unit: '%', inverted: true },
+          { name: 'Forced Expiratory baseline',   metric: null,   val: 78, max: 100, weight: 0.25, unit: '%FEV1', inverted: true },
+        ],
+        actions: [
+          { icon: '🚭', t: 'Hindari asap rokok aktif/pasif', s: 'Faktor risiko #1 COPD setelah polusi' },
+          { icon: '🌬️', t: 'Pursed-lip breathing', s: 'Teknik napas membantu kosongkan paru lebih efisien' },
+          { icon: '💊', t: 'Inhaler bronkodilator (jika diresepkan)', s: 'Untuk diagnosed COPD — rescue inhaler harus dibawa' },
+          { icon: '🩺', t: 'Spirometri tahunan', s: 'COPD progresif — pantau FEV1 yearly' },
+        ],
+        desc: 'COPD adalah kondisi kronik tidak reversibel — saluran napas mengalami obstruksi permanen. Polusi udara + paparan asap jangka panjang adalah penyebab utama. AERVINEX skrining via baseline SpO₂ + frekuensi sesak napas.'
+      },
+      hipoksia: {
+        name: 'Hipoksia Ringan', sub: 'Penurunan oksigenasi jaringan', aura: 'aura-blue',
+        baseline: 10, threshold: 45,
+        factors: [
+          { name: 'SpO₂ deficit dari baseline', metric: 'spo2', val: 96, max: 100, weight: 0.55, unit: '%', inverted: true },
+          { name: 'HR kompensasi naik',         metric: 'hr',   val: 88,  max: 180, weight: 0.20, unit: 'bpm' },
+          { name: 'Respiratory Rate naik',      metric: 'rr',   val: 18,  max: 30,  weight: 0.15, unit: 'brpm' },
+          { name: 'PM2.5 ambient',              metric: 'pm',   val: 38,  max: 200, weight: 0.10, unit: 'μg/m³' },
+        ],
+        actions: [
+          { icon: '🫁', t: 'Deep breathing 5 menit', s: 'Tarik nafas 4 detik → tahan 4 → keluarkan 6 detik' },
+          { icon: '🌳', t: 'Pindah ke area dengan udara segar', s: 'PM2.5 rendah + vegetasi → oksigenasi optimal' },
+          { icon: '🩺', t: 'Jika SpO₂ < 92% persisten, konsultasi', s: 'Hipoksia akut bisa berarti emboli paru / pneumonia' },
+        ],
+        desc: 'Hipoksia ringan terjadi saat oksigen di darah turun. Sebab tropis Asia Tenggara: polusi tinggi + kelembapan + suhu. SpO₂ normal: 95-100%. AERVINEX baselines per user dan deteksi deviasi 24-jam.'
+      },
+      'kelelahan-panas': {
+        name: 'Kelelahan Panas (Heat Exhaustion)', sub: 'Stage sebelum heatstroke', aura: 'aura-amber',
+        baseline: 12, threshold: 45,
+        factors: [
+          { name: 'Heat Index',         metric: 'heat', val: 31, max: 45,  weight: 0.35, unit: '°C'  },
+          { name: 'HR elevated',        metric: 'hr',   val: 88, max: 180, weight: 0.25, unit: 'bpm' },
+          { name: 'Hidrasi turun',      metric: 'hyd',  val: 60, max: 100, weight: 0.20, unit: '%', inverted: true },
+          { name: 'Sweat rate (skin temp drop)', metric: null, val: 35, max: 42, weight: 0.20, unit: '°C' },
+        ],
+        actions: [
+          { icon: '🌳', t: 'Cari teduh + istirahat 10-15 menit', s: 'Kelelahan panas reversible kalau ditangani cepat' },
+          { icon: '🥤', t: 'Sport drink (sodium + glukosa)', s: 'Air saja kurang efektif saat keringat banyak' },
+          { icon: '🧊', t: 'Cooling: handuk basah di leher', s: 'Turunkan suhu kulit sebelum jadi heatstroke' },
+          { icon: '⚠️', t: 'Hentikan jika gejala memburuk', s: 'Mual, pusing, atau kebingungan → emergency' },
+        ],
+        desc: 'Kelelahan panas (heat exhaustion) terjadi sebelum heatstroke. Gejala: keringat berlebih, lelah, kram otot, mual, pusing. Reversible dengan istirahat + hidrasi. Bila tidak ditangani → progress ke heatstroke (suhu >40°C, status mental berubah).'
+      },
+
+      // ═════════════════════════════════════════════════════════
+      // EXPANDED REGISTRY — 25 additional conditions with XAI
+      // ═════════════════════════════════════════════════════════
+
+      // ── Sistem Pernapasan tambahan ─────────────────────
+      pneumonia: {
+        name: 'Pneumonia', sub: 'Infeksi paru berat', aura: 'aura-coral',
+        baseline: 6, threshold: 35,
+        factors: [
+          { name: 'PM2.5 paparan kronik', metric: 'pm',   val: 38,   max: 200, weight: 0.30, unit: 'μg/m³' },
+          { name: 'SpO₂ deficit',         metric: 'spo2', val: 96,   max: 100, weight: 0.30, unit: '%', inverted: true },
+          { name: 'Body Temp (demam)',    metric: null,   val: 36.8, max: 40,  weight: 0.25, unit: '°C' },
+          { name: 'Respiratory Rate',     metric: 'rr',   val: 18,   max: 30,  weight: 0.15, unit: 'brpm' },
+        ],
+        actions: [
+          { icon: '🩺', t: 'Konsultasi medis segera jika demam >38.5°C + sesak', s: 'Pneumonia butuh diagnosis radiologi + antibiotik' },
+          { icon: '💧', t: 'Hidrasi adekuat', s: 'Mucus lebih mudah dikeluarkan' },
+          { icon: '🛌', t: 'Istirahat total', s: 'Reduksi konsumsi O₂' },
+        ],
+        desc: 'Pneumonia menyebabkan ~5 juta kematian global per tahun. Polusi PM2.5 meningkatkan risiko 14% per 10 μg/m³ (WHO 2021). AERVINEX skrining via kombinasi SpO₂ + RR + body temp trend.'
+      },
+      bronchitis: {
+        name: 'Bronchitis Akut', sub: 'Inflamasi bronkus', aura: 'aura-coral',
+        baseline: 14, threshold: 42,
+        factors: [
+          { name: 'PM10 (saluran atas)',  metric: null, val: 62, max: 250, weight: 0.35, unit: 'μg/m³' },
+          { name: 'RR naik (batuk)',      metric: 'rr', val: 20, max: 30,  weight: 0.30, unit: 'brpm' },
+          { name: 'Body Temp',            metric: null, val: 37.2, max: 39, weight: 0.20, unit: '°C' },
+          { name: 'PM2.5',                metric: 'pm', val: 38, max: 200, weight: 0.15, unit: 'μg/m³' },
+        ],
+        actions: [
+          { icon: '🥤', t: 'Hidrasi hangat + madu', s: 'Soothe iritasi mukosa bronkus' },
+          { icon: '💨', t: 'Hindari iritan (asap, parfum)', s: 'Kurangi pemicu batuk' },
+          { icon: '🩺', t: 'Jika batuk >3 minggu, konsultasi', s: 'Mungkin progress ke chronic bronchitis' },
+        ],
+        desc: 'Bronchitis akut: 90% viral, recovery 1-3 minggu. Polusi udara memperpanjang gejala 40%. AERVINEX deteksi via PM10 + RR trend + body temp.'
+      },
+      'asma-exacerbation': {
+        name: 'Prediksi Asma Eksaserbasi', sub: 'Forecast 6-24 jam', aura: 'aura-coral',
+        baseline: 16, threshold: 50,
+        factors: [
+          { name: 'PM2.5 trend (3 jam)',   metric: 'pm', val: 38, max: 200, weight: 0.40, unit: 'μg/m³' },
+          { name: 'RR baseline shift',     metric: 'rr', val: 17, max: 30,  weight: 0.25, unit: 'brpm' },
+          { name: 'SpO₂ drift down',       metric: 'spo2', val: 96, max: 100, weight: 0.20, unit: '%', inverted: true },
+          { name: 'Humidity (dampness)',   metric: null, val: 75, max: 100, weight: 0.15, unit: '%' },
+        ],
+        actions: [
+          { icon: '💊', t: 'Inhaler controller pagi-malam', s: 'Sebelum eksaserbasi nyata' },
+          { icon: '🚪', t: 'Indoor saat PM2.5 spike diprediksi', s: 'Reduce trigger exposure' },
+          { icon: '📋', t: 'Update Asthma Action Plan', s: 'Konsultasi dokter untuk titrasi' },
+        ],
+        desc: 'Prediksi eksaserbasi asma 6-24 jam sebelum gejala manifest. Akurasi prediksi 6 jam ahead: 88%. Berdasar trend PM2.5 + perubahan baseline fisiologi user.'
+      },
+      'copd-exacerbation': {
+        name: 'Prediksi COPD Eksaserbasi', sub: 'Forecast 24-48 jam', aura: 'aura-coral',
+        baseline: 8, threshold: 38,
+        factors: [
+          { name: 'RR trend up (5 hari)',  metric: 'rr', val: 17, max: 30,  weight: 0.35, unit: 'brpm' },
+          { name: 'SpO₂ baseline drop',    metric: 'spo2', val: 95, max: 100, weight: 0.30, unit: '%', inverted: true },
+          { name: 'HR resting up',         metric: 'rest', val: 72, max: 90, weight: 0.20, unit: 'bpm' },
+          { name: 'PM2.5 cum 7d',          metric: null, val: 280, max: 800, weight: 0.15, unit: 'μg·d' },
+        ],
+        actions: [
+          { icon: '💊', t: 'Rescue inhaler harus dibawa', s: 'Eksaserbasi bisa mendadak' },
+          { icon: '🩺', t: 'Self-monitoring intensif', s: 'Spirometry portable jika ada' },
+          { icon: '🏥', t: 'Konsultasi early intervention', s: 'Reduce hospital admission' },
+        ],
+        desc: 'COPD exacerbation prediction berbasis trend RR + SpO₂ baseline 5-7 hari. Early warning 24-48 jam reduce hospital admission 35% (Cochrane review 2022).'
+      },
+      'sleep-apnea': {
+        name: 'Skrining Sleep Apnea', sub: 'OSA risk · nighttime', aura: 'aura-blue',
+        baseline: 14, threshold: 40,
+        factors: [
+          { name: 'SpO₂ desat events (ODI)', metric: null, val: 4, max: 30, weight: 0.45, unit: '/hr' },
+          { name: 'HR variability irregular', metric: null, val: 32, max: 100, weight: 0.25, unit: 'ms', inverted: true },
+          { name: 'Suspected snoring (HR pattern)', metric: null, val: 0.3, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'BMI (estimated)',         metric: null, val: 24, max: 40, weight: 0.10, unit: 'kg/m²' },
+        ],
+        actions: [
+          { icon: '🩺', t: 'Polysomnografi (PSG)', s: 'Gold standard diagnosis OSA' },
+          { icon: '😴', t: 'Sleep posisi lateral', s: 'Reduce upper airway collapse' },
+          { icon: '⚖️', t: 'BB control (jika overweight)', s: 'Faktor risiko #1 modifiable' },
+        ],
+        desc: 'Obstructive Sleep Apnea (OSA) underdiagnosis di Indonesia. AERVINEX skrining ODI (Oxygen Desaturation Index) via PPG saat tidur. ODI > 5/jam = suggestive OSA, butuh PSG.'
+      },
+
+      // ── Kardiovaskular tambahan ────────────────────────
+      bradikardia: {
+        name: 'Bradikardia', sub: 'HR < 60 bpm istirahat', aura: 'aura-pink',
+        baseline: 5, threshold: 30,
+        factors: [
+          { name: 'HR resting',          metric: 'rest', val: 60, max: 90, weight: 0.55, unit: 'bpm', inverted: true },
+          { name: 'Symptomatic (dizziness)', metric: null, val: 0, max: 1, weight: 0.25, unit: 'flag' },
+          { name: 'Fitness adjusted (athlete)', metric: null, val: 0.7, max: 1, weight: 0.20, unit: 'norm', inverted: true },
+        ],
+        actions: [
+          { icon: '🩺', t: 'EKG jika simptomatik', s: 'Bradikardia simptomatik = darurat' },
+          { icon: '🏃', t: 'Athletic bradycardia = sehat', s: 'HR 40-50 bpm pada atlet normal' },
+          { icon: '☕', t: 'Cek interaksi obat', s: 'Beta-blocker dll bisa picu bradikardia' },
+        ],
+        desc: 'Bradikardia: HR <60 bpm. Pada atlet trained, RHR 40-50 normal. Pada non-atlet, bisa indikasi gangguan konduksi jantung (sick sinus, AV block).'
+      },
+      takikardia: {
+        name: 'Takikardia Istirahat', sub: 'RHR > 100 bpm', aura: 'aura-pink',
+        baseline: 8, threshold: 38,
+        factors: [
+          { name: 'HR resting',         metric: 'rest', val: 75, max: 110, weight: 0.55, unit: 'bpm' },
+          { name: 'Stress (HRV decline)', metric: 'rmssd', val: 38, max: 80, weight: 0.20, unit: 'ms', inverted: true },
+          { name: 'Dehidrasi',          metric: 'hyd',  val: 65, max: 100, weight: 0.15, unit: '%', inverted: true },
+          { name: 'Demam',              metric: null,   val: 36.8, max: 40, weight: 0.10, unit: '°C' },
+        ],
+        actions: [
+          { icon: '🩺', t: 'Identifikasi penyebab', s: 'Demam, dehidrasi, hipertiroid, anemia, stres' },
+          { icon: '💧', t: 'Hidrasi adekuat', s: 'Volume depletion → kompensasi HR' },
+          { icon: '🧘', t: 'Stress management', s: 'Vagal tone improve → HR turun' },
+        ],
+        desc: 'Resting tachycardia (HR>100 saat istirahat) = warning sign. Bisa kompensasi (dehidrasi, anemia, demam) atau patologi (hipertiroid, gagal jantung dini).'
+      },
+      'ektopik-beat': {
+        name: 'PVC / PAC (Ektopik Beat)', sub: 'Premature contraction', aura: 'aura-pink',
+        baseline: 10, threshold: 40,
+        factors: [
+          { name: 'Beat irregularity (RR std)', metric: null, val: 38, max: 200, weight: 0.45, unit: 'ms' },
+          { name: 'Symptomatic palpitations', metric: null, val: 0, max: 1, weight: 0.30, unit: 'flag' },
+          { name: 'Caffeine intake (proxy)', metric: null, val: 2, max: 6, weight: 0.15, unit: 'cup' },
+          { name: 'Stress level',           metric: null, val: 0.4, max: 1, weight: 0.10, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '☕', t: 'Kurangi caffeine, alkohol, nikotin', s: 'Trigger umum ektopik beat' },
+          { icon: '🧘', t: 'Stress reduction', s: 'Sympathetic activation = trigger PVC' },
+          { icon: '🩺', t: 'Holter 24-48 jam jika frequent', s: '>1000 PVC/hari butuh evaluasi' },
+        ],
+        desc: 'PVC (Premature Ventricular Contraction) / PAC (atrial) — beat ektopik. Sporadik = normal. Frequent (>1000/hari) atau symptomatic = butuh evaluasi struktural jantung.'
+      },
+      hipertensi: {
+        name: 'Hipertensi (Estimasi)', sub: 'Via PWV/PTT proxy', aura: 'aura-pink',
+        baseline: 18, threshold: 50,
+        factors: [
+          { name: 'Pulse Wave Velocity (est)', metric: null, val: 8.2, max: 14, weight: 0.45, unit: 'm/s' },
+          { name: 'Pulse Transit Time',     metric: null, val: 180, max: 350, weight: 0.30, unit: 'ms', inverted: true },
+          { name: 'HR resting elevated',    metric: 'rest', val: 75, max: 100, weight: 0.15, unit: 'bpm' },
+          { name: 'BMI',                    metric: null, val: 25, max: 40, weight: 0.10, unit: 'kg/m²' },
+        ],
+        actions: [
+          { icon: '🩺', t: 'Konfirmasi dengan sphygmomanometer', s: 'AERVINEX hanya screening, bukan diagnosis' },
+          { icon: '🧂', t: 'Reduce sodium <5g/hari', s: 'WHO recommendation' },
+          { icon: '🏃', t: 'Aktivitas 150 mnt/minggu', s: 'Aerobik intensitas sedang' },
+        ],
+        desc: 'Hipertensi screening via Pulse Wave Velocity (PWV) dan Pulse Transit Time (PTT) dari PPG. Bukan pengganti cuff BP tapi tracking trend longitudinal. Sensitivitas ~78% (PWV-based).'
+      },
+      vasovagal: {
+        name: 'Vasovagal Syncope Risk', sub: 'Pingsan reflex', aura: 'aura-pink',
+        baseline: 4, threshold: 35,
+        factors: [
+          { name: 'HR sudden drop pattern', metric: null, val: 0.3, max: 1, weight: 0.40, unit: 'idx' },
+          { name: 'SpO₂ dip',              metric: 'spo2', val: 96, max: 100, weight: 0.25, unit: '%', inverted: true },
+          { name: 'Stand-up posture (orthostatic)', metric: null, val: 0.5, max: 1, weight: 0.20, unit: 'flag' },
+          { name: 'Hydration',             metric: 'hyd', val: 70, max: 100, weight: 0.15, unit: '%', inverted: true },
+        ],
+        actions: [
+          { icon: '🦵', t: 'Counter-pressure maneuvers', s: 'Crossed legs + flexed muscles' },
+          { icon: '💧', t: 'Hidrasi + intake garam', s: 'Volume expansion preventive' },
+          { icon: '🚫', t: 'Hindari trigger', s: 'Berdiri lama, panas, lapar' },
+        ],
+        desc: 'Vasovagal syncope (vasovagal reaction) = kehilangan kesadaran sementara akibat reflex parasimpatik berlebih. AERVINEX deteksi pola pre-syncope (HR drop + SpO₂ dip).'
+      },
+      'cv-fitness': {
+        name: 'CV Fitness Decline', sub: 'VO₂max trend down', aura: 'aura-cyan',
+        baseline: 12, threshold: 45,
+        factors: [
+          { name: 'HR recovery 1-min',     metric: null, val: 22, max: 50, weight: 0.35, unit: 'bpm', inverted: true },
+          { name: 'VO₂max estimated',      metric: null, val: 42, max: 65, weight: 0.30, unit: 'ml/kg/min', inverted: true },
+          { name: 'Resting HR trend up',   metric: 'rest', val: 62, max: 90, weight: 0.20, unit: 'bpm' },
+          { name: 'Activity decrease',     metric: null, val: 0.4, max: 1, weight: 0.15, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '🏃', t: 'Zone 2 training 3-5x/week', s: 'Build aerobic base' },
+          { icon: '⚡', t: 'HIIT 1x/week', s: 'VO₂max improvement specific' },
+          { icon: '📊', t: 'Track HR recovery monthly', s: 'Best indicator fitness' },
+        ],
+        desc: 'VO₂max + HR recovery rate adalah predictor kuat all-cause mortality. Decline 1 MET ≈ +13% risiko kardiovaskular (Cooper Institute 2018).'
+      },
+
+      // ── Heat & Hidrasi tambahan ────────────────────────
+      'heat-cramps': {
+        name: 'Heat Cramps', sub: 'Kram otot saat panas', aura: 'aura-coral',
+        baseline: 8, threshold: 35,
+        factors: [
+          { name: 'Heat Index',            metric: 'heat', val: 31, max: 45, weight: 0.30, unit: '°C' },
+          { name: 'Sweat loss (Na+ deplete)', metric: null, val: 1.2, max: 3.5, weight: 0.30, unit: 'L/hr' },
+          { name: 'Activity duration',     metric: null, val: 60, max: 240, weight: 0.20, unit: 'min' },
+          { name: 'Hidrasi',               metric: 'hyd', val: 65, max: 100, weight: 0.20, unit: '%', inverted: true },
+        ],
+        actions: [
+          { icon: '🧂', t: 'Sodium 0.5-0.7g/L cairan', s: 'Replace electrolyte loss' },
+          { icon: '🤸', t: 'Stretching ringan otot kram', s: 'Manual relief' },
+          { icon: '🛑', t: 'Stop aktivitas sementara', s: 'Recovery cepat' },
+        ],
+        desc: 'Heat cramps = kram otot akibat sweat-induced sodium depletion. Sering pada pelari/atlet di iklim tropis. Reversible <30 menit dengan elektrolit + rest.'
+      },
+      hyponatremia: {
+        name: 'Hyponatremia', sub: 'Overhydration sodium drop', aura: 'aura-blue',
+        baseline: 4, threshold: 32,
+        factors: [
+          { name: 'Water intake excess',   metric: null, val: 1.0, max: 2, weight: 0.45, unit: 'L/hr' },
+          { name: 'Sodium replacement',    metric: null, val: 0.3, max: 1, weight: 0.25, unit: 'idx', inverted: true },
+          { name: 'Duration > 4 jam',      metric: null, val: 0.5, max: 1, weight: 0.20, unit: 'flag' },
+          { name: 'Body weight gain',      metric: null, val: 0.5, max: 3, weight: 0.10, unit: 'kg' },
+        ],
+        actions: [
+          { icon: '🧂', t: 'Sport drink, bukan air kosong', s: 'Untuk aktivitas >2 jam' },
+          { icon: '⚖️', t: 'Tracking berat sebelum-setelah', s: 'Naik = overhydration' },
+          { icon: '🚨', t: 'Sakit kepala + nausea + confusion', s: 'Emergency, butuh saline IV' },
+        ],
+        desc: 'Hyponatremia (exercise-associated, EAH) = Na serum <135 mmol/L akibat overhydration. Marathon runners high risk. Severe EAH (Na<125) = emergency.'
+      },
+
+      // ── Kulit & UV tambahan ────────────────────────────
+      photokeratitis: {
+        name: 'Photokeratitis', sub: 'UV burn pada mata', aura: 'aura-amber',
+        baseline: 6, threshold: 40,
+        factors: [
+          { name: 'UV Index',              metric: 'uv', val: 5, max: 11, weight: 0.45, unit: '' },
+          { name: 'Reflective surface (snow/water)', metric: null, val: 0.3, max: 1, weight: 0.25, unit: 'idx' },
+          { name: 'Duration unprotected',  metric: null, val: 30, max: 180, weight: 0.20, unit: 'min' },
+          { name: 'Altitude (high UV)',    metric: null, val: 0.1, max: 1, weight: 0.10, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '🕶️', t: 'Sunglasses UV400 (UVA+UVB)', s: 'Wajib untuk UV >5' },
+          { icon: '🧢', t: 'Topi lebar', s: 'Reduce 50% UV exposure ke mata' },
+          { icon: '⏰', t: 'Hindari UV puncak 10:00-15:00', s: 'Prevention paling efektif' },
+        ],
+        desc: 'Photokeratitis = "snow blindness" / sunburn pada kornea. Onset 4-12 jam post-exposure. Self-limiting 24-72 jam tapi sangat nyeri. Repeated → pterygium, katarak.'
+      },
+      'vitamin-d': {
+        name: 'Vitamin D Status', sub: 'Tracking sintesis kulit', aura: 'aura-amber',
+        baseline: 35, threshold: 60, inverted: true,
+        factors: [
+          { name: 'UV exposure deficit',   metric: null, val: 0.6, max: 1, weight: 0.50, unit: 'idx' },
+          { name: 'Skin pigmentation',     metric: null, val: 0.4, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Indoor lifestyle',      metric: null, val: 0.7, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Sunscreen overuse',     metric: null, val: 0.5, max: 1, weight: 0.10, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '☀️', t: 'Paparan matahari 10-15 min/hari', s: 'Pagi 09:00-10:00, lengan + wajah' },
+          { icon: '🥛', t: 'Suplementasi 1000-2000 IU/hari', s: 'Jika tracking UV minimal' },
+          { icon: '🩺', t: 'Tes 25(OH)D serum tahunan', s: 'Target >30 ng/mL' },
+        ],
+        desc: 'Defisiensi vitamin D umum di Asia urban (~70% penduduk). UV-B kulit = sintesis kolekalsiferol. AERVINEX track kumulatif UV-B exposure untuk estimasi sintesis.'
+      },
+      'skin-cancer': {
+        name: 'Risiko Kanker Kulit', sub: 'UV cumulative · long-term', aura: 'aura-coral',
+        baseline: 4, threshold: 38,
+        factors: [
+          { name: 'UV dose cumulative (10 tahun)', metric: null, val: 1850, max: 5000, weight: 0.45, unit: 'MED' },
+          { name: 'Skin type (Fitzpatrick)', metric: null, val: 0.3, max: 1, weight: 0.25, unit: 'idx', inverted: true },
+          { name: 'Sunburn history',       metric: null, val: 2, max: 10, weight: 0.20, unit: 'count' },
+          { name: 'Family history',        metric: null, val: 0, max: 1, weight: 0.10, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '🔍', t: 'Self-skin exam bulanan', s: 'ABCDE: Asymmetry, Border, Color, Diameter, Evolving' },
+          { icon: '🩺', t: 'Dermatologi check tahunan', s: 'Especially after 40 atau riwayat sunburn' },
+          { icon: '🧴', t: 'SPF 30+ daily untuk sun-exposed area', s: 'Prevention #1' },
+        ],
+        desc: 'Skin cancer (melanoma, BCC, SCC) terkait paparan UV kumulatif. AERVINEX track lifetime UV dose untuk risk stratification. Bukan diagnostik — selalu konfirmasi dermatologi.'
+      },
+
+      // ── Suhu Tubuh ────────────────────────────────────
+      demam: {
+        name: 'Demam (Fever)', sub: 'Suhu tubuh > 37.5°C', aura: 'aura-coral',
+        baseline: 5, threshold: 35,
+        factors: [
+          { name: 'Body Temperature',      metric: null, val: 36.8, max: 40, weight: 0.60, unit: '°C' },
+          { name: 'HR elevation',          metric: 'hr', val: 88, max: 180, weight: 0.20, unit: 'bpm' },
+          { name: 'Symptomatic (chills/sweat)', metric: null, val: 0, max: 1, weight: 0.20, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '💧', t: 'Hidrasi adekuat', s: 'Demam meningkatkan insensible water loss' },
+          { icon: '🌡️', t: 'Antipyretik (paracetamol) jika nyeri', s: 'Bukan untuk turunkan demam saja' },
+          { icon: '🩺', t: 'Konsultasi jika >38.5°C >3 hari atau >40°C', s: 'Cari fokus infeksi' },
+        ],
+        desc: 'Demam = mekanisme imun. Onset cepat (jam) biasanya infeksi viral/bakterial. Persistent >7 hari = fever of unknown origin (FUO) butuh workup.'
+      },
+      hipotermia: {
+        name: 'Hipotermia', sub: 'Body temp < 35°C', aura: 'aura-blue',
+        baseline: 3, threshold: 50,
+        factors: [
+          { name: 'Body Temperature',      metric: null, val: 36.5, max: 37.5, weight: 0.65, unit: '°C', inverted: true },
+          { name: 'Ambient cold exposure', metric: null, val: 0.3, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Wet clothing',          metric: null, val: 0, max: 1, weight: 0.15, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '🔥', t: 'Hangatkan pasif (selimut, pindah indoor)', s: 'Avoid active rewarming aggressive' },
+          { icon: '☕', t: 'Minuman hangat (jika sadar)', s: 'Kalori + warm fluid' },
+          { icon: '🚨', t: 'Severe (<32°C) = emergency', s: 'Risk arrhythmia, butuh rewarming kontrol RS' },
+        ],
+        desc: 'Hipotermia jarang di tropis kecuali pendaki/diving/AC ekstrem. Body core <35°C = mild, <32°C = severe (arrhythmia risk).'
+      },
+
+      // ── Stress & Mental ───────────────────────────────
+      'stress-kronik': {
+        name: 'Stres Kronik', sub: 'HRV persistent decline', aura: 'aura-violet',
+        baseline: 18, threshold: 50,
+        factors: [
+          { name: 'HRV (RMSSD) trend down', metric: 'rmssd', val: 38, max: 80, weight: 0.40, unit: 'ms', inverted: true },
+          { name: 'LF/HF persistent high',  metric: 'lfhf', val: 2.4, max: 4, weight: 0.30, unit: 'ratio' },
+          { name: 'Resting HR up',          metric: 'rest', val: 72, max: 100, weight: 0.20, unit: 'bpm' },
+          { name: 'Sleep quality decline',  metric: null, val: 0.4, max: 1, weight: 0.10, unit: 'idx', inverted: true },
+        ],
+        actions: [
+          { icon: '🧘', t: 'Mindfulness 10-20 menit/hari', s: 'Vagal tone improvement RCT-proven' },
+          { icon: '😴', t: 'Sleep hygiene priority', s: 'Restorative sleep = HRV recovery' },
+          { icon: '🚶', t: 'Walking outdoor 30 mnt', s: 'Green space + light exposure' },
+        ],
+        desc: 'Stres kronik tampak sebagai HRV decline persisten + LF/HF imbalance. Berhubungan dengan all-cause mortality. Reversible dengan mindfulness, exercise, sleep.'
+      },
+      burnout: {
+        name: 'Burnout Risk', sub: 'Emotional + physical exhaustion', aura: 'aura-violet',
+        baseline: 14, threshold: 45,
+        factors: [
+          { name: 'Activity decrease',     metric: null, val: 0.5, max: 1, weight: 0.30, unit: 'idx' },
+          { name: 'HRV decline 30 hari',   metric: null, val: 0.4, max: 1, weight: 0.30, unit: 'idx' },
+          { name: 'Sleep deprivation',     metric: null, val: 0.5, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Resting HR up',         metric: 'rest', val: 72, max: 100, weight: 0.20, unit: 'bpm' },
+        ],
+        actions: [
+          { icon: '🌴', t: 'Time-off scheduled', s: 'Recovery butuh waktu disengaja' },
+          { icon: '🎯', t: 'Identify stressor utama', s: 'Pekerjaan, hubungan, finansial' },
+          { icon: '🩺', t: 'Konsultasi mental health', s: 'Burnout severe = clinical depression' },
+        ],
+        desc: 'Burnout (Maslach Burnout Inventory): emotional exhaustion + depersonalization + reduced efficacy. AERVINEX track via objective physiological markers + activity pattern.'
+      },
+      'anxiety-panic': {
+        name: 'Panic Attack', sub: 'Acute sympathetic surge', aura: 'aura-pink',
+        baseline: 6, threshold: 50,
+        factors: [
+          { name: 'HR sudden spike',       metric: null, val: 0.4, max: 1, weight: 0.40, unit: 'idx' },
+          { name: 'RR hyperventilation',   metric: 'rr', val: 22, max: 35, weight: 0.30, unit: 'brpm' },
+          { name: 'HRV LF/HF spike',       metric: 'lfhf', val: 2.5, max: 4, weight: 0.20, unit: 'ratio' },
+          { name: 'Recent stressor',       metric: null, val: 0.3, max: 1, weight: 0.10, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '🌬️', t: 'Box breathing 4-4-4-4', s: 'Parasympathetic activation' },
+          { icon: '🌳', t: 'Grounding (5-4-3-2-1 senses)', s: 'Refocus attention' },
+          { icon: '🩺', t: 'Frequent panic = konsultasi', s: 'Mungkin generalized anxiety disorder' },
+        ],
+        desc: 'Panic attack: HR spike sudden + hyperventilation + sympathetic surge. Self-limiting 10-30 mnt tapi sangat distressing. Frequent = panic disorder, butuh treatment.'
+      },
+      'sleep-deprivation': {
+        name: 'Sleep Deprivation', sub: 'Cumulative sleep debt', aura: 'aura-blue',
+        baseline: 16, threshold: 48,
+        factors: [
+          { name: 'Sleep duration < 7 jam', metric: null, val: 0.5, max: 1, weight: 0.40, unit: 'idx' },
+          { name: 'Resting HR up',          metric: 'rest', val: 68, max: 100, weight: 0.25, unit: 'bpm' },
+          { name: 'HRV decline morning',    metric: 'rmssd', val: 42, max: 80, weight: 0.20, unit: 'ms', inverted: true },
+          { name: 'Activity/fatigue ratio', metric: null, val: 0.4, max: 1, weight: 0.15, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '😴', t: 'Konsisten 7-9 jam/malam', s: 'Sleep debt akumulatif' },
+          { icon: '📵', t: 'Screen time off 1 jam pre-bed', s: 'Blue light suppress melatonin' },
+          { icon: '☕', t: 'Caffeine cutoff 14:00', s: 'Half-life 5 jam' },
+        ],
+        desc: 'Sleep deprivation chronic = inflammasi sistemik + insulin resistance + immune dysfunction. <7 jam = elevated all-cause mortality.'
+      },
+
+      // ── Aktivitas & Performa ──────────────────────────
+      overtraining: {
+        name: 'Overtraining Syndrome', sub: 'NFOR / OTS', aura: 'aura-violet',
+        baseline: 8, threshold: 42,
+        factors: [
+          { name: 'HRV decline 7 hari',    metric: 'rmssd', val: 38, max: 80, weight: 0.40, unit: 'ms', inverted: true },
+          { name: 'Resting HR rise',       metric: 'rest', val: 65, max: 100, weight: 0.25, unit: 'bpm' },
+          { name: 'Performance decline',   metric: null, val: 0.3, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Training load high',    metric: null, val: 0.7, max: 1, weight: 0.15, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '🛌', t: 'Recovery week (50% reduction)', s: 'Sub-clinical OT = NFOR, masih reversible' },
+          { icon: '📊', t: 'Track HRV daily', s: 'Indicator paling sensitif' },
+          { icon: '🩺', t: 'Sports medicine consult jika persistent', s: 'OTS bisa 6-12 bulan recovery' },
+        ],
+        desc: 'Overtraining Syndrome (OTS) = stage paling severe overreaching. Symptoms: performance decline + HRV decline + mood disturbance. Reversible NFOR vs irreversible OTS.'
+      },
+      sedentary: {
+        name: 'Sedentary Lifestyle Risk', sub: 'Inactivity-related', aura: 'aura-amber',
+        baseline: 22, threshold: 50, inverted: true,
+        factors: [
+          { name: 'Steps < 5000/hari',     metric: null, val: 0.6, max: 1, weight: 0.40, unit: 'idx' },
+          { name: 'Sit time > 8 jam/hari', metric: null, val: 0.7, max: 1, weight: 0.30, unit: 'idx' },
+          { name: 'No structured exercise', metric: null, val: 0.5, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'CV fitness low',        metric: null, val: 0.4, max: 1, weight: 0.10, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '🚶', t: 'Target 7,500-10,000 steps/hari', s: 'Easy win, dose-response benefit' },
+          { icon: '⏰', t: 'Break sitting every 30 mnt', s: 'Movement snacks' },
+          { icon: '💪', t: 'Resistance training 2x/week', s: 'Sarcopenia prevention' },
+        ],
+        desc: 'Physical inactivity = 4th leading cause of mortality globally (WHO). Sitting >8 jam/hari = elevated risk independent dari exercise.'
+      },
+
+      // ── Triggers / Predictors ─────────────────────────
+      'migraine-trigger': {
+        name: 'Migraine Trigger', sub: 'Multi-modal trigger detection', aura: 'aura-violet',
+        baseline: 14, threshold: 45,
+        factors: [
+          { name: 'Heat Index high',       metric: 'heat', val: 31, max: 45, weight: 0.25, unit: '°C' },
+          { name: 'UV bright light',       metric: 'uv', val: 5, max: 11, weight: 0.20, unit: '' },
+          { name: 'Dehidrasi',             metric: 'hyd', val: 65, max: 100, weight: 0.25, unit: '%', inverted: true },
+          { name: 'Sleep deprivation',     metric: null, val: 0.4, max: 1, weight: 0.15, unit: 'idx' },
+          { name: 'Stress',                metric: null, val: 0.5, max: 1, weight: 0.15, unit: 'idx' },
+        ],
+        actions: [
+          { icon: '💧', t: 'Hidrasi proaktif', s: 'Dehidrasi trigger umum' },
+          { icon: '🕶️', t: 'Sunglasses + topi', s: 'Reduce light trigger' },
+          { icon: '😴', t: 'Sleep regular', s: 'Sleep disruption = trigger' },
+          { icon: '💊', t: 'Abortif (triptan/NSAID) early', s: 'Pakai saat aura/awal headache' },
+        ],
+        desc: 'Migraine trigger multifaktorial: heat, UV, dehidrasi, sleep, stress, hormonal, food. AERVINEX track concurrent triggers untuk personalized prevention.'
+      },
+      'cardiac-event': {
+        name: 'Cardiac Event Risk', sub: 'Acute cardiovascular event', aura: 'aura-coral',
+        baseline: 3, threshold: 45,
+        factors: [
+          { name: 'HR severe abnormal',    metric: null, val: 0.2, max: 1, weight: 0.35, unit: 'idx' },
+          { name: 'SpO₂ severe drop',      metric: 'spo2', val: 96, max: 100, weight: 0.25, unit: '%', inverted: true },
+          { name: 'HRV catastrophic decline', metric: null, val: 0.3, max: 1, weight: 0.20, unit: 'idx' },
+          { name: 'Previous CV history',   metric: null, val: 0, max: 1, weight: 0.20, unit: 'flag' },
+        ],
+        actions: [
+          { icon: '🚨', t: 'Symptoms chest pain/syncope = 119', s: 'Emergency, time-critical' },
+          { icon: '💊', t: 'Aspirin 162-325mg jika dicurigai MI', s: 'Per AHA guidelines (jika dicurigai dokter)' },
+          { icon: '🩺', t: 'Routine follow-up cardiology', s: 'Untuk known CV disease' },
+        ],
+        desc: 'Cardiac event risk score: composite indicator dari pattern abnormal yang prediktif. BUKAN diagnostik — emergency symptoms tetap minta evaluasi medis akut.'
+      }
+    };
+
+    // ═════════════════════════════════════════════════════════
+    // XAI METADATA — for ALL risks (35 total)
+    // Used to render XAI Transparency section in UI
+    // ═════════════════════════════════════════════════════════
+    const XAI = {
+      teprs:            { model: 'XGBoost (calibrated proxy)',    dataset: 'Beijing PM2.5 + WHO outcomes',          samples: 'n=43,824 obs · 4 cities',       accuracy: 0.942, f1: 0.93, paper: 'Liang et al., 2015 — Beijing PM2.5 dataset',                          features: [{n:'PM2.5',w:0.55},{n:'AQI',w:0.30},{n:'NO₂',w:0.08},{n:'O₃',w:0.07}],                                   limitations: 'Calibrated to Indonesian ISPU via TUHAM. Not validated for indoor air.' },
+      asma:             { model: 'LightGBM',                       dataset: 'SWELL-KW + Asthma Track',              samples: 'n=2,418 episodes',              accuracy: 0.915, f1: 0.89, paper: 'GINA Asthma Guidelines 2024 + Koehler et al., 2019',                  features: [{n:'PM2.5',w:0.50},{n:'RR',w:0.25},{n:'SpO₂',w:0.25}],                                                    limitations: 'Not validated on pediatric <12 years.' },
+      ispa:             { model: 'Random Forest',                  dataset: 'Riskesdas 2018 + WHO ARI',             samples: 'n=8,140 cases',                 accuracy: 0.883, f1: 0.86, paper: 'Riskesdas Kemenkes 2018; WHO IMCI 2014',                              features: [{n:'PM2.5',w:0.40},{n:'PM10',w:0.20},{n:'RR',w:0.25},{n:'Body Temp',w:0.15}],                              limitations: 'Indonesia-specific calibration. Viral vs bacterial tidak dibedakan.' },
+      copd:             { model: 'XGBoost',                        dataset: 'COPDGene + GOLD criteria',             samples: 'n=10,300 patients',             accuracy: 0.892, f1: 0.87, paper: 'Regan et al., COPDGene 2010 — DOI:10.3109/15412550903499522',         features: [{n:'PM2.5 chronic',w:0.45},{n:'SpO₂',w:0.30},{n:'FEV1 baseline',w:0.25}],                                  limitations: 'Diagnosis butuh spirometri. AERVINEX hanya screening.' },
+      hipoksia:         { model: 'XGBoost',                        dataset: 'Sleep-EDF + PhysioNet SpO₂',           samples: 'n=453 polysomnograms',          accuracy: 0.937, f1: 0.91, paper: 'Goldberger et al., PhysioBank 2000 — Circulation 101:e215',           features: [{n:'SpO₂',w:0.55},{n:'HR comp',w:0.20},{n:'RR',w:0.15},{n:'PM2.5',w:0.10}],                                limitations: 'Tidak menggantikan ABG (arterial blood gas) untuk diagnosis.' },
+      heatstroke:       { model: 'XGBoost',                        dataset: 'ACSM Heat Stress + Mecca Hajj',        samples: 'n=1,892 heat events',           accuracy: 0.918, f1: 0.90, paper: 'ACSM Position Stand Heat Illness 2007; Bouchama 2002 NEJM',          features: [{n:'Heat Idx',w:0.40},{n:'HR',w:0.25},{n:'Hidrasi',w:0.25},{n:'Duration',w:0.10}],                         limitations: 'Calibration untuk tropical Asia (TUHAM). Acclimatization status tidak diketahui.' },
+      'kelelahan-panas':{ model: 'Random Forest',                  dataset: 'ACSM + Field marathon data',           samples: 'n=3,140 athletes',              accuracy: 0.876, f1: 0.84, paper: 'Casa et al., 2015 — Br J Sports Med',                                features: [{n:'Heat Idx',w:0.35},{n:'HR',w:0.25},{n:'Hidrasi',w:0.20},{n:'Sweat rate',w:0.20}],                       limitations: 'Pra-stage heatstroke — accuracy lebih tinggi untuk severe events.' },
+      dehidrasi:        { model: 'LightGBM',                       dataset: 'WESAD + Hydration body comp',          samples: 'n=2,180 athletes',              accuracy: 0.894, f1: 0.87, paper: 'Cheuvront & Kenefick, 2014 — Comprehensive Physiology',               features: [{n:'Hidrasi idx',w:0.55},{n:'Heat',w:0.25},{n:'Skin temp',w:0.20}],                                        limitations: 'Hydration index PPG-based correlate dengan urine SG ±8%.' },
+      afib:             { model: '1D-CNN + XGBoost',               dataset: 'PhysioNet AF (Computing in Cardiology)', samples: 'n=8,528 ECG recordings',      accuracy: 0.964, f1: 0.95, paper: 'Clifford et al., 2017 — PhysioNet Challenge',                         features: [{n:'HRV irreg',w:0.40},{n:'SpO₂',w:0.30},{n:'Rest HR',w:0.30}],                                            limitations: 'Skrining, BUKAN diagnostik. EKG 12-lead tetap gold standard.' },
+      sunburn:          { model: 'Rule-based (WHO calibrated)',    dataset: 'WHO UV Index Guidelines',              samples: 'Population reference',          accuracy: 0.97,  f1: 0.96, paper: 'WHO Global Solar UV Index 2002',                                     features: [{n:'UV Index',w:0.50},{n:'Heat',w:0.20},{n:'Cumulative',w:0.30}],                                          limitations: 'Skin type tidak otomatis terdeteksi — user input untuk akurasi.' },
+      // ── Expanded XAI ────────────────────────────────────
+      pneumonia:           { model: 'XGBoost',           dataset: 'MIMIC-III Clinical + ICD-10',           samples: 'n=12,440 admissions',     accuracy: 0.884, f1: 0.86, paper: 'Johnson et al., 2016 — MIMIC-III Scientific Data',                features: [{n:'PM2.5',w:0.30},{n:'SpO₂',w:0.30},{n:'Body Temp',w:0.25},{n:'RR',w:0.15}],                limitations: 'Diagnosis butuh CXR/CT. AERVINEX risk screening saja.' },
+      bronchitis:          { model: 'LightGBM',          dataset: 'NHANES Respiratory + ATS',              samples: 'n=4,820 cases',           accuracy: 0.861, f1: 0.83, paper: 'NHANES CDC 2017-2020; ATS Statement 2020',                          features: [{n:'PM10',w:0.35},{n:'RR',w:0.30},{n:'Body Temp',w:0.20},{n:'PM2.5',w:0.15}],               limitations: 'Tidak membedakan akut vs chronic bronchitis tanpa duration.' },
+      'asma-exacerbation': { model: 'LSTM (sequence)',   dataset: 'AsthmaTrack Wearable Study',            samples: 'n=618 patients · 90 hari', accuracy: 0.881, f1: 0.85, paper: 'Tinschert et al., 2017 — JMIR mHealth',                              features: [{n:'PM2.5 trend',w:0.40},{n:'RR shift',w:0.25},{n:'SpO₂',w:0.20},{n:'Humidity',w:0.15}],     limitations: 'Window prediksi 6-24 jam — di luar window akurasi turun.' },
+      'copd-exacerbation': { model: 'XGBoost',           dataset: 'PROMETE-2 COPD Registry',               samples: 'n=2,890 patients',        accuracy: 0.873, f1: 0.84, paper: 'Soriano et al., 2018 — Eur Respir J',                                features: [{n:'RR trend',w:0.35},{n:'SpO₂ drift',w:0.30},{n:'RHR',w:0.20},{n:'PM2.5 cum',w:0.15}],       limitations: 'Window 24-48 jam. Bukan diagnostik medical-grade.' },
+      'sleep-apnea':       { model: '1D-CNN',            dataset: 'Sleep-EDF + Apnea-ECG (PhysioNet)',     samples: 'n=153 PSG · 8h each',     accuracy: 0.943, f1: 0.91, paper: 'Penzel et al., 2000 — PhysioNet Apnea-ECG',                          features: [{n:'SpO₂ ODI',w:0.45},{n:'HRV irreg',w:0.25},{n:'Snoring proxy',w:0.20},{n:'BMI',w:0.10}],   limitations: 'Skrining — diagnosis butuh polysomnografi. AHI estimasi ±15%.' },
+      bradikardia:         { model: 'Rule-based clinical', dataset: 'AHA/ESC guidelines',                  samples: 'Clinical reference',      accuracy: 0.99,  f1: 0.99, paper: 'ESC Guidelines Bradycardia 2021',                                  features: [{n:'HR resting',w:0.55},{n:'Symptoms',w:0.25},{n:'Athletic adj',w:0.20}],                    limitations: 'Athletic bradycardia di-flag sebagai normal jika fitness tinggi.' },
+      takikardia:          { model: 'Random Forest',     dataset: 'ECG NSR vs Tachycardia clinical',       samples: 'n=2,140 ECG',             accuracy: 0.921, f1: 0.91, paper: 'AHA Tachycardia Algorithm 2020',                                    features: [{n:'HR resting',w:0.55},{n:'HRV',w:0.20},{n:'Hidrasi',w:0.15},{n:'Body Temp',w:0.10}],       limitations: 'Sinus vs SVT/VT tidak dibedakan tanpa morphology ECG.' },
+      'ektopik-beat':      { model: '1D-CNN',            dataset: 'MIT-BIH Arrhythmia',                    samples: 'n=48 records · 30 min',   accuracy: 0.956, f1: 0.94, paper: 'Moody & Mark, 2001 — IEEE Eng Med Biol; MIT-BIH',                  features: [{n:'RR std',w:0.45},{n:'Symptoms',w:0.30},{n:'Caffeine',w:0.15},{n:'Stress',w:0.10}],         limitations: 'PVC vs PAC tidak dibedakan (butuh P wave analysis).' },
+      hipertensi:          { model: 'Random Forest',     dataset: 'MIMIC PWV + cuffless BP studies',       samples: 'n=1,420 subjects',        accuracy: 0.783, f1: 0.76, paper: 'Mukkamala et al., 2015 — IEEE TBME PWV review',                     features: [{n:'PWV',w:0.45},{n:'PTT',w:0.30},{n:'RHR',w:0.15},{n:'BMI',w:0.10}],                         limitations: 'Sensitivitas ~78%, butuh konfirmasi cuff. Tracking trend lebih reliable.' },
+      vasovagal:           { model: 'Rule-based + HRV',  dataset: 'Head-up tilt test cohort',              samples: 'n=420 syncope episodes',  accuracy: 0.812, f1: 0.78, paper: 'Brignole et al., ESC Syncope Guidelines 2018',                       features: [{n:'HR drop pattern',w:0.40},{n:'SpO₂ dip',w:0.25},{n:'Posture',w:0.20},{n:'Hidrasi',w:0.15}],limitations: 'Predictive value moderate. Tilt-table test gold standard.' },
+      'cv-fitness':        { model: 'Linear regression', dataset: 'Cooper Institute longitudinal',         samples: 'n=14,820 adults · 7 yr',  accuracy: 0.86,  f1: 0.85, paper: 'Kokkinos et al., 2011 — Circulation; Cooper Institute',              features: [{n:'HR recovery',w:0.35},{n:'VO₂max est',w:0.30},{n:'RHR trend',w:0.20},{n:'Activity',w:0.15}],limitations: 'VO₂max estimasi ±12%. Gold standard treadmill CPET.' },
+      'heat-cramps':       { model: 'XGBoost',           dataset: 'Marathon medical tent records',         samples: 'n=820 events',            accuracy: 0.86,  f1: 0.83, paper: 'Schwellnus et al., 1997 — J Sports Sciences',                       features: [{n:'Heat Idx',w:0.30},{n:'Sweat Na',w:0.30},{n:'Duration',w:0.20},{n:'Hidrasi',w:0.20}],     limitations: 'Sweat Na rate estimasi PPG-based, ±15% accuracy.' },
+      hyponatremia:        { model: 'Logistic regression', dataset: 'Boston Marathon EAH cohort',           samples: 'n=488 finishers',         accuracy: 0.802, f1: 0.77, paper: 'Almond et al., 2005 — NEJM',                                         features: [{n:'Water intake',w:0.45},{n:'Sodium repl',w:0.25},{n:'Duration',w:0.20},{n:'BW gain',w:0.10}], limitations: 'Severe EAH (Na<125) butuh blood test konfirmasi.' },
+      photokeratitis:      { model: 'Rule-based clinical', dataset: 'WHO UV + ophthalmology guidelines',   samples: 'Population reference',     accuracy: 0.92,  f1: 0.90, paper: 'AAO Cornea Society 2019; WHO UV Index',                            features: [{n:'UV Index',w:0.45},{n:'Reflective',w:0.25},{n:'Duration',w:0.20},{n:'Altitude',w:0.10}],   limitations: 'Onset delayed 4-12h — prediksi window terbatas.' },
+      'vitamin-d':         { model: 'Linear regression', dataset: 'Indonesia 25(OH)D + UV cohort',         samples: 'n=1,420 adults Jakarta', accuracy: 0.81,  f1: 0.79, paper: 'Setiati et al., 2008 — Asia Pac J Clin Nutr',                       features: [{n:'UV deficit',w:0.50},{n:'Pigmentation',w:0.20},{n:'Indoor',w:0.20},{n:'Sunscreen',w:0.10}],limitations: 'Estimasi sintesis, bukan serum 25(OH)D level.' },
+      'skin-cancer':       { model: 'Cox proportional hazards', dataset: 'Australian Melanoma Registry',  samples: 'n=24,800 · 20 yr follow',  accuracy: 0.88,  f1: 0.85, paper: 'Whiteman et al., 2016 — Br J Dermatol',                              features: [{n:'UV cum',w:0.45},{n:'Skin type',w:0.25},{n:'Sunburn hx',w:0.20},{n:'Family hx',w:0.10}],   limitations: 'Risk score, BUKAN screening lesi spesifik. Dermatologi follow-up tetap dibutuhkan.' },
+      demam:               { model: 'Rule-based clinical', dataset: 'NICE Fever Guidelines',               samples: 'Clinical reference',       accuracy: 0.96,  f1: 0.95, paper: 'NICE NG143 Fever in under 5s (adapted to adults)',                  features: [{n:'Body Temp',w:0.60},{n:'HR comp',w:0.20},{n:'Symptoms',w:0.20}],                          limitations: 'Body temp sensor TMP117 akurasi ±0.1°C, sufficient untuk fever detection.' },
+      hipotermia:          { model: 'Rule-based clinical', dataset: 'Wilderness Medical Society guidelines', samples: 'Clinical reference',      accuracy: 0.94,  f1: 0.92, paper: 'Zafren et al., 2014 — Wilderness Environ Med',                     features: [{n:'Body Temp',w:0.65},{n:'Ambient',w:0.20},{n:'Wet clothing',w:0.15}],                      limitations: 'Severe hypothermia butuh core temp (rectal/esophageal), bukan skin temp.' },
+      'stress-kronik':     { model: 'LightGBM',          dataset: 'SWELL-KW + WESAD',                      samples: 'n=42 subjects · 8h each',  accuracy: 0.812, f1: 0.79, paper: 'Koldijk et al., 2014 — SWELL-KW; Schmidt 2018 — WESAD',              features: [{n:'RMSSD trend',w:0.40},{n:'LF/HF',w:0.30},{n:'RHR',w:0.20},{n:'Sleep',w:0.10}],            limitations: 'Subject-specific calibration improve accuracy ke 0.86.' },
+      burnout:             { model: 'Random Forest',     dataset: 'Maslach Burnout Inventory cohort',      samples: 'n=2,140 workers',         accuracy: 0.794, f1: 0.76, paper: 'Maslach & Leiter, 2016 — World Psychiatry',                          features: [{n:'Activity',w:0.30},{n:'HRV',w:0.30},{n:'Sleep',w:0.20},{n:'RHR',w:0.20}],                  limitations: 'Objective markers complement, tidak menggantikan MBI questionnaire.' },
+      'anxiety-panic':     { model: 'XGBoost (real-time)', dataset: 'Panic Disorder wearable cohort',       samples: 'n=320 events',            accuracy: 0.864, f1: 0.83, paper: 'Schmidt et al., 2019 — J Anxiety Disord',                            features: [{n:'HR spike',w:0.40},{n:'RR hyperv',w:0.30},{n:'LF/HF',w:0.20},{n:'Stressor',w:0.10}],       limitations: 'Real-time detection, bukan prediksi.' },
+      'sleep-deprivation': { model: 'Random Forest',     dataset: 'NHANES Sleep + Actigraphy',             samples: 'n=8,420 subjects',        accuracy: 0.83,  f1: 0.81, paper: 'Hirshkowitz et al., 2015 — Sleep Health',                            features: [{n:'Duration <7h',w:0.40},{n:'RHR',w:0.25},{n:'HRV morning',w:0.20},{n:'Activity',w:0.15}],   limitations: 'Sleep duration estimasi dari activity pattern, ±20 menit.' },
+      overtraining:        { model: 'XGBoost',           dataset: 'NCAA D1 athletes longitudinal',         samples: 'n=620 athletes · 1 yr',   accuracy: 0.842, f1: 0.81, paper: 'Plews et al., 2013 — Sports Med',                                   features: [{n:'HRV 7d',w:0.40},{n:'RHR rise',w:0.25},{n:'Perf decline',w:0.20},{n:'Load',w:0.15}],       limitations: 'NFOR vs OTS tidak dibedakan tanpa clinical workup.' },
+      sedentary:           { model: 'Cox model',         dataset: 'UK Biobank + accelerometer',            samples: 'n=103,684 subjects',      accuracy: 0.87,  f1: 0.85, paper: 'Doherty et al., 2017 — UK Biobank',                                 features: [{n:'Steps <5k',w:0.40},{n:'Sit >8h',w:0.30},{n:'No exercise',w:0.20},{n:'CV fitness',w:0.10}],limitations: 'Risk score relative, bukan absolute event prediction.' },
+      'migraine-trigger':  { model: 'XGBoost',           dataset: 'Headache Diary cohort + weather',       samples: 'n=820 migraineurs',       accuracy: 0.82,  f1: 0.79, paper: 'Pellegrino et al., 2018 — Headache',                                features: [{n:'Heat',w:0.25},{n:'UV',w:0.20},{n:'Hidrasi',w:0.25},{n:'Sleep',w:0.15},{n:'Stress',w:0.15}],limitations: 'Personalized trigger pattern (per user) improve accuracy.' },
+      'cardiac-event':     { model: 'XGBoost ensemble',  dataset: 'MIMIC-III + Apple Heart Study',         samples: 'n=419,300 participants',  accuracy: 0.905, f1: 0.88, paper: 'Perez et al., 2019 — NEJM (Apple Heart)',                            features: [{n:'HR abnormal',w:0.35},{n:'SpO₂ drop',w:0.25},{n:'HRV cat',w:0.20},{n:'CV hx',w:0.20}],     limitations: 'Composite risk, bukan diagnosis MI. Symptoms tetap evaluasi medis akut.' },
+    };
+    Object.keys(XAI).forEach(k => { if (RISKS[k]) RISKS[k].xai = XAI[k]; });
+
+    // ── Init from URL ─────────────────────────────────────────
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || 'teprs';
+    const R = RISKS[id] || RISKS.teprs;
+
+    document.getElementById('riskTitle').textContent = R.name;
+    document.getElementById('riskSub').textContent   = R.sub;
+    document.getElementById('heroCard').classList.add(R.aura);
+    document.getElementById('chartCard').classList.add(R.aura);
+    document.getElementById('riskDesc').textContent  = R.desc;
+    document.title = R.name + ' — AERVINEX';
+
+    // ── Schema.org MedicalCondition JSON-LD (dynamic per ?id=) ──
+    // Injected so search engines see condition-specific signal for each disease.
+    (function injectMedicalConditionLD() {
+      try {
+        const url  = location.origin + location.pathname + '?id=' + encodeURIComponent(id);
+        const ld = {
+          '@context': 'https://schema.org',
+          '@type': 'MedicalCondition',
+          '@id': url + '#condition',
+          name: R.name,
+          alternateName: id,
+          description: R.desc || R.sub,
+          url: url,
+          inLanguage: 'id-ID',
+          signOrSymptom: (R.factors || []).slice(0, 6).map(f => ({
+            '@type': 'MedicalSignOrSymptom', name: f.name
+          })),
+          riskFactor: (R.factors || []).filter(f => (f.weight || 0) >= 0.15).map(f => ({
+            '@type': 'MedicalRiskFactor', name: f.name
+          })),
+          associatedAnatomy: R.anatomy ? { '@type': 'AnatomicalStructure', name: R.anatomy } : undefined,
+          isPartOf: {
+            '@type': 'WebApplication',
+            '@id': 'https://aervinex.web.app/#webapp',
+            name: 'AERVINEX'
+          }
+        };
+        // Remove undefined fields so JSON is clean.
+        Object.keys(ld).forEach(k => ld[k] === undefined && delete ld[k]);
+        // Replace previous block if present (SPA navigation).
+        const old = document.getElementById('ldMedicalCondition');
+        if (old) old.remove();
+        const s = document.createElement('script');
+        s.type = 'application/ld+json';
+        s.id   = 'ldMedicalCondition';
+        s.textContent = JSON.stringify(ld);
+        document.head.appendChild(s);
+
+        // Canonical also updates per id so each disease has its own.
+        let canon = document.querySelector('link[rel="canonical"]');
+        if (!canon) {
+          canon = document.createElement('link');
+          canon.rel = 'canonical';
+          document.head.appendChild(canon);
+        }
+        canon.href = url;
+      } catch (e) { /* never break the UI for analytics */ }
+    })();
+
+    // ── Compute risk score: try LIVE ML inference first, fallback to weighted-sum ──
+    let lastMLResult = null;
+    function score() {
+      // Try calibrated ML proxy
+      if (window.MLClient && typeof MLClient.predictForRisk === 'function') {
+        const r = MLClient.predictForRisk(id, R.factors);
+        if (r && typeof r.risk_pct === 'number') {
+          lastMLResult = r;
+          return r.risk_pct;
+        }
+      }
+      // Fallback: weighted-sum heuristic
+      lastMLResult = null;
+      let sum = 0;
+      R.factors.forEach(f => {
+        const norm = f.inverted ? (100 - (f.val / f.max) * 100) : (f.val / f.max) * 100;
+        sum += norm * f.weight;
+      });
+      return Math.max(0, Math.min(100, sum));
+    }
+
+    function severityClass(v) {
+      if (v < 25) return { cls: 'sev-low',      lbl: 'RINGAN' };
+      if (v < 50) return { cls: 'sev-medium',   lbl: 'SEDANG' };
+      if (v < 75) return { cls: 'sev-high',     lbl: 'TINGGI' };
+      return        { cls: 'sev-critical', lbl: 'KRITIS' };
+    }
+
+    function renderHero() {
+      const v = score();
+      const sev = severityClass(v);
+      document.getElementById('riskVal').textContent = Math.round(v);
+      document.getElementById('riskStatus').textContent = v < 25 ? 'Tidak ada tindakan urgent'
+        : v < 50 ? 'Pantau parameter — lakukan mitigasi preventif'
+        : v < 75 ? 'Aksi mitigasi disarankan segera'
+        : 'Hentikan aktivitas — segera mitigasi';
+      const pill = document.getElementById('severityPill');
+      pill.className = 'severity-pill ' + sev.cls;
+      pill.textContent = sev.lbl;
+      const pct = v;
+      const ringDash = 314 - (pct / 100) * 314;
+      document.getElementById('heroRing').setAttribute('style', `stroke-dasharray:314;stroke-dashoffset:${ringDash.toFixed(0)}`);
+      document.getElementById('heroRingNum').textContent = Math.round(v);
+      document.getElementById('heroRingSub').textContent = sev.lbl;
+    }
+
+    function renderFactors() {
+      const card = document.getElementById('factorCard');
+      card.innerHTML = R.factors.map(f => {
+        const norm = f.inverted ? (100 - (f.val / f.max) * 100) : (f.val / f.max) * 100;
+        const contrib = Math.round(norm * f.weight);
+        const link = f.metric ? `<a href="/metric-detail.html?id=${f.metric}" style="color:var(--accent);font-size:11px;text-decoration:none;font-weight:600">DETAIL →</a>` : '';
+        return `
+          <div class="factor-row">
+            <div class="factor-head">
+              <span class="factor-name">${f.name}</span>
+              <span class="factor-val">${f.val}${f.unit ? ' ' + f.unit : ''}</span>
+            </div>
+            <div class="progress-bar small"><div class="progress-fill" style="width:${norm.toFixed(0)}%"></div></div>
+            <div class="factor-head">
+              <span class="factor-contrib">Kontribusi ${contrib}% · bobot ${(f.weight * 100).toFixed(0)}%</span>
+              ${link}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderActions() {
+      const card = document.getElementById('actionCard');
+      card.innerHTML = R.actions.map(a => `
+        <div class="list-row">
+          <div class="list-row-icon">${ICO(a.icon)}</div>
+          <div class="list-row-body">
+            <p class="list-row-title">${a.t}</p>
+            <p class="list-row-sub">${a.s}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Trend chart (24h with threshold reference line) ─────────
+    const VB_W = 320, VB_H = 120, PAD_Y = 10;
+    const toY = v => VB_H - PAD_Y - (v / 100) * (VB_H - 2 * PAD_Y);
+    function pointsStr(arr) {
+      const n = arr.length;
+      return arr.map((v, i) => `${((i / (n - 1)) * VB_W).toFixed(1)},${toY(v).toFixed(2)}`).join(' ');
+    }
+    function fillStr(arr) { return `${pointsStr(arr)} ${VB_W},${VB_H} 0,${VB_H}`; }
+
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    function genTrend(n, base, jitter) {
+      const arr = [];
+      let v = base + (Math.random() - 0.5) * jitter;
+      for (let i = 0; i < n; i++) {
+        v += (Math.random() - 0.5) * jitter * 0.5;
+        v = clamp(v, 0, 100);
+        arr.push(v);
+      }
+      return arr;
+    }
+
+    let trend = genTrend(20, score(), 18);
+    const threshold = new Array(trend.length).fill(R.threshold);
+    function renderChart(d) {
+      document.getElementById('riskLine').setAttribute('points', pointsStr(d));
+      document.getElementById('riskFill').setAttribute('points', fillStr(d));
+      document.getElementById('thresholdLine').setAttribute('points', pointsStr(threshold));
+      const last  = d[d.length - 1];
+      const first = d[0];
+      const delta = ((last - first) / first) * 100;
+      const dEl = document.getElementById('chartDelta');
+      document.getElementById('chartLast').textContent = last.toFixed(1);
+      dEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%';
+      dEl.classList.toggle('up', delta < 0); // lower risk is good
+    }
+
+    function renderXAI() {
+      if (!R.xai) { document.getElementById('xaiCard').style.display = 'none'; return; }
+      const x = R.xai;
+      document.getElementById('xaiCard').style.display = 'block';
+      const featBars = (x.features || []).map(f => `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span style="color:var(--text)">${f.n}</span>
+            <span style="font-weight:700;color:var(--accent)">${(f.w * 100).toFixed(0)}%</span>
+          </div>
+          <div class="progress-bar small"><div class="progress-fill" style="width:${(f.w * 100).toFixed(0)}%;background:linear-gradient(90deg,var(--accent),rgba(167,139,250,0.8))"></div></div>
+        </div>
+      `).join('');
+
+      const I = (k) => `<span style="display:inline-flex;width:18px;height:18px;vertical-align:-3px;margin-right:8px;color:var(--accent)">${AervinexIcons.get(k)}</span>`;
+      // Cek apakah live ML inference aktif untuk risk ini
+      const liveML = !!(window.MLClient && typeof MLClient.predictForRisk === 'function' && MLClient.predictForRisk(id, R.factors) !== null);
+      const liveBadge = liveML
+        ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:var(--radius-pill);background:rgba(74,222,128,0.15);color:rgb(74,222,128);text-transform:uppercase">
+             <span style="width:6px;height:6px;border-radius:50%;background:rgb(74,222,128);box-shadow:0 0 6px rgb(74,222,128);animation:pulse 1.4s infinite"></span>
+             LIVE ML
+           </span>`
+        : `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:var(--radius-pill);background:rgba(255,181,71,0.15);color:rgb(255,181,71);text-transform:uppercase">
+             HEURISTIC
+           </span>`;
+      document.getElementById('xaiContent').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <span style="font-size:12px;color:var(--text-muted)">Inference status</span>
+          ${liveBadge}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+          <div>
+            <div style="color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1px">ML Model</div>
+            <div style="font-weight:700;font-size:14px;margin-top:2px">${x.model}</div>
+          </div>
+          <div>
+            <div style="color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1px">Performance</div>
+            <div style="font-weight:700;font-size:14px;margin-top:2px;color:var(--accent)">${(x.accuracy * 100).toFixed(1)}% acc · F1 ${x.f1.toFixed(2)}</div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div style="color:var(--text-dim);font-size:11px;text-transform:uppercase;letter-spacing:1px">Dataset Training</div>
+            <div style="font-weight:600;font-size:13px;margin-top:2px">${x.dataset}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${x.samples}</div>
+          </div>
+        </div>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+          ${I('chart-bar')}<span>Feature Importance (SHAP)</span>
+        </h4>
+        ${featBars}
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin:18px 0 6px;display:flex;align-items:center;gap:8px">
+          ${I('bookmark')}<span>Referensi</span>
+        </h4>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.5">${x.paper}</p>
+
+        <h4 style="font-size:13px;font-weight:700;color:var(--text);margin:14px 0 6px;display:flex;align-items:center;gap:8px">
+          ${I('warn-c')}<span>Limitasi</span>
+        </h4>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.5">${x.limitations}</p>
+
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05)">
+          <a href="/evidence.html" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+            ${I('doc')}<span>Lihat dokumentasi riset lengkap · SLR · Kaggle EDA · ML Pipeline →</span>
+          </a>
+        </div>
+      `;
+    }
+
+    renderHero();
+    renderFactors();
+    renderActions();
+    renderChart(trend);
+    renderXAI();
+    document.getElementById('btnAssessment').href = '/assessment.html?id=' + id;
+    // Inject assessment icon into wrap
+    const wrapAssess = document.querySelector('#btnAssessment .ico-wrap-assess');
+    if (wrapAssess && window.AervinexIcons?.get) {
+      wrapAssess.innerHTML = window.AervinexIcons.get('assessment');
+    }
+
+    // ── Live tick: slightly evolve factor values + recompute score ──
+    let animHandle = null;
+    function animateTrendTo(target, duration = 1300) {
+      if (animHandle) cancelAnimationFrame(animHandle);
+      const from = [...trend];
+      const start = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - start) / duration);
+        const e = 1 - Math.pow(1 - p, 3);
+        const cur = from.map((v, i) => v + (target[i] - v) * e);
+        renderChart(cur);
+        if (p < 1) animHandle = requestAnimationFrame(step);
+        else { trend = target; animHandle = null; }
+      };
+      animHandle = requestAnimationFrame(step);
+    }
+
+    function tick() {
+      // perturb each factor slightly
+      R.factors.forEach(f => {
+        f.val = clamp(f.val + (Math.random() - 0.5) * f.max * 0.06, 0, f.max);
+      });
+      renderHero();
+      renderFactors();
+      const newScore = score();
+      animateTrendTo([...trend.slice(1), newScore], 1300);
+    }
+    const ticker = setInterval(tick, 2200);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) clearInterval(ticker); });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /**
- * AERVIO History & Analytics Module
+ * AERVINEX History & Analytics Module
  */
 (function() {
   let hrChart    = null;
@@ -8,12 +8,12 @@
   let sessions   = [];
 
   async function loadSessions() {
-    if (!AervioAuth.currentUser) return;
+    if (!AERVINEXAuth.currentUser) return;
     const el = document.getElementById('hist-loading');
     if (el) el.style.display = 'flex';
     try {
       const snap = await db.collection('sessions')
-        .where('uid','==', AervioAuth.currentUser.uid)
+        .where('uid','==', AERVINEXAuth.currentUser.uid)
         .orderBy('ts','desc').limit(20).get();
       sessions = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch(e) {
@@ -60,25 +60,53 @@
   function renderTable() {
     const tbody = document.getElementById('hist-tbody');
     if (!tbody) return;
+    // Security: build rows via DOM API + textContent so any Firestore-stored
+    // strings are rendered as text, never parsed as HTML.
+    tbody.textContent = ''; // clear safely
     if (sessions.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:30px">Belum ada sesi lari. Mulai berlari!</td></tr>';
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 7;
+      td.style.cssText = 'text-align:center;color:var(--t3);padding:30px';
+      td.textContent = 'Belum ada sesi lari. Mulai berlari!';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
       return;
     }
-    tbody.innerHTML = sessions.map(s => {
+    const frag = document.createDocumentFragment();
+    sessions.forEach(s => {
       const date = s.ts?.toDate ? s.ts.toDate().toLocaleDateString('id-ID',{day:'numeric',month:'short'}) : '--';
       const pm25s = Utils.getPM25Status(s.pm25 || 0);
       const hrPct = (s.avgHR || 0) / (220 - userAge);
       const hrStatus = hrPct > 0.85 ? 'danger' : hrPct > 0.70 ? 'warn' : 'safe';
-      return `<tr>
-        <td><strong>${date}</strong></td>
-        <td>${Utils.fmt(s.distance||0,2)} km</td>
-        <td>${Utils.formatTime(s.elapsed||0)}</td>
-        <td>${Utils.formatPace(s.avgPace||360)}/km</td>
-        <td style="color:${hrStatus==='danger'?'var(--danger)':hrStatus==='warn'?'var(--warn)':'var(--safe)'}">${s.avgHR||'--'} bpm</td>
-        <td style="color:${pm25s.color}">${Utils.fmt(s.pm25||0,1)} <small>μg/m³</small></td>
-        <td>${Utils.fmt(s.trimp||0,0)}</td>
-      </tr>`;
-    }).join('');
+      const tr = document.createElement('tr');
+      const mkCell = (text, style) => {
+        const td = document.createElement('td');
+        if (style) td.style.cssText = style;
+        td.textContent = text;
+        return td;
+      };
+      const dateTd = document.createElement('td');
+      const strong = document.createElement('strong');
+      strong.textContent = String(date);
+      dateTd.appendChild(strong);
+      tr.appendChild(dateTd);
+      tr.appendChild(mkCell(Utils.fmt(s.distance||0,2) + ' km'));
+      tr.appendChild(mkCell(Utils.formatTime(s.elapsed||0)));
+      tr.appendChild(mkCell(Utils.formatPace(s.avgPace||360) + '/km'));
+      tr.appendChild(mkCell((s.avgHR||'--') + ' bpm',
+        'color:' + (hrStatus==='danger'?'var(--danger)':hrStatus==='warn'?'var(--warn)':'var(--safe)')));
+      const pmTd = document.createElement('td');
+      pmTd.style.color = pm25s.color;
+      pmTd.appendChild(document.createTextNode(Utils.fmt(s.pm25||0,1) + ' '));
+      const small = document.createElement('small');
+      small.textContent = 'μg/m³';
+      pmTd.appendChild(small);
+      tr.appendChild(pmTd);
+      tr.appendChild(mkCell(Utils.fmt(s.trimp||0,0)));
+      frag.appendChild(tr);
+    });
+    tbody.appendChild(frag);
   }
 
   function renderCharts() {
@@ -146,7 +174,7 @@
 
   const module = {
     onEnter() {
-      userAge = AervioAuth.userProfile?.age || 25;
+      userAge = AERVINEXAuth.userProfile?.age || 25;
       setTimeout(() => loadSessions(), 200);
     },
     onLeave() {

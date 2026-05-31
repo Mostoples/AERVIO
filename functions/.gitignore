@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Service accounts
+*-sa.json
+serviceAccountKey.json
+
+# Local config
+.env
+.env.local
+.runtimeconfig.json
+
+# Python venv (legacy callable model server)
+venv/
+__pycache__/
+*.pyc

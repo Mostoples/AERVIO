@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Laporan Adverse Event — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .ae-input, .ae-select, .ae-textarea {
+      display:block; width:100%; padding:10px 12px; margin-top:6px; border-radius:var(--radius-md);
+      background:var(--bg); color:var(--text); border:1px solid rgba(255,255,255,0.08); font:inherit;
+    }
+    body.theme-light .ae-input, body.theme-light .ae-select, body.theme-light .ae-textarea { border-color:rgba(0,0,0,0.08); }
+    .ae-label { font-size:11px; color:var(--text-muted); letter-spacing:0.5px; text-transform:uppercase; margin-top:14px; display:block; }
+  </style>
+</head>
+<body class="theme-dark" data-page="ae-report">
+  <div class="app-shell">
+    <header class="top-bar">
+      <a href="/profile.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Lapor Adverse Event</h2><p>Insiden kesehatan terkait penggunaan AERVINEX</p></div>
+      <span style="width:40px"></span>
+    </header>
+
+    <section class="card aura-coral" style="padding:18px">
+      <p style="font-size:13px;color:var(--text);line-height:1.6">
+        <strong>⚠️ Penting</strong>: Laporan ini dipakai untuk audit keamanan &amp; perbaikan ML model.
+        Jika Anda mengalami darurat medis sekarang, hubungi <strong>119</strong> atau ke UGD terdekat,
+        jangan menunggu form ini.
+      </p>
+    </section>
+
+    <h3 class="section-title">Detail Insiden</h3>
+    <section class="card" style="padding:18px">
+      <label class="ae-label">Tipe Event</label>
+      <select class="ae-select" id="aeType">
+        <option value="false_alarm">False alarm — alert dipicu tapi saya sehat</option>
+        <option value="missed_alarm">Missed alarm — saya sakit tapi tidak ada warning</option>
+        <option value="wrong_classification">Klasifikasi salah — kondisi terbaca berbeda</option>
+        <option value="device_burn">Iritasi/luka kulit dari device</option>
+        <option value="ui_confusion">UI menyesatkan / interpretasi salah</option>
+        <option value="other">Lainnya</option>
+      </select>
+
+      <label class="ae-label">Tingkat Keparahan</label>
+      <select class="ae-select" id="aeSeverity">
+        <option value="minor">Minor — tidak mempengaruhi kesehatan</option>
+        <option value="moderate">Moderate — cemas atau kesalahpahaman</option>
+        <option value="major">Major — menyebabkan tindakan medis tidak perlu (ER visit, dsb)</option>
+        <option value="severe">Severe — perawatan rawat inap atau kerugian permanen</option>
+      </select>
+
+      <label class="ae-label">Tanggal &amp; Waktu Kejadian</label>
+      <input class="ae-input" type="datetime-local" id="aeDate" />
+
+      <label class="ae-label">Deskripsi Kejadian</label>
+      <textarea class="ae-textarea" id="aeDesc" rows="5" placeholder="Jelaskan apa yang terjadi, alert apa yang muncul, tindakan yang Anda ambil, dan dampaknya..."></textarea>
+
+      <label class="ae-label">Riwayat Penyakit Relevan (opsional)</label>
+      <input class="ae-input" id="aeHistory" placeholder="mis. asma, hipertensi, diabetes" />
+
+      <label class="ae-label">Kontak untuk Follow-up (opsional)</label>
+      <input class="ae-input" id="aeContact" placeholder="Email atau WhatsApp — kosongkan jika anonim" />
+
+      <p style="font-size:11px;color:var(--text-dim);margin-top:14px;line-height:1.6">
+        Data laporan ini hanya diakses tim audit AERVINEX. Tidak dibagikan ke pihak ketiga tanpa izin Anda.
+        Lihat <a href="/privacy.html" style="color:var(--accent)">Kebijakan Privasi</a>.
+      </p>
+    </section>
+
+    <button class="btn-block primary" id="btnSubmit" style="margin-top:14px">Kirim Laporan</button>
+    <p id="aeResult" style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:10px"></p>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    // Default datetime to now
+    (function () {
+      const d = new Date();
+      d.setSeconds(0, 0);
+      const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0, 16);
+      document.getElementById('aeDate').value = iso;
+    })();
+
+    document.getElementById('btnSubmit').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (!user) { alert('Login dulu'); return; }
+      const payload = {
+        uid: user.uid,
+        type:        document.getElementById('aeType').value,
+        severity:    document.getElementById('aeSeverity').value,
+        eventAt:     document.getElementById('aeDate').value,
+        description: document.getElementById('aeDesc').value.trim(),
+        medicalHistory: document.getElementById('aeHistory').value.trim(),
+        contact:     document.getElementById('aeContact').value.trim(),
+        userAgent:   navigator.userAgent.slice(0, 200),
+        reportedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+        status:      'open',
+        investigationFlag: false,
+      };
+      if (!payload.description) { alert('Deskripsi wajib diisi'); return; }
+      try {
+        const ref = db.collection('adverse_events').doc(String(Date.now()));
+        await ref.set(payload);
+        document.getElementById('aeResult').textContent = '✓ Laporan terkirim. Tim audit akan menghubungi Anda dalam 7 hari kerja jika kontak diberikan.';
+        document.getElementById('aeResult').style.color = 'rgb(74,222,128)';
+        document.getElementById('btnSubmit').disabled = true;
+      } catch (e) {
+        document.getElementById('aeResult').textContent = 'Gagal kirim: ' + e.message;
+        document.getElementById('aeResult').style.color = 'rgb(255,130,150)';
+      }
+    });
+  </script>
+</body>
+</html>

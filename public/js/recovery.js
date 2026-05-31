@@ -1,5 +1,5 @@
 /**
- * AERVIO Recovery Module
+ * AERVINEX Recovery Module
  */
 (function() {
   let tickInterval = null;
@@ -43,7 +43,10 @@
 
     const analysis = HealthEngine.analyze(raw, {
       age: userAge, pm25: 12, uvi: 3, ambientTemp: 27,
-      paceSecPerKm: null, elapsed: ticks * 3, restHR: 65
+      paceSecPerKm: null, elapsed: ticks * 3, restHR: 65,
+      aqi: 48, humidity: 70, windSpeed: 3,
+      activityLevel: 0.02,
+      userProfile: AERVINEXAuth.userProfile,
     });
 
     // Readiness
@@ -111,7 +114,7 @@
 
   const module = {
     onEnter() {
-      userAge = AervioAuth.userProfile?.age || 25;
+      userAge = AERVINEXAuth.userProfile?.age || 25;
       SensorSim.setAge(userAge);
       for (let i=0; i<20; i++) SensorSim.ppg.nextRRI(0.15, 0.02); // calm down
       setTimeout(() => initChart(), 100);

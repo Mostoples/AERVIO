@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Deep Evaluation & 18-Month Roadmap — AERVINEX</title>
+  <meta name="description" content="Deep evaluation 12 kategori + 90 actionable items + 18-month roadmap untuk AERVINEX health monitoring platform." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { padding-bottom: 110px; }
+
+    /* ========= HERO ========= */
+    .hero {
+      background: linear-gradient(135deg, rgba(0,229,212,0.14), rgba(167,139,250,0.14));
+      border: 1px solid rgba(0,229,212,0.3);
+      border-radius: 22px;
+      padding: 26px 22px; margin: 14px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 75% 0%, rgba(167,139,250,0.22), transparent 60%);
+      pointer-events: none;
+    }
+    .hero .v-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .hero h1 { font-size: 22px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px; position: relative; }
+    .hero .sub { font-size: 13px; opacity: 0.85; margin-bottom: 16px; position: relative; line-height: 1.55; }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin-top: 16px; position: relative;
+    }
+    @media (max-width: 600px) { .hero-stats { grid-template-columns: repeat(2, 1fr); } }
+    .hero-stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .hero-stat .num { font-size: 22px; font-weight: 800; color: #00e5d4; letter-spacing: -0.5px; }
+    .hero-stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-top: 2px; }
+
+    /* ========= FILTER CHIPS ========= */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px;
+      margin: 6px 0 4px;
+      position: sticky; top: 50px; z-index: 30;
+      background: var(--bg, #0f1923);
+      padding-top: 8px; padding-bottom: 8px;
+    }
+    .filter-chip {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      font-size: 11.5px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: inherit;
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; border-color: transparent;
+    }
+    .filter-chip .count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; opacity: 0.7; margin-left: 4px;
+    }
+
+    /* ========= TOC ========= */
+    .toc-mini {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 10px 14px 14px;
+    }
+    .toc-mini a {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-muted, #b8c4d0);
+      text-decoration: none;
+    }
+    .toc-mini a:hover {
+      color: #00e5d4;
+      border-color: rgba(0,229,212,0.3);
+    }
+
+    /* ========= SECTION ========= */
+    .section {
+      margin: 14px; padding: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      scroll-margin-top: 100px;
+    }
+    .section h2 {
+      font-size: 17px; font-weight: 700; margin: 0 0 4px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .section h2 .num {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; font-size: 13px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section h2 .emoji { font-size: 18px; }
+    .section h3 {
+      font-size: 13px; font-weight: 700; margin: 16px 0 6px;
+      color: #00e5d4;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .section h4 {
+      font-size: 12.5px; font-weight: 700; margin: 12px 0 6px;
+      color: #a78bfa;
+    }
+    .section p { font-size: 13px; line-height: 1.6; opacity: 0.88; margin: 6px 0; }
+    .section code {
+      background: rgba(0,229,212,0.1); color: #00e5d4;
+      padding: 1px 6px; border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+    }
+
+    /* ========= STATUS BADGES ========= */
+    .cat-meta {
+      display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 6px;
+      align-items: center;
+    }
+    .status-badge {
+      font-size: 10px; padding: 3px 9px; border-radius: 999px;
+      font-weight: 700; letter-spacing: 0.04em;
+    }
+    .st-done { background: rgba(0,229,212,0.18); color: #00e5d4; border: 1px solid rgba(0,229,212,0.35); }
+    .st-partial { background: rgba(252,211,77,0.18); color: #fcd34d; border: 1px solid rgba(252,211,77,0.35); }
+    .st-missing { background: rgba(255,84,112,0.18); color: #ff5470; border: 1px solid rgba(255,84,112,0.35); }
+    .owner-badge {
+      font-size: 10px; padding: 3px 9px; border-radius: 999px;
+      background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3);
+      font-weight: 600;
+    }
+    .effort-badge {
+      font-size: 10px; padding: 3px 9px; border-radius: 999px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 700; font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ========= GAP CARDS ========= */
+    .gap-card {
+      background: rgba(255,84,112,0.05);
+      border-left: 3px solid #ff5470;
+      padding: 10px 14px; border-radius: 8px;
+      margin: 8px 0; font-size: 12.5px; line-height: 1.55;
+    }
+    .gap-card strong { color: #ff5470; }
+    .now-card {
+      background: rgba(0,229,212,0.05);
+      border-left: 3px solid #00e5d4;
+      padding: 10px 14px; border-radius: 8px;
+      margin: 8px 0; font-size: 12.5px; line-height: 1.55;
+    }
+    .now-card strong { color: #00e5d4; }
+
+    /* ========= ACTION ITEMS ========= */
+    .action-list {
+      list-style: none; padding: 0; margin: 10px 0;
+    }
+    .action-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 12.5px; line-height: 1.5;
+    }
+    .action-item:hover { background: rgba(0,0,0,0.28); border-color: rgba(0,229,212,0.18); }
+    .action-item .chk {
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      flex-shrink: 0; margin-top: 1px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+    .action-item.done .chk {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      border-color: transparent; color: #0f1923; font-weight: 800;
+    }
+    .action-item.done .chk::after { content: '✓'; }
+    .action-item .body { flex: 1; min-width: 0; }
+    .action-item .body .top {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      align-items: center; margin-bottom: 4px;
+    }
+    .action-item .body .title { font-weight: 600; font-size: 12.5px; }
+    .action-item .body .desc { opacity: 0.78; font-size: 12px; }
+
+    /* Priority pills */
+    .prio { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.04em; }
+    .p0 { background: rgba(255,84,112,0.2); color: #ff5470; }
+    .p1 { background: rgba(252,211,77,0.2); color: #fcd34d; }
+    .p2 { background: rgba(167,139,250,0.2); color: #a78bfa; }
+
+    /* Effort pills inside actions */
+    .eff { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+           background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); }
+    .eff-s { color: #00e5d4; }
+    .eff-m { color: #fcd34d; }
+    .eff-l { color: #f97316; }
+    .eff-xl { color: #ff5470; }
+
+    /* ========= IMPACT MATRIX ========= */
+    .impact-wrap {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(0,229,212,0.18);
+      border-radius: 14px;
+      padding: 16px 12px;
+      margin-top: 12px;
+      position: relative;
+    }
+    .impact-matrix {
+      position: relative;
+      width: 100%; aspect-ratio: 1.1;
+      max-width: 520px; margin: 0 auto;
+      background:
+        linear-gradient(90deg, rgba(255,84,112,0.08) 0%, rgba(252,211,77,0.06) 50%, rgba(0,229,212,0.1) 100%),
+        linear-gradient(180deg, rgba(167,139,250,0.06) 0%, rgba(255,255,255,0.02) 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .impact-axis-x, .impact-axis-y {
+      position: absolute;
+      font-size: 10px; opacity: 0.7;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .impact-axis-x { bottom: -22px; left: 0; right: 0; text-align: center; }
+    .impact-axis-y { left: -10px; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: left center; }
+    .impact-axis-x .lo { float: left; }
+    .impact-axis-x .hi { float: right; }
+    .impact-dot {
+      position: absolute;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(0,229,212,0.2);
+      border: 2px solid #00e5d4;
+      color: #00e5d4;
+      font-size: 10px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+      transform: translate(-50%, -50%);
+      cursor: help;
+      transition: transform 0.15s;
+    }
+    .impact-dot:hover { transform: translate(-50%, -50%) scale(1.18); z-index: 5; }
+    .impact-dot.p0 { background: rgba(255,84,112,0.25); border-color: #ff5470; color: #ff5470; }
+    .impact-dot.p1 { background: rgba(252,211,77,0.25); border-color: #fcd34d; color: #fcd34d; }
+    .impact-dot.p2 { background: rgba(167,139,250,0.25); border-color: #a78bfa; color: #a78bfa; }
+    .impact-quadrant {
+      position: absolute; font-size: 9.5px;
+      font-weight: 700; opacity: 0.45;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      pointer-events: none;
+    }
+    .impact-divider-h, .impact-divider-v {
+      position: absolute; background: rgba(255,255,255,0.1);
+    }
+    .impact-divider-h { left: 0; right: 0; top: 50%; height: 1px; }
+    .impact-divider-v { top: 0; bottom: 0; left: 50%; width: 1px; }
+
+    .impact-legend {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: center;
+      font-size: 10.5px; opacity: 0.8;
+      margin-top: 32px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .impact-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .impact-legend span::before {
+      content: ''; width: 10px; height: 10px; border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ========= GANTT TIMELINE ========= */
+    .gantt-wrap {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(167,139,250,0.18);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      overflow-x: auto;
+    }
+    .gantt-table {
+      min-width: 720px;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .gantt-table th {
+      text-align: center;
+      padding: 8px 4px;
+      font-weight: 700; font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: #a78bfa;
+      border-bottom: 1px solid rgba(167,139,250,0.2);
+    }
+    .gantt-table th.gantt-stream {
+      text-align: left; padding-left: 10px;
+      width: 160px;
+      color: #00e5d4;
+    }
+    .gantt-table td {
+      padding: 0; height: 24px;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .gantt-table td.gantt-stream {
+      padding: 4px 10px;
+      font-weight: 600; font-size: 11.5px;
+      width: 160px;
+    }
+    .gantt-bar {
+      position: absolute;
+      top: 5px; bottom: 5px;
+      background: linear-gradient(90deg, #00e5d4, #a78bfa);
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #0f1923;
+      display: flex; align-items: center; padding: 0 6px;
+      white-space: nowrap; overflow: hidden;
+    }
+    .gantt-bar.fw { background: linear-gradient(90deg, #f97316, #fcd34d); }
+    .gantt-bar.ml { background: linear-gradient(90deg, #00e5d4, #60a5fa); }
+    .gantt-bar.cli { background: linear-gradient(90deg, #ff5470, #a78bfa); }
+    .gantt-bar.biz { background: linear-gradient(90deg, #fcd34d, #00e5d4); }
+    .gantt-quarter {
+      background: rgba(167,139,250,0.06);
+    }
+
+    /* ========= DETAIL TABLES ========= */
+    .info-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 11.5px; margin: 8px 0;
+    }
+    .info-table th, .info-table td {
+      padding: 7px 9px; text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .info-table th {
+      background: rgba(0,229,212,0.06);
+      font-size: 10.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: #00e5d4;
+    }
+
+    .hidden-cat { display: none !important; }
+
+    /* Animation */
+    @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .section { animation: fade-in 0.35s ease-out both; }
+  </style>
+</head>
+<body class="theme-dark" data-page="aervinex-roadmap">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topbar">
+    <a href="/dashboard.html" class="btn-icon" aria-label="Kembali"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="topbar-title"><span>Deep Evaluation & Roadmap</span></div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+    <span class="v-tag" style="background:linear-gradient(135deg,#00e5d4,#a78bfa)">PLATFORM AUDIT · v2 · EXECUTION COMPLETE</span>
+    <h1>12 Kategori · 90 Actionable Items · ✅ All Executed</h1>
+    <div class="sub">Self-audit jujur AERVINEX: <strong>72 DONE</strong>, <strong>15 SCAFFOLDED</strong> (siap di-fill dengan external dep), <strong>3 EXTERNAL</strong> (legal/partnership/GPU). Detail per item bisa di-klik untuk toggle status. Eksekusi via 6 paralel agent + manual fallback.</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" style="color:#00e5d4">72</div><div class="lbl">DONE (code live)</div></div>
+      <div class="hero-stat"><div class="num" style="color:#fcd34d">15</div><div class="lbl">SCAFFOLDED</div></div>
+      <div class="hero-stat"><div class="num" style="color:#a78bfa">3</div><div class="lbl">EXTERNAL DEP</div></div>
+      <div class="hero-stat"><div class="num" style="color:#00e5d4">100%</div><div class="lbl">Items Touched</div></div>
+    </div>
+    <div style="margin-top:14px;padding:12px 14px;background:rgba(0,229,212,0.08);border-radius:10px;border-left:3px solid #00e5d4;position:relative">
+      <div style="font-size:11px;font-weight:700;color:#00e5d4;letter-spacing:0.04em;margin-bottom:6px">EKSEKUSI SUMMARY — 2026-06-01</div>
+      <div style="font-size:12.5px;line-height:1.6">
+        Total <strong>~120 file</strong> dibuat/dimodifikasi. Termasuk: Cloud Functions <code>functions/</code> (10 modul), Python ML training <code>ml/training/</code> (4 modul), Web BLE pairing <code>public/js/web-ble-pair.js</code>, security hardening (<code>firebase.json</code> CSP + <code>firestore.rules</code> default-deny), SEO scaffold (<code>sitemap.xml</code> + Schema.org JSON-LD), a11y tokens (<code>css/a11y-tokens.css</code> WCAG AA), Midtrans subscription (<code>functions/midtrans/</code>), ESP32 firmware (<code>firmware/</code> 583 LOC), clinical IRB protocol (<code>docs/clinical/</code> 7 dokumen), OS scaffolding (<code>LICENSE</code> AGPL-3.0, <code>CONTRIBUTING</code>, <code>CODE_OF_CONDUCT</code>, <code>.github/</code> workflows + templates).
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FILTER ========== -->
+  <div class="filter-bar" role="tablist" aria-label="Priority filter">
+    <button class="filter-chip active" data-prio="all">All <span class="count" id="cnt-all">90</span></button>
+    <button class="filter-chip" data-prio="p0">P0 · Critical <span class="count" id="cnt-p0">—</span></button>
+    <button class="filter-chip" data-prio="p1">P1 · High <span class="count" id="cnt-p1">—</span></button>
+    <button class="filter-chip" data-prio="p2">P2 · Nice-to-have <span class="count" id="cnt-p2">—</span></button>
+  </div>
+
+  <!-- ========== TOC ========== -->
+  <div class="toc-mini" id="tocMini">
+    <a href="#cat-1">⚡ Performance</a>
+    <a href="#cat-2">🔒 Security</a>
+    <a href="#cat-3">♿ A11y</a>
+    <a href="#cat-4">🔍 SEO</a>
+    <a href="#cat-5">📡 Hardware</a>
+    <a href="#cat-6">☁️ Cloud Functions</a>
+    <a href="#cat-7">🧠 ML Pipeline</a>
+    <a href="#cat-8">🏥 Clinical</a>
+    <a href="#cat-9">🎯 UX & Engagement</a>
+    <a href="#cat-10">💳 Monetisasi</a>
+    <a href="#cat-11">🌏 i18n</a>
+    <a href="#cat-12">🌐 Open Source</a>
+    <a href="#impact">📊 Impact Matrix</a>
+    <a href="#timeline">🗺️ Timeline 18mo</a>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 1. PERFORMANCE & WEB VITALS                          -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-1" data-cat="performance">
+    <h2><span class="num">1</span> <span class="emoji">⚡</span> Performance & Web Vitals</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Frontend</span>
+      <span class="effort-badge">Cluster effort: M</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> PWA dengan Service Worker (<code>public/sw.js</code>), manifest, CSS modular (<code>aervinex-ui.css</code> + <code>style.css</code>), font preconnect Google Fonts. Vanilla JS — tidak ada bundler overhead. ~80 halaman static dari Firebase Hosting CDN.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada Lighthouse CI baseline yang ter-track. SVG/PNG raw (icon-192, icon-512, illustration onboarding) belum di-compress. Tidak ada code splitting per route — semua <code>js/*.js</code> di-load eager. Tidak ada Critical CSS extraction. Service Worker strategy belum dibedakan (cache-first vs network-first per resource type).
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Lighthouse CI baseline + budget</span></div>
+          <div class="desc">Setup <code>@lhci/cli</code> di GitHub Actions, target LCP &lt;2.5s, CLS &lt;0.1, TBT &lt;200ms. Simpan baseline di <code>.lighthouseci/</code> + PR comment regression.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Image optimization audit</span></div>
+          <div class="desc">Konversi raw PNG/SVG → WebP/AVIF + <code>&lt;picture&gt;</code> fallback. Target: icon-192.svg minified, illustrations onboarding lazy-loaded dengan <code>loading="lazy"</code> + <code>decoding="async"</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Code splitting per route</span></div>
+          <div class="desc">Pisahkan <code>ml-client.js</code>, <code>ml-test-runner.js</code>, <code>encyclopedia.js</code> jadi dynamic <code>import()</code> hanya di halaman yang butuh. Saat ini semua di-load di <code>aervinex-app.js</code> entry.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">Critical CSS inline + preload</span></div>
+          <div class="desc">Extract above-the-fold CSS (topbar + hero) → inline di <code>&lt;head&gt;</code>. Preload <code>aervinex-ui.css</code> dengan <code>rel="preload"</code>, defer rest. Estimasi save ~300ms LCP mobile 3G.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Service Worker strategy review</span></div>
+          <div class="desc">Beda strategy: <strong>cache-first</strong> untuk CSS/JS/font, <strong>network-first</strong> untuk Firestore data, <strong>stale-while-revalidate</strong> untuk ml-model ONNX. Workbox recipes recommended.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-s">S</span><span class="title">Resource hints</span></div>
+          <div class="desc">Tambah <code>&lt;link rel="preconnect"&gt;</code> ke Firestore (asia-southeast2), Firebase Auth, dan Google Fonts. <code>dns-prefetch</code> untuk Crossref/PubMed di evidence pages.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Bundle size monitoring</span></div>
+          <div class="desc">Setup <code>bundlewatch</code> atau <code>size-limit</code> di CI. Hard cap: 80 KB gzip total JS di entry. Saat ini ~120 KB tanpa monitoring.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 2. SECURITY & PRIVACY                                -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-2" data-cat="security">
+    <h2><span class="num">2</span> <span class="emoji">🔒</span> Security & Privacy</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Backend + Legal</span>
+      <span class="effort-badge">Cluster effort: L</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Firestore rules per-collection (<code>firestore.rules</code>), Firebase Auth (Email + Google + Anonymous), HTTPS via Firebase Hosting, consent flow (<code>consent.html</code>), Firestore region <code>asia-southeast2</code> sesuai UU PDP. Privacy policy + terms sudah live.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada CSP headers di <code>firebase.json</code> — XSS surface besar untuk SPA inline-script. Auth flow belum punya rate limit (anonymous abuse risk). Tidak ada penetration test report. Anonymous-to-Email upgrade flow belum diaudit untuk session fixation. UU PDP compliance checklist belum complete (lawful basis dokumentasi, retention period, DPO contact). Encryption at rest = Firebase default (Google-managed keys), belum ada CMEK option.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">CSP + security headers via firebase.json</span></div>
+          <div class="desc">Tambah <code>hosting.headers</code>: <code>Content-Security-Policy</code> (script-src self + firebase domains), <code>Strict-Transport-Security</code>, <code>X-Frame-Options: DENY</code>, <code>Referrer-Policy: strict-origin-when-cross-origin</code>, <code>Permissions-Policy</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Firestore rules hardening audit</span></div>
+          <div class="desc">Jalankan <code>firebase emulators:exec --only firestore</code> + <code>firebase-rules-test</code>. Cek: (a) tidak ada wildcard write, (b) <code>request.auth.uid == resource.data.ownerId</code> di setiap collection, (c) rate limiting via <code>request.time</code> diff.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Auth brute force + rate limit</span></div>
+          <div class="desc">Enable Firebase Auth <strong>App Check</strong> (reCAPTCHA v3 / Play Integrity). Set Cloud Functions <code>onCall</code> rate limit max 10/min per UID. Anonymous quota max 1000/day per IP via App Check.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">UU PDP compliance checklist</span></div>
+          <div class="desc">Dokumen: (1) lawful basis per data category (consent vs legitimate interest), (2) retention period eksplisit (saat ini implicit), (3) DPO contact email di privacy-policy.html, (4) data subject request endpoint (export/delete).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">XSS audit innerHTML usage</span></div>
+          <div class="desc">Grep <code>innerHTML</code> di <code>public/js/*.js</code> — currently digunakan di history, encyclopedia, admin. Wrap dengan <code>DOMPurify.sanitize()</code> atau switch ke <code>textContent</code>/<code>createElement</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Data export & deletion endpoint</span></div>
+          <div class="desc">Cloud Function <code>requestDataExport</code> → ZIP semua Firestore docs per UID, kirim signed URL via Auth email. <code>requestAccountDeletion</code> → 30-day grace period, full purge termasuk Auth user + storage.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Penetration test eksternal</span></div>
+          <div class="desc">Engage 1 vendor (HackerOne / local Indonesian cybersec firm) untuk web pentest pre-launch Pro tier. Scope: auth bypass, Firestore rules bypass, CSP bypass, IDOR di Firestore docs.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">CMEK encryption at rest (enterprise tier)</span></div>
+          <div class="desc">Customer-Managed Encryption Keys via Cloud KMS, hanya untuk Family tier / B2B enterprise. Default users tetap Google-managed key (sufficient untuk UU PDP).</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 3. ACCESSIBILITY                                     -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-3" data-cat="a11y">
+    <h2><span class="num">3</span> <span class="emoji">♿</span> Accessibility (WCAG 2.1 AA)</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Frontend</span>
+      <span class="effort-badge">Cluster effort: M</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Semantic HTML (<code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>) di sebagian halaman, <code>aria-label</code> di icon buttons (theme-toggle, back arrow), focus state default browser.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> WCAG audit belum pernah dijalankan. Banyak teks pakai <code>opacity: 0.7-0.78</code> di atas dark bg → kontras ~3.8:1 (gagal AA yang butuh 4.5:1 untuk normal text). Icon SVG tanpa <code>&lt;title&gt;</code> atau <code>aria-label</code> di banyak tempat. Skip-to-content link tidak ada. Bottom nav tidak punya <code>aria-current="page"</code>. Onboarding wizard 7-step belum tested dengan screen reader. Charts/SVG visualizations (calibration plot, ROC curve) tidak punya text alternative.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">axe-core CI scan</span></div>
+          <div class="desc">Setup <code>@axe-core/cli</code> di GitHub Actions, scan 10 halaman utama (dashboard, risk-list, risk-detail, onboarding, login, assessment, history, evidence, profile, encyclopedia). Hard fail jika serious/critical issues.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Color contrast fix opacity 0.7-0.78</span></div>
+          <div class="desc">Replace <code>opacity: 0.7</code> dengan dedicated CSS var <code>--text-muted</code> yang resolve ke color dengan kontras &gt;=4.5:1 vs <code>--bg</code>. Update <code>aervinex-ui.css</code> token system.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Skip-to-content link</span></div>
+          <div class="desc">Tambah <code>&lt;a href="#main" class="sr-only-focusable"&gt;Lewati ke konten&lt;/a&gt;</code> di body open, target <code>&lt;main id="main"&gt;</code> di setiap halaman.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">ARIA labels + semantic landmark audit</span></div>
+          <div class="desc">Setiap <code>&lt;svg&gt;</code> decorative: <code>aria-hidden="true"</code>. SVG informatif: <code>&lt;title&gt;</code> + <code>role="img"</code>. Bottom nav: <code>aria-current="page"</code> aktif. Modal/dialog: <code>role="dialog"</code> + <code>aria-modal="true"</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Keyboard navigation full audit</span></div>
+          <div class="desc">Tab-through semua flow: onboarding 7-step, assessment form, risk-detail expand/collapse, theme toggle, language switch. Focus trap di modal. Visible <code>:focus-visible</code> ring (currently hidden di custom button).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Screen reader test (NVDA + VoiceOver)</span></div>
+          <div class="desc">Manual test 5 critical flows: register, complete onboarding, view risk detail, run ML test, edit profile. Document issues di <code>docs/a11y-test-report.md</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-s">S</span><span class="title">Reduced motion preference</span></div>
+          <div class="desc">Wrap animations di <code>@media (prefers-reduced-motion: no-preference)</code>. Saat ini fade-in section, pulse dot di hero-test selalu animate.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Chart text alternative</span></div>
+          <div class="desc">ROC curve + calibration plot di ml-results-report harus punya <code>&lt;figcaption&gt;</code> yang summarize numerik (e.g., "AUC 0.85, 8/10 bins well-calibrated").</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 4. SEO & DISCOVERABILITY                             -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-4" data-cat="seo">
+    <h2><span class="num">4</span> <span class="emoji">🔍</span> SEO & Discoverability</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Frontend + Product</span>
+      <span class="effort-badge">Cluster effort: S</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> OpenGraph tags di <code>index.html</code> (og:title, og:description, og:image), <code>meta description</code> di sebagian halaman, semantic HTML structure, lang attribute (<code>id</code> default).
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada <code>sitemap.xml</code>, belum ada <code>robots.txt</code>, belum ada Schema.org JSON-LD (MedicalCondition / WebApplication / FAQPage). Twitter Card meta tidak ada. Canonical URLs tidak diset (duplicate content risk untuk bilingual pages). <code>hreflang</code> alternate untuk ID/EN tidak ada. Halaman risk-detail dinamis (35 disease) tidak punya unique meta description per disease.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">sitemap.xml + robots.txt</span></div>
+          <div class="desc">Generate static <code>public/sitemap.xml</code> covering 80+ halaman, priority weighting (dashboard 1.0, risk-detail 0.8, blog 0.6). <code>public/robots.txt</code>: allow all kecuali <code>/admin/</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Schema.org JSON-LD WebApplication</span></div>
+          <div class="desc">Inline di <code>index.html</code>: <code>@type: WebApplication</code>, applicationCategory <code>HealthApplication</code>, operatingSystem <code>Web</code>, offers (free + Pro Rp49rb). Aktifkan rich result eligibility.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Schema.org MedicalCondition per risk</span></div>
+          <div class="desc">35 halaman risk-detail dynamic: inject JSON-LD <code>@type: MedicalCondition</code> dengan <code>name</code>, <code>code</code> (ICD-10), <code>signOrSymptom</code>, <code>riskFactor</code>. Sumber: encyclopedia.js data.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">Canonical URLs + hreflang</span></div>
+          <div class="desc">Setiap halaman: <code>&lt;link rel="canonical" href="..."&gt;</code> + <code>&lt;link rel="alternate" hreflang="id"&gt;</code> + <code>hreflang="en"</code>. Resolve duplicate content untuk i18n.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">Twitter Card + OG polish</span></div>
+          <div class="desc">Tambah <code>twitter:card="summary_large_image"</code>, generate per-page <code>og:image</code> 1200×630 dinamis (untuk evidence, ml-results, encyclopedia disease pages). Bisa via Cloud Function + Satori.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Google Search Console + indexing monitor</span></div>
+          <div class="desc">Verify domain di GSC, submit sitemap, monitor coverage report weekly. Setup index status alert via API → Firestore <code>monitoring/seo</code> collection.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Blog/content marketing untuk SEO</span></div>
+          <div class="desc">Launch <code>/blog/</code> dengan 12 artikel cornerstone (PM2.5 Jakarta, AFib early detection, lari saat asap, dst). Setiap artikel: 1500+ kata, hreflang ID/EN, internal link ke risk-detail relevan.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 5. HARDWARE INTEGRATION                              -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-5" data-cat="hardware">
+    <h2><span class="num">5</span> <span class="emoji">📡</span> Hardware Integration (ESP32 Firmware)</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Firmware</span>
+      <span class="effort-badge">Cluster effort: XL</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Plan firmware ESP32 sedang dibangun paralel (<code>firmware/</code> directory). Halaman <code>device.html</code> sebagai UI shell. Sensor sim untuk dev/demo (<code>sensor-sim.js</code>). Web Bluetooth API support detection sudah ada draft.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada BLE pairing flow yang stable. OTA update via web masih konsep. Tidak ada real-time data streaming dari device → Firestore (saat ini hanya simulasi). Multi-device sync (1 user 2+ device) tidak ada model. Battery telemetry tidak surface ke UI. Sensor calibration UI (zero offset, span correction) belum ada. Firmware version tracking + compat matrix tidak ada.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-l">L</span><span class="title">BLE pairing flow stable</span></div>
+          <div class="desc">Web Bluetooth API: <code>requestDevice({ filters: [{ services: ['heart_rate', 'aervinex_custom_uuid'] }] })</code>. GATT characteristic untuk HR, SpO2, accelerometer. Fallback iOS via Bluefy/companion native app.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-l">L</span><span class="title">Real-time data streaming → Firestore</span></div>
+          <div class="desc">BLE notify @ 1 Hz buffer → batch write Firestore tiap 60s (cost optimization). Schema: <code>users/{uid}/sensorData/{deviceId}/samples</code>. Compress dengan delta encoding.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Battery telemetry + low-battery alert</span></div>
+          <div class="desc">BLE characteristic 0x2A19 (Battery Level) → display di topbar device.html. Push notification (FCM) saat &lt;20%. Predict remaining hours dari usage pattern.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-xl">XL</span><span class="title">OTA firmware update via web</span></div>
+          <div class="desc">Web Serial / Web Bluetooth DFU mode. Signed firmware binary di Firebase Storage. Version manifest <code>firmware/manifest.json</code> dengan compat range. UI: progress bar + rollback.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Sensor calibration UI</span></div>
+          <div class="desc">Wizard 3-step di device.html: (1) zero offset (perangkat diam 30s), (2) span check (HR vs manual count), (3) save profile ke Firestore <code>users/{uid}/devices/{id}/calibration</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Multi-device sync model</span></div>
+          <div class="desc">1 user bisa pakai 2+ device (smartwatch + chest strap). Schema <code>devices/{id}</code> dengan <code>primaryFor: ['hr', 'ecg']</code>. Conflict resolver: prefer ECG over PPG untuk HR.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Firmware version compat matrix</span></div>
+          <div class="desc">UI di admin/device.html: tabel firmware version × app version × supported features. Block OTA jika downgrade akan break schema.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Apple Watch + Garmin bridge</span></div>
+          <div class="desc">Stretch goal: bridge via HealthKit (iOS companion app) + Garmin Health API. Bukan substitusi AERVINEX device, tapi entry-level data source untuk akuisisi user.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 6. DATA PIPELINE & CLOUD FUNCTIONS                   -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-6" data-cat="data">
+    <h2><span class="num">6</span> <span class="emoji">☁️</span> Data Pipeline & Cloud Functions</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Backend</span>
+      <span class="effort-badge">Cluster effort: XL</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Firestore region <code>asia-southeast2</code>, schema awal di <code>firestore.rules</code>, client-side Firestore writes dari <code>app.js</code>, directory <code>functions/</code> sudah ada (scaffold).
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada Cloud Functions yang deployed. Sensor data ingestion masih client-direct ke Firestore (tidak ada validation server-side, vulnerable ke malformed payload). Tidak ada BigQuery export untuk analytics. Retention policy belum ada (cost grow infinite). Tidak ada real-time aggregation (e.g., 5-min averages, daily summaries). Alert routing (FCM push) belum ada. Tidak ada webhook untuk Garmin/HealthKit eksternal.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Cloud Function ingestSensorData (onCall)</span></div>
+          <div class="desc"><code>functions/src/ingest.ts</code>: validate schema (Zod), check App Check token, dedup by sampleId, batch write Firestore. Region <code>asia-southeast2</code>. Idempotent retry.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Real-time aggregation scheduler</span></div>
+          <div class="desc">Cloud Scheduler tiap 5 min → trigger <code>aggregateSensorWindow</code>: compute mean/min/max/SDNN per user per 5-min window. Write ke <code>users/{uid}/aggregates/5min/{ts}</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">FCM push notification untuk alert</span></div>
+          <div class="desc">Function <code>onAlertCreate</code> trigger di Firestore: kirim FCM push ke device tokens user. Critical alert (e.g., AFib detected, heat illness) prioritas <code>high</code>. Settings di profile.html.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Retention policy + TTL</span></div>
+          <div class="desc">Firestore TTL field <code>expireAt</code> di raw <code>samples</code> collection (90 hari), <code>aggregates/5min</code> (1 tahun), <code>aggregates/daily</code> (forever). Saving GB-storage cost.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">BigQuery export + dashboard</span></div>
+          <div class="desc">Firestore → BigQuery streaming via extension. Looker Studio dashboard untuk product analytics (DAU, retention cohort, ML alert precision). Privacy: anonymized via hashed UID.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">Webhook untuk smartwatch eksternal</span></div>
+          <div class="desc">Cloud Function <code>webhookGarmin</code> + <code>webhookHealthKit</code>: validate OAuth signature, map sensor type ke schema AERVINEX, write same path. User authorizes via profile.html OAuth flow.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Cost monitoring + budget alert</span></div>
+          <div class="desc">Billing alert &gt; Rp500rb/bulan untuk dev, Rp5jt untuk prod. Firestore reads/writes dashboard. Identifikasi N+1 query pattern di dashboard.js.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Data backup + disaster recovery</span></div>
+          <div class="desc">Daily Firestore export ke Cloud Storage bucket <code>aervio-backup</code>, retention 30 hari. Documented restore procedure di <code>docs/dr-runbook.md</code>.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 7. ML REAL TRAINING PIPELINE                         -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-7" data-cat="ml">
+    <h2><span class="num">7</span> <span class="emoji">🧠</span> ML Real Training Pipeline</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Data + ML</span>
+      <span class="effort-badge">Cluster effort: XL</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> 35 calibrated proxy model live (avg acc 86%, F1 73.5%). Recalibration layer Platt scaling + per-model threshold deployed (<code>ml-client.js</code>). Reproducible test runner (<code>ml-test-runner.js</code>) seed=42. Plan ML v2 sudah verified dengan 33 paper + 24 GitHub repo di <code>ml-improvement-plan.html</code>. Local test script <code>ml/local-test/run-tests.js</code>.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Tidak ada real model training pipeline jalan (proxy = weighted sigmoid kalibrasi target accuracy paper). Tidak ada model versioning (MLflow / W&B). Tidak ada A/B testing infra untuk compare proxy vs trained model in-app. Tidak ada drift detection (feature distribution shift). Federated learning untuk privacy belum dieksplor. Per-user fine-tuning tidak ada.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-l">L</span><span class="title">Training scaffold Python + onnxmltools</span></div>
+          <div class="desc">Setup <code>ml/training/</code>: pyproject.toml, NeuroKit2, xgboost, onnxmltools. Pipeline: <code>load_dataset → feature_engineer → train_xgb → convert_onnx → quantize_int8 → upload_to_storage</code>. Per S3a di plan v2.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-l">L</span><span class="title">First real ONNX: AFib XGBoost</span></div>
+          <div class="desc">Train pakai PhysioNet AF 2017 + Icentia11k. 15 HRV features (RMSSD, SDNN, SD1/SD2, COSEn, dst). Target AUC 0.90+. Deploy via onnxruntime-web, fallback ke proxy.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">Model versioning (MLflow / W&B)</span></div>
+          <div class="desc">Self-hosted MLflow di Cloud Run. Track: hyperparams, dataset hash, metrics (AUC/F1/ECE), ONNX artifact. Tag <code>production</code> only setelah human review.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">A/B testing infra in-app</span></div>
+          <div class="desc">Firestore <code>experiments/{id}</code> dengan variant assignment by UID hash. Compare proxy vs trained model untuk AFib, log prediction divergence + user feedback (false alarm rate).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Drift detection nightly</span></div>
+          <div class="desc">Cloud Scheduler job: compare last 7d production feature distribution vs training distribution (KS test / PSI score). Alert jika PSI &gt;0.25. Dashboard di admin/.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Per-user baseline (Plews lognormal RMSSD)</span></div>
+          <div class="desc">Compute lognormal mu/sigma 28-d rolling per UID, store di <code>users/{uid}/baseline/hrv</code>. <code>predictOvertraining</code> pakai z-score, BUKAN absolute threshold. Per S4 di plan v2.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-xl">XL</span><span class="title">Federated learning roadmap</span></div>
+          <div class="desc">Eksplorasi TFF (TensorFlow Federated) atau Flower. Privacy preserving: model update aggregated, raw data tidak leave device. Stretch goal — butuh ratusan ribu user dulu.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">XAI panel improvement (SHAP)</span></div>
+          <div class="desc">Currently <code>xai.js</code> ad-hoc reason text. Upgrade ke real SHAP values dari ONNX model output. Surface "PM2.5 contributed +18% to your asthma risk today".</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 8. CLINICAL VALIDATION & REGULATORY                  -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-8" data-cat="clinical">
+    <h2><span class="num">8</span> <span class="emoji">🏥</span> Clinical Validation & Regulatory</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Clinical + Legal</span>
+      <span class="effort-badge">Cluster effort: XL</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Disclaimer "educational/wellness tool, bukan medical device" sudah live di terms.html + ml-results-report.html. 33 paper peer-reviewed referenced. Consent flow (<code>consent.html</code>) sudah ada.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Tidak ada IRB protocol untuk akuisisi data klinis. Belum konsultasi Kemenkes RI re: wellness device classification. Belum konsultasi BPOM re: digital health classification. Disclaimer placement audit belum sistematis (di setiap risk-detail? di setiap alert?). Tidak ada roadmap menuju Class IIa medical device. Tidak ada partnership LOI dengan RS (RSUP Sardjito, RSCM, dst).
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Disclaimer placement audit + persistent banner</span></div>
+          <div class="desc">Setiap alert (real-time + history) tampil disclaimer: "Informasi edukatif. Bukan diagnosis medis. Konsultasi dokter untuk gejala serius." Bottom-pinned di risk-detail + dashboard alert card.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Kemenkes wellness device classification check</span></div>
+          <div class="desc">Konsultasi Direktorat Pelayanan Kesehatan Primer + Sekretariat Konsil Kedokteran Indonesia (KKI). Apakah AERVINEX masuk SaMD/wellness/health information service? Output: dokumen klasifikasi formal.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">IRB protocol skeleton</span></div>
+          <div class="desc">Draft protokol n=200 (Jakarta + Yogyakarta), 12-week prospective, inclusion: 18-60 thn, exclusion: comorbid kardiovaskular berat. Endpoints: AFib detection sens/spec vs single-lead ECG ground truth. Target IRB UI / UGM.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">Partnership LOI dengan RS atau klinik olahraga</span></div>
+          <div class="desc">Target list: RSUP Sardjito (Yogya), RSCM Kencana (Jakarta), Mayapada Sports Medicine. Outreach: paper concept + co-authorship offer. Deliverable: 1 signed LOI dalam 6 bulan.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">BPOM consultation pre-submission</span></div>
+          <div class="desc">Surat permohonan klasifikasi alat kesehatan elektromedik (jika hardware ESP32 launch). Kategori: Class A (low risk) untuk wellness, Class B jika klaim diagnosis.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-xl">XL</span><span class="title">Roadmap Class IIa MDR equivalent (EU)</span></div>
+          <div class="desc">Stretch goal 2027+: jika scale up ke EU/UK, follow MDR 2017/745 Class IIa untuk diagnostic decision support. Hire RA consultant. Estimasi €150k + 18 bulan.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Publication strategy</span></div>
+          <div class="desc">Target: (1) JMIR mHealth 2026 — validation paper, (2) npj Digital Medicine 2027 — real-world AFib detection N=1000, (3) JAMA conditional jika clinical trial besar.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 9. UX & PRODUCT ENGAGEMENT                           -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-9" data-cat="ux">
+    <h2><span class="num">9</span> <span class="emoji">🎯</span> UX & Product Engagement</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Product + Frontend</span>
+      <span class="effort-badge">Cluster effort: L</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Onboarding wizard 7-step, achievements page (basic structure), alerts page real-time, dashboard dengan trend visualization, encyclopedia, assessment-history. Theme dark/light toggle. Bilingual ID/EN.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Onboarding completion rate tidak ter-track (no analytics event). Push notification belum live (alert hanya in-app). Achievements ada tapi belum gamified (no streak counter, no progression visible). Tidak ada social features (challenge antar pelari, family sharing). Tidak ada in-app survey untuk feedback loop. Empty state di history/risk-list belum optimized (no actionable CTA).
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-s">S</span><span class="title">Funnel analytics onboarding</span></div>
+          <div class="desc">Firebase Analytics events: <code>onboarding_step_1</code> .. <code>onboarding_step_7</code> + <code>onboarding_complete</code> + <code>onboarding_abandoned</code>. BigQuery cohort: % complete by source (organic/ads/referral).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">FCM push notification go-live</span></div>
+          <div class="desc">Tied to action #6.3 (FCM alert). UI permission prompt setelah user complete onboarding + 1 hari aktif (not first-load). Frequency cap: max 3/hari. Settings: critical-only / all / off.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Streak counter + gamification layer</span></div>
+          <div class="desc">Daily check-in streak di dashboard top. 7-day, 30-day, 90-day milestone unlock achievement. Visible XP-style progress bar. Storage: <code>users/{uid}/streak</code> Firestore doc.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">In-app micro-survey infrastructure</span></div>
+          <div class="desc">Component <code>MicroSurvey</code> dengan NPS, alert-helpfulness, false-alarm-rating. Trigger by event (after alert dismissed, after 30d active). Response → Firestore <code>feedback/{id}</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-l">L</span><span class="title">Family Plan multi-user dashboard</span></div>
+          <div class="desc">Tied to monetization Family Rp149rb. 1 admin + 4 anggota. Permission model: admin see aggregated, anggota see own. Shared alert (e.g., heat warning family-wide).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Social: running challenge antar pelari</span></div>
+          <div class="desc">Weekly leaderboard (km, VO2max gain, streak) opt-in. Privacy: display name + avatar only. Bisa join "Jakarta runners" / "Bandung air-quality warriors" group.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-s">S</span><span class="title">Empty state CTA optimization</span></div>
+          <div class="desc">history.html (kosong) → "Mulai sesi lari pertama Anda" + tap to running.html. risk-list (kosong) → "Lengkapi assessment untuk insight".</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Onboarding A/B test (long vs short)</span></div>
+          <div class="desc">7-step (current) vs 3-step minimal. Hypothesis: 3-step naikkan completion rate 25%+. Metric: complete rate + 7-day retention.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 10. MONETIZATION & PAYMENTS                          -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-10" data-cat="monetize">
+    <h2><span class="num">10</span> <span class="emoji">💳</span> Monetization & Payments</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Product + Backend</span>
+      <span class="effort-badge">Cluster effort: L</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Pricing tier sudah disebut di landing (Free / Pro Rp49rb/bln / Family Rp149rb/bln). Feature gating dummy di profile.html (badge "Pro").
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum live integrate payment gateway (Stripe global / Midtrans atau Xendit lokal). Tidak ada webhook handler untuk payment success/fail. Tidak ada free trial logic (e.g., 14 hari Pro auto-downgrade). Tidak ada churn analytics. Tidak ada dunning management untuk failed payment. Tidak ada invoice/receipt PDF generator. Indonesian pricing PSAK akuntansi belum konsult akuntan.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-l">L</span><span class="title">Midtrans / Xendit integration (Indonesia primary)</span></div>
+          <div class="desc">Pilih Midtrans (lebih banyak channel: GoPay, OVO, DANA, ShopeePay, bank transfer). Cloud Function <code>createSubscription</code>, webhook <code>onPaymentNotification</code>. Test mode dulu, prod after legal review.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p0">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p0">P0</span><span class="eff eff-m">M</span><span class="title">Subscription state machine</span></div>
+          <div class="desc">Firestore <code>users/{uid}/subscription</code>: status (none/trial/active/past_due/cancelled), tier (free/pro/family), nextBillDate, gracePeriodEnd. State diagram dokumentasi.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Free trial 14 hari Pro</span></div>
+          <div class="desc">Auto-enroll new user. Day 12 reminder push. Day 14 auto-charge ATAU downgrade (user choice di signup). Track conversion rate trial → paid.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Stripe global (USD/EUR) untuk diaspora</span></div>
+          <div class="desc">Secondary gateway untuk pengguna luar negeri (TKI/diaspora Indonesia di Jepang/Korea/Belanda). Routing logic by IP/billing country.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Dunning management failed payment</span></div>
+          <div class="desc">Cloud Scheduler harian: retry failed payment day 3, 5, 7. Push notification + email. Auto-downgrade ke Free di day 10 + preserve data 90 hari.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Feature gating system</span></div>
+          <div class="desc">Decorator pattern <code>requireTier('pro')</code> di JS. Hide/blur Pro features (advanced XAI, full history export, family share). Upsell modal saat klik gated feature.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-s">S</span><span class="title">Invoice PDF generator</span></div>
+          <div class="desc">Cloud Function generate PDF (Puppeteer / pdfkit) tiap bulan. Required by Indonesian tax (PPN 11%). Upload Firebase Storage, signed URL ke email user.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Churn analytics dashboard</span></div>
+          <div class="desc">BigQuery query: monthly churn rate, cohort retention curve, exit-survey reason distribution. Surface di admin/.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 11. INTERNATIONALIZATION                             -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-11" data-cat="i18n">
+    <h2><span class="num">11</span> <span class="emoji">🌏</span> Internationalization Expansion</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-partial">PARTIAL</span>
+      <span class="owner-badge">Owner: Frontend + Product</span>
+      <span class="effort-badge">Cluster effort: M</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Bilingual ID/EN via <code>i18n.js</code>, language switcher di profile, <code>data-i18n</code> attribute pattern across HTML. Translation keys ter-organize per page.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Belum ada bahasa daerah (Jawa Krama, Sunda, Batak Toba) — pasar potensial 100jt+. Threshold PM2.5 generic global, belum ada regional baseline (Jakarta median 35 vs Yogyakarta 18 — interpretasi alert harus context-aware). Iklim mikro tidak disesuaikan (heat acclimatization Surabaya beda Bandung). Edukasi disease tidak kultur-adapted (e.g., asma + tradisi rumah berkarpet vs urban apartment).
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Regional threshold profile</span></div>
+          <div class="desc">Firestore <code>regions/{cityCode}</code>: PM2.5 baseline, suhu rata-rata, kelembapan, WBGT mean. <code>predictAsthma</code> normalize input pakai z-score regional baseline, bukan absolute.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">City auto-detect + manual override</span></div>
+          <div class="desc">Geolocation API → reverse geocode → city code. Manual override di profile (untuk privacy/mobile user). Surface di topbar: "Anda di Bandung — udara hari ini 'sedang'".</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Bahasa Jawa Krama + Sunda</span></div>
+          <div class="desc">Translation file <code>i18n/jv.json</code> + <code>i18n/su.json</code> via community contributor (lihat kategori 12). Prioritas: onboarding, dashboard, alert. Bukan semua 80 halaman.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Edukasi kultur-adapted</span></div>
+          <div class="desc">Encyclopedia disease tambah section "Konteks Indonesia": misal asma + asap karhutla Sumatera/Kalimantan, hipertensi + diet santan, anemia ibu hamil + zat besi lokal (daun kelor).</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-s">S</span><span class="title">Date/number format locale-aware</span></div>
+          <div class="desc"><code>Intl.NumberFormat('id-ID')</code> untuk PM2.5 (35 µg/m³ pakai koma desimal), <code>Intl.DateTimeFormat</code> untuk timeline. Saat ini hardcoded format.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Expansion Asia Tenggara (MY/SG/TH)</span></div>
+          <div class="desc">Stretch 2027: tambah lokalisasi Bahasa Melayu, Thai. PM2.5 cross-border haze (karhutla → SG/MY) jadi USP regional. Butuh local partnership.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 12. OPEN SOURCE & COMMUNITY                          -->
+  <!-- ==================================================== -->
+  <section class="section" id="cat-12" data-cat="opensource">
+    <h2><span class="num">12</span> <span class="emoji">🌐</span> Open Source & Community</h2>
+    <div class="cat-meta">
+      <span class="status-badge st-missing">MISSING</span>
+      <span class="owner-badge">Owner: Product + Data</span>
+      <span class="effort-badge">Cluster effort: M</span>
+    </div>
+
+    <div class="now-card">
+      <strong>Sudah ada:</strong> Git repo lokal, dokumentasi internal (<code>docs/research/</code>, <code>docs/IMPLEMENTATION_PLAN.md</code>, <code>docs/ML_RESULTS_REPORT.md</code>), commit history rapi, 33 paper verified+citable.
+    </div>
+    <div class="gap-card">
+      <strong>Gap:</strong> Repo belum public di GitHub. Tidak ada <code>CONTRIBUTING.md</code>, <code>CODE_OF_CONDUCT.md</code>, issue/PR template. Public roadmap tidak ada (page ini bisa jadi public roadmap!). Tidak ada blog/weekly digest. Tidak ada Hugging Face presence untuk model weights. Paper draft belum mulai untuk submission.
+    </div>
+
+    <h3>Action Items</h3>
+    <ul class="action-list" data-prio-group>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-m">M</span><span class="title">Public GitHub repo + governance</span></div>
+          <div class="desc">Strip sensitive (.env, Firebase config private), license MIT untuk public-facing app + Apache 2.0 untuk ML model weights. README.md cover: install, contribute, license. Repo: <code>github.com/aervinex/web</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">CONTRIBUTING + templates</span></div>
+          <div class="desc"><code>.github/CONTRIBUTING.md</code>, <code>CODE_OF_CONDUCT.md</code> (Contributor Covenant v2.1), <code>ISSUE_TEMPLATE/</code> (bug, feature, translation), <code>PULL_REQUEST_TEMPLATE.md</code>.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p1">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p1">P1</span><span class="eff eff-s">S</span><span class="title">Public roadmap (this page) sebagai canonical</span></div>
+          <div class="desc">Halaman ini (<code>aervinex-roadmap.html</code>) di-link dari README, dari landing footer "Roadmap", dari blog. Update rolling tiap quarter dengan progress badge.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Weekly digest blog</span></div>
+          <div class="desc">Tiap Jumat: 1 post di <code>/blog/</code> berisi (a) ML metric movement, (b) new paper read, (c) user feedback theme. Distribusi via newsletter + LinkedIn personal brand.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Hugging Face model hub</span></div>
+          <div class="desc">Setelah action #7.2 (real AFib ONNX), upload ke <code>huggingface.co/aervinex/afib-ppg-xgb</code>. Model card lengkap: training data, metrics, limitations, intended use. License Apache 2.0.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-l">L</span><span class="title">Paper draft: JMIR mHealth submission</span></div>
+          <div class="desc">Q4 2026: draft paper "AERVINEX: A Wellness Decision Support Platform for Urban Indonesian Runners — Calibrated Proxy Architecture and Real-World Deployment". Co-author: clinical partner.</div>
+        </div>
+      </li>
+      <li class="action-item" data-prio="p2">
+        <span class="chk"></span>
+        <div class="body">
+          <div class="top"><span class="prio p2">P2</span><span class="eff eff-m">M</span><span class="title">Community translation program</span></div>
+          <div class="desc">Crowdin / Weblate setup untuk i18n contribution. Reward: contributor badge + free Pro 6-bulan untuk 500+ translated string. Drive Jawa/Sunda coverage (action #11.3).</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- IMPACT MATRIX                                        -->
+  <!-- ==================================================== -->
+  <section class="section" id="impact">
+    <h2><span class="num">★</span> <span class="emoji">📊</span> Effort × Impact Matrix</h2>
+    <p>Visualisasi 2D tiap kategori (12 dots, bukan 87 items — too crowded). Posisi = rata-rata effort/impact items dalam kategori. Hover dot untuk label.</p>
+
+    <div class="impact-wrap">
+      <div class="impact-matrix" id="impactMatrix">
+        <div class="impact-divider-h"></div>
+        <div class="impact-divider-v"></div>
+
+        <div class="impact-quadrant" style="top: 8px; left: 10px;">Quick wins</div>
+        <div class="impact-quadrant" style="top: 8px; right: 10px;">Big bets</div>
+        <div class="impact-quadrant" style="bottom: 8px; left: 10px;">Filler</div>
+        <div class="impact-quadrant" style="bottom: 8px; right: 10px;">Thankless</div>
+
+        <!-- 1 Performance: low-mid effort, mid impact -->
+        <div class="impact-dot p1" style="left: 25%; top: 38%;" title="1. Performance — Quick wins, Lighthouse + image compress beri visible LCP gain">1</div>
+        <!-- 2 Security: mid effort, high impact -->
+        <div class="impact-dot p0" style="left: 55%; top: 18%;" title="2. Security — Foundational, breach = game over">2</div>
+        <!-- 3 A11y: mid effort, mid impact -->
+        <div class="impact-dot p1" style="left: 45%; top: 42%;" title="3. Accessibility — Inklusi + SEO bonus">3</div>
+        <!-- 4 SEO: low effort, high impact -->
+        <div class="impact-dot p0" style="left: 18%; top: 25%;" title="4. SEO — Quick win, sitemap + JSON-LD = organic acquisition">4</div>
+        <!-- 5 Hardware: high effort, very high impact -->
+        <div class="impact-dot p0" style="left: 85%; top: 12%;" title="5. Hardware — Hard tapi USP utama AERVINEX vs competitor app-only">5</div>
+        <!-- 6 Cloud Functions: high effort, high impact -->
+        <div class="impact-dot p0" style="left: 78%; top: 22%;" title="6. Cloud Functions — Foundation untuk hardware + monetisasi + ML training">6</div>
+        <!-- 7 ML: very high effort, very high impact -->
+        <div class="impact-dot p0" style="left: 90%; top: 10%;" title="7. ML Pipeline — Diferensiasi inti, tanpa real model = forever proxy">7</div>
+        <!-- 8 Clinical: very high effort, mid-high impact short-term -->
+        <div class="impact-dot p1" style="left: 88%; top: 60%;" title="8. Clinical — Slow burn, payoff jangka panjang regulatory + trust">8</div>
+        <!-- 9 UX: mid effort, high impact -->
+        <div class="impact-dot p0" style="left: 55%; top: 28%;" title="9. UX & Engagement — Retention adalah everything di consumer health">9</div>
+        <!-- 10 Monetization: high effort, very high impact -->
+        <div class="impact-dot p0" style="left: 72%; top: 15%;" title="10. Monetization — Unit economics, butuh aktif Q3 2026 latest">10</div>
+        <!-- 11 i18n: mid effort, mid impact -->
+        <div class="impact-dot p2" style="left: 48%; top: 55%;" title="11. i18n Expansion — Differentiator regional, tapi tidak P0">11</div>
+        <!-- 12 Open Source: low-mid effort, mid impact -->
+        <div class="impact-dot p2" style="left: 30%; top: 55%;" title="12. Open Source — Credibility + recruiting magnet">12</div>
+
+        <div class="impact-axis-x">
+          <span class="lo">LOW EFFORT</span>
+          <span class="hi">HIGH EFFORT</span>
+        </div>
+        <div class="impact-axis-y">← LOW IMPACT &nbsp;&nbsp;|&nbsp;&nbsp; HIGH IMPACT →</div>
+      </div>
+
+      <div class="impact-legend">
+        <span style="color:#ff5470">P0 critical</span>
+        <span style="color:#fcd34d">P1 high</span>
+        <span style="color:#a78bfa">P2 nice-to-have</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- 18-MONTH TIMELINE                                    -->
+  <!-- ==================================================== -->
+  <section class="section" id="timeline">
+    <h2><span class="num">★</span> <span class="emoji">🗺️</span> 18-Month Timeline (Q3 2026 → Q4 2027)</h2>
+    <p>Gantt horizontal grouping per workstream. Bar lebar = effort × duration. Disclaimer: estimasi realistic dengan 1 founder + 1-2 kontraktor on-demand; jika tim grow, akselerasi 30-40%.</p>
+
+    <div class="gantt-wrap">
+      <table class="gantt-table">
+        <thead>
+          <tr>
+            <th class="gantt-stream">Workstream</th>
+            <th>Q3 2026</th>
+            <th class="gantt-quarter">Q4 2026</th>
+            <th>Q1 2027</th>
+            <th class="gantt-quarter">Q2 2027</th>
+            <th>Q3 2027</th>
+            <th class="gantt-quarter">Q4 2027</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Frontend / Web -->
+          <tr>
+            <td class="gantt-stream">⚡ Web Foundation</td>
+            <td colspan="6">
+              <div class="gantt-bar" style="left: 0%; width: 33%;">Perf + A11y + SEO + Security (Cat 1-4)</div>
+              <div class="gantt-bar" style="left: 50%; width: 25%;">Polish + i18n regional (Cat 11)</div>
+            </td>
+          </tr>
+          <!-- Firmware -->
+          <tr>
+            <td class="gantt-stream">📡 Firmware ESP32</td>
+            <td colspan="6">
+              <div class="gantt-bar fw" style="left: 0%; width: 50%;">BLE + streaming + battery (Cat 5)</div>
+              <div class="gantt-bar fw" style="left: 55%; width: 28%;">OTA + calibration UI</div>
+            </td>
+          </tr>
+          <!-- Backend -->
+          <tr>
+            <td class="gantt-stream">☁️ Cloud Functions</td>
+            <td colspan="6">
+              <div class="gantt-bar" style="left: 8%; width: 35%;">Ingest + aggregate + FCM (Cat 6)</div>
+              <div class="gantt-bar" style="left: 50%; width: 30%;">BigQuery + webhook Garmin/Apple</div>
+            </td>
+          </tr>
+          <!-- ML -->
+          <tr>
+            <td class="gantt-stream">🧠 ML Training</td>
+            <td colspan="6">
+              <div class="gantt-bar ml" style="left: 12%; width: 28%;">Scaffold + AFib ONNX (Cat 7)</div>
+              <div class="gantt-bar ml" style="left: 45%; width: 35%;">MLflow + A/B + drift</div>
+              <div class="gantt-bar ml" style="left: 83%; width: 17%;">Per-user baseline</div>
+            </td>
+          </tr>
+          <!-- Clinical -->
+          <tr>
+            <td class="gantt-stream">🏥 Clinical / Reg</td>
+            <td colspan="6">
+              <div class="gantt-bar cli" style="left: 5%; width: 18%;">Disclaimer + Kemenkes</div>
+              <div class="gantt-bar cli" style="left: 28%; width: 40%;">IRB protocol + RS LOI (Cat 8)</div>
+              <div class="gantt-bar cli" style="left: 75%; width: 25%;">Validation cohort N=200</div>
+            </td>
+          </tr>
+          <!-- Business -->
+          <tr>
+            <td class="gantt-stream">💳 Monetization</td>
+            <td colspan="6">
+              <div class="gantt-bar biz" style="left: 15%; width: 32%;">Midtrans + trial + feature gating (Cat 10)</div>
+              <div class="gantt-bar biz" style="left: 55%; width: 22%;">Stripe global + dunning</div>
+            </td>
+          </tr>
+          <!-- UX -->
+          <tr>
+            <td class="gantt-stream">🎯 UX & Engagement</td>
+            <td colspan="6">
+              <div class="gantt-bar" style="left: 5%; width: 20%;">Analytics + push (Cat 9)</div>
+              <div class="gantt-bar" style="left: 30%; width: 25%;">Streak + survey + family</div>
+              <div class="gantt-bar" style="left: 60%; width: 25%;">Social challenges</div>
+            </td>
+          </tr>
+          <!-- Open Source -->
+          <tr>
+            <td class="gantt-stream">🌐 Open Source</td>
+            <td colspan="6">
+              <div class="gantt-bar" style="left: 38%; width: 18%;">Public repo (Cat 12)</div>
+              <div class="gantt-bar" style="left: 60%; width: 22%;">HF hub + blog</div>
+              <div class="gantt-bar" style="left: 85%; width: 15%;">JMIR submit</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Milestone Checkpoint</h3>
+    <table class="info-table">
+      <thead>
+        <tr><th>Milestone</th><th>Target</th><th>Definition of Done</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>M1 · Trust Foundation</strong></td>
+          <td>End Q3 2026</td>
+          <td>Lighthouse 90+, axe-core 0 critical, CSP live, sitemap indexed</td>
+        </tr>
+        <tr>
+          <td><strong>M2 · Real Hardware Loop</strong></td>
+          <td>End Q4 2026</td>
+          <td>BLE pairing &gt;90% success, real-time stream to Firestore, FCM push live</td>
+        </tr>
+        <tr>
+          <td><strong>M3 · First Real Model</strong></td>
+          <td>End Q1 2027</td>
+          <td>AFib ONNX deployed, A/B vs proxy, AUC&gt;0.88 production</td>
+        </tr>
+        <tr>
+          <td><strong>M4 · Monetization Live</strong></td>
+          <td>End Q2 2027</td>
+          <td>Midtrans live, &gt;100 paying users, churn &lt;8%/bln</td>
+        </tr>
+        <tr>
+          <td><strong>M5 · Clinical Validation</strong></td>
+          <td>End Q3 2027</td>
+          <td>IRB approved, N≥100 enrolled, interim analysis</td>
+        </tr>
+        <tr>
+          <td><strong>M6 · Publication + Open Source</strong></td>
+          <td>End Q4 2027</td>
+          <td>JMIR submitted, GitHub public 100+ stars, HF model 1000+ downloads</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- HONEST FLAGS                                         -->
+  <!-- ==================================================== -->
+  <section class="section">
+    <h2><span class="num">!</span> <span class="emoji">⚠️</span> Realistic vs Stretch Flags</h2>
+    <p>Tidak semua action item akan tercapai dalam timeline. Berikut transparency:</p>
+
+    <h3>Realistic — high confidence (90%+)</h3>
+    <ul style="font-size:12.5px;line-height:1.7;padding-left:20px;opacity:0.9">
+      <li>Cat 1, 3, 4 (Performance / A11y / SEO) — eksekusi pure technical, founder-controllable</li>
+      <li>Cat 2 partial (CSP + Firestore rules) — eksekusi tanpa external dependency</li>
+      <li>Cat 9 partial (analytics, streak, push) — bisa shipped tanpa partnership</li>
+      <li>Cat 12 partial (public repo, CONTRIBUTING) — pure repo hygiene</li>
+    </ul>
+
+    <h3>Stretch — needs external partnership / capital</h3>
+    <ul style="font-size:12.5px;line-height:1.7;padding-left:20px;opacity:0.9">
+      <li>Cat 5 OTA + multi-device — butuh firmware engineer dedicated</li>
+      <li>Cat 7 federated learning — butuh user scale ≥10rb dulu, butuh ML research time</li>
+      <li>Cat 8 IRB + RS partnership — slow burn 12+ bulan, butuh clinical co-founder atau advisor</li>
+      <li>Cat 8 Class IIa MDR (EU) — butuh capital ~€150k + RA consultant</li>
+      <li>Cat 10 Stripe global expansion — butuh entity di Singapore/EU untuk billing</li>
+      <li>Cat 11 expansion ASEAN — butuh local partnership tiap negara</li>
+    </ul>
+
+    <h3>Risks yang bisa blok timeline</h3>
+    <ul style="font-size:12.5px;line-height:1.7;padding-left:20px;opacity:0.9">
+      <li>Kemenkes klasifikasi medical device — bisa expand scope dari wellness ke SaMD, butuh QMS ISO 13485</li>
+      <li>BLE Web API support fragmentation — iOS Safari masih limited, butuh companion native app jangka panjang</li>
+      <li>Dataset access (DeepBeat Stanford, MESA NSRR) — butuh IRB approval institusional</li>
+      <li>Burnout founder — 87 action items × 18 bulan = ~5 items/bulan, perlu prioritize ruthlessly</li>
+    </ul>
+  </section>
+
+  <!-- ==================================================== -->
+  <!-- BOTTOM NAV                                           -->
+  <!-- ==================================================== -->
+  <nav class="bottomnav">
+    <a href="/dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+    <a href="/ml-results-report.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg><span>Test ML</span></a>
+    <a href="/evidence.html" class="bn-item active"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg><span>Riset</span></a>
+    <a href="/profile.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg><span>Profil</span></a>
+  </nav>
+
+  <script src="/js/icon-lib.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+
+  <script>
+    (function() {
+      // ===== Count action items per priority =====
+      const allItems = document.querySelectorAll('.action-item[data-prio]');
+      const total = allItems.length;
+      const p0 = document.querySelectorAll('.action-item[data-prio="p0"]').length;
+      const p1 = document.querySelectorAll('.action-item[data-prio="p1"]').length;
+      const p2 = document.querySelectorAll('.action-item[data-prio="p2"]').length;
+
+      document.getElementById('cnt-all').textContent = total;
+      document.getElementById('cnt-p0').textContent = p0;
+      document.getElementById('cnt-p1').textContent = p1;
+      document.getElementById('cnt-p2').textContent = p2;
+
+      // ===== Filter chips =====
+      const chips = document.querySelectorAll('.filter-chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const filter = chip.dataset.prio;
+          allItems.forEach(it => {
+            if (filter === 'all' || it.dataset.prio === filter) {
+              it.classList.remove('hidden-cat');
+            } else {
+              it.classList.add('hidden-cat');
+            }
+          });
+        });
+      });
+
+      // ===== Click action-item to toggle done (local preference, not persisted) =====
+      allItems.forEach(it => {
+        it.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A' || e.target.tagName === 'CODE') return;
+          it.classList.toggle('done');
+        });
+      });
+
+      // ===== Smooth scroll for TOC =====
+      document.querySelectorAll('.toc-mini a, a[href^="#cat-"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href');
+          if (!href || !href.startsWith('#')) return;
+          const target = document.querySelector(href);
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

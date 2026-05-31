@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Live Data — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .live-grid { grid-template-columns: 1fr; } }
+    .live-card { padding: 16px; }
+    .live-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .live-value { font-size: 32px; font-weight: 800; color: var(--text); margin: 6px 0; }
+    .live-unit  { font-size: 12px; color: var(--text-dim); margin-left: 4px; font-weight: 500; }
+    .live-trend { font-size: 11px; color: var(--text-muted); }
+    .live-svg   { width: 100%; height: 60px; display: block; }
+    .live-line  { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .live-line.hr   { stroke: rgb(255,92,124); }
+    .live-line.spo2 { stroke: rgb(74,160,255); }
+    .live-line.pm25 { stroke: rgb(192,132,252); }
+    .live-line.uv   { stroke: rgb(255,181,71); }
+    .source-pill { display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--radius-pill);background:rgba(0,229,212,0.12);color:var(--accent);font-size:11px;font-weight:700 }
+    .source-pill.stale { background: rgba(255,181,71,0.15); color: rgb(255,181,71); }
+  </style>
+</head>
+<body class="theme-dark" data-page="live-data">
+  <div class="app-shell">
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Live Sensor Data</h2>
+        <p>Real-time stream dari AERVINEX device</p>
+      </div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <section class="card aura-cyan" style="padding:16px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <p style="font-size:11px;color:var(--text-muted);letter-spacing:1px">SOURCE</p>
+        <p style="font-size:14px;font-weight:700;color:var(--text)" id="srcName">Menunggu data...</p>
+      </div>
+      <span class="source-pill" id="srcPill">— offline —</span>
+    </section>
+
+    <h3 class="section-title">Real-Time Vitals</h3>
+    <section class="live-grid">
+      <div class="card aura-coral live-card">
+        <p class="live-label">Heart Rate</p>
+        <p class="live-value"><span id="hrVal">--</span><span class="live-unit">bpm</span></p>
+        <svg class="live-svg" id="hrChart" viewBox="0 0 200 60" preserveAspectRatio="none"><polyline class="live-line hr" id="hrLine"/></svg>
+        <p class="live-trend" id="hrTrend">—</p>
+      </div>
+      <div class="card aura-blue live-card">
+        <p class="live-label">SpO₂</p>
+        <p class="live-value"><span id="spo2Val">--</span><span class="live-unit">%</span></p>
+        <svg class="live-svg" id="spo2Chart" viewBox="0 0 200 60" preserveAspectRatio="none"><polyline class="live-line spo2" id="spo2Line"/></svg>
+        <p class="live-trend" id="spo2Trend">—</p>
+      </div>
+      <div class="card aura-violet live-card">
+        <p class="live-label">PM2.5</p>
+        <p class="live-value"><span id="pm25Val">--</span><span class="live-unit">μg/m³</span></p>
+        <svg class="live-svg" id="pm25Chart" viewBox="0 0 200 60" preserveAspectRatio="none"><polyline class="live-line pm25" id="pm25Line"/></svg>
+        <p class="live-trend" id="pm25Trend">—</p>
+      </div>
+      <div class="card aura-amber live-card">
+        <p class="live-label">UV Index</p>
+        <p class="live-value"><span id="uvVal">--</span></p>
+        <svg class="live-svg" id="uvChart" viewBox="0 0 200 60" preserveAspectRatio="none"><polyline class="live-line uv" id="uvLine"/></svg>
+        <p class="live-trend" id="uvTrend">—</p>
+      </div>
+    </section>
+
+    <h3 class="section-title">Status</h3>
+    <section class="card list-card">
+      <div class="list-row">
+        <div class="list-row-body">
+          <p class="list-row-title">Last Update</p>
+          <p class="list-row-sub" id="lastUpdate">—</p>
+        </div>
+      </div>
+      <div class="list-row">
+        <div class="list-row-body">
+          <p class="list-row-title">Stream Samples</p>
+          <p class="list-row-sub" id="sampleCount">0</p>
+        </div>
+      </div>
+    </section>
+
+    <a class="btn-block primary" href="/device-pair.html" style="margin-top:14px">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M6 2l12 10L6 22V2z"/></svg>
+      <span>Pair / Re-pair Device</span>
+    </a>
+
+    <div class="spacer-bottom"></div>
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/medical-disclaimer.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    const $ = (id) => document.getElementById(id);
+
+    const series = { hr: [], spo2: [], pm25: [], uv: [] };
+    const MAX_POINTS = 60;
+    let sampleCount = 0;
+    let lastReceivedAt = 0;
+
+    function pushPoint(key, val) {
+      if (val == null || isNaN(val)) return;
+      series[key].push(val);
+      if (series[key].length > MAX_POINTS) series[key].shift();
+      renderChart(key);
+    }
+
+    function renderChart(key) {
+      const data = series[key];
+      if (!data.length) return;
+      const min = Math.min(...data);
+      const max = Math.max(...data);
+      const range = (max - min) || 1;
+      const w = 200, h = 60, pad = 4;
+      const step = (w - pad * 2) / Math.max(1, data.length - 1);
+      const pts = data.map((v, i) => {
+        const x = pad + i * step;
+        const y = h - pad - ((v - min) / range) * (h - pad * 2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      const line = document.getElementById(key + 'Line');
+      if (line) line.setAttribute('points', pts);
+    }
+
+    function trendDelta(arr) {
+      if (arr.length < 4) return null;
+      const recent = arr.slice(-3).reduce((a,b)=>a+b,0)/3;
+      const old = arr.slice(-8, -3).reduce((a,b)=>a+b,0)/5;
+      return recent - old;
+    }
+    function trendLabel(delta, unit) {
+      if (delta == null) return '—';
+      const sign = delta >= 0 ? '+' : '';
+      return `${sign}${delta.toFixed(1)} ${unit} vs 30s lalu`;
+    }
+
+    function updateUI(payload) {
+      if (payload.hr   != null) { $('hrVal').textContent   = Math.round(payload.hr);   pushPoint('hr',   payload.hr);   $('hrTrend').textContent   = trendLabel(trendDelta(series.hr),   'bpm'); }
+      if (payload.spo2 != null) { $('spo2Val').textContent = Math.round(payload.spo2); pushPoint('spo2', payload.spo2); $('spo2Trend').textContent = trendLabel(trendDelta(series.spo2), '%'); }
+      if (payload.pm25 != null) { $('pm25Val').textContent = (payload.pm25).toFixed(1); pushPoint('pm25', payload.pm25); $('pm25Trend').textContent = trendLabel(trendDelta(series.pm25), 'μg/m³'); }
+      if (payload.uv   != null) { $('uvVal').textContent   = (payload.uv).toFixed(1);   pushPoint('uv',   payload.uv);   $('uvTrend').textContent   = trendLabel(trendDelta(series.uv),   ''); }
+      sampleCount += 1;
+      $('sampleCount').textContent = sampleCount;
+      lastReceivedAt = Date.now();
+      $('lastUpdate').textContent = 'Baru saja';
+      $('srcPill').textContent = '● LIVE';
+      $('srcPill').classList.remove('stale');
+      if (payload.deviceId) $('srcName').textContent = payload.deviceId;
+    }
+
+    function staleCheck() {
+      if (!lastReceivedAt) return;
+      const elapsed = Math.floor((Date.now() - lastReceivedAt) / 1000);
+      if (elapsed > 15) { $('srcPill').textContent = '○ STALE'; $('srcPill').classList.add('stale'); }
+      $('lastUpdate').textContent = elapsed < 60 ? `${elapsed} detik lalu` : `${Math.floor(elapsed/60)} menit lalu`;
+    }
+    setInterval(staleCheck, 1000);
+
+    // Listen to Firestore snapshot
+    auth.onAuthStateChanged((user) => {
+      if (!user) return;
+      const ref = db.collection('sensor_data').doc(user.uid).collection('realtime').doc('current');
+      ref.onSnapshot((snap) => {
+        if (!snap.exists) return;
+        updateUI(snap.data());
+      }, (err) => {
+        console.warn('snapshot err', err);
+        $('srcName').textContent = 'Tidak ada data — pair device dulu';
+      });
+    });
+  </script>
+</body>
+</html>

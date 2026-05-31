@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Profile — AERVINEX</title>
+  <meta name="description" content="Profil dan pengaturan akun AERVINEX." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://aervinex.web.app/profile.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+</head>
+<body class="theme-dark" data-page="profile">
+  <a href="#main" class="sr-only-focusable">Lewati ke konten utama</a>
+  <main id="main" class="app-shell">
+
+    <header class="top-bar">
+      <a href="/dashboard.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Profil</h2>
+        <p>Akun &amp; pengaturan</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card aura-cyan" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px">
+      <div id="avatar" style="width:80px;height:80px;border-radius:50%;background:var(--bg);box-shadow:var(--shadow-raised);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:var(--accent);letter-spacing:2px">?</div>
+      <div>
+        <h2 style="font-size:20px;font-weight:700;color:var(--text)" id="userName">User</h2>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:4px" id="userEmail">—</p>
+      </div>
+      <span id="guestBadge" class="metric-trend up" style="display:none">GUEST MODE</span>
+    </section>
+
+    <!-- Streak Card -->
+    <section id="streakCard" style="margin-top:6px"></section>
+
+    <!-- Subscription + Challenges quick rows -->
+    <section class="card aura-violet list-card">
+      <a class="list-row" href="/subscription.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">💎 Langganan</p>
+          <p class="list-row-sub" id="subscriptionSub">Kelola plan Free / Pro / Family</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/challenges.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M6 3v6a6 6 0 0012 0V3M6 3h12M9 21h6M12 15v6"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">🏆 Community Challenges</p>
+          <p class="list-row-sub">Tantangan mingguan & monthly</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+
+    <section class="card aura-violet list-card">
+      <a class="list-row" href="/device.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M11 7h2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Device Manager</p>
+          <p class="list-row-sub" id="deviceSub">AERVINEX Watch · Battery 78%</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/edit-profile.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Edit Profil</p>
+          <p class="list-row-sub">Nama, umur, berat, target</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/alerts.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0a3 3 0 11-6 0"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Notifikasi</p>
+          <p class="list-row-sub">Atur AARC alerts &amp; daily summary</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/privacy.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Privasi &amp; Data</p>
+          <p class="list-row-sub">Kelola data tersimpan di cloud</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+
+    <section class="card aura-amber list-card">
+      <a class="list-row" href="/achievements.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">🏆 Achievements</p>
+          <p class="list-row-sub">Badge collection · streak · milestones</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/assessment-history.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Assessment History</p>
+          <p class="list-row-sub">Trend skor longitudinal per kondisi</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/encyclopedia.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">📚 Encyclopedia</p>
+          <p class="list-row-sub">Library 35 kondisi · referensi medis</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" id="rowPair" href="#" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="6" y="3" width="12" height="18" rx="3"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Pair Device (Web Bluetooth)</p>
+          <p class="list-row-sub">Scan BLE device sekitar Anda</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" id="rowPDF" href="#" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Export Health Report (PDF)</p>
+          <p class="list-row-sub">Untuk dibawa konsultasi dokter</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 11.5a8.4 8.4 0 11-16 0c0-4.6 3.6-8.4 8-8.4s8 3.8 8 8.4z"/></svg></div>
+          <div><p class="setting-title">Voice Alerts</p><p class="setting-sub">Speak milestones + warnings saat running</p></div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="toggleVoice" /><span class="toggle-track"><span class="toggle-thumb"></span></span></label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg></div>
+          <div><p class="setting-title">Language</p><p class="setting-sub" id="langSub">Bahasa Indonesia</p></div>
+        </div>
+        <button class="btn-pill" id="btnToggleLang" style="padding:6px 14px;font-size:11px"><span id="langBtnLabel">Switch to EN</span></button>
+      </div>
+    </section>
+
+    <section class="card aura-violet list-card">
+      <a class="list-row" href="/device-pair.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M6 2l12 10L6 22V2z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Pair Device (Web Bluetooth)</p>
+          <p class="list-row-sub" id="pairedCount">Hubungkan AERVINEX sensor — Chrome / Edge</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/live-data.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Live Sensor Data</p>
+          <p class="list-row-sub">Real-time HR · SpO₂ · PM2.5 · UV</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/calibrate.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Kalibrasi Sensor</p>
+          <p class="list-row-sub">Baseline HR + Skin Temp · refresh tiap 30 hari</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/health-bridge.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M9 11l3-8 3 8M5 21l3-7M19 21l-3-7M3 14h18"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Health Bridge</p>
+          <p class="list-row-sub">Garmin · Apple HealthKit · Fitbit (OAuth)</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/ae-report.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon" style="color:rgb(255,130,150)"><svg viewBox="0 0 24 24" class="ico"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4m0 4h.01"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Lapor Adverse Event</p>
+          <p class="list-row-sub">False alarm · misclassification · cedera kulit</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+
+    <section class="card aura-coral list-card">
+      <a class="list-row" href="/risk-list.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">🔍 Browse Risk Factors</p>
+          <p class="list-row-sub">35 kondisi · search · filter kategori</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/assessment.html?id=teprs" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">📝 Self-Assessment</p>
+          <p class="list-row-sub">35 kuesioner · validate ML dengan input Anda</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+
+    <section class="card aura-pink list-card">
+      <a class="list-row" href="/evidence.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">📖 Research Evidence &amp; XAI</p>
+          <p class="list-row-sub">SLR · Datasets · ML pipeline · 35 model accuracy</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/about.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Tentang AERVINEX</p>
+          <p class="list-row-sub">Versi 1.0.0 · From Detection to Action</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/help.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Bantuan &amp; FAQ</p>
+          <p class="list-row-sub">Dokumentasi fitur novelty &amp; troubleshoot</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" id="rowReplayTour" href="#" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 12a9 9 0 11-3-6.7M21 3v6h-6"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Replay Tour</p>
+          <p class="list-row-sub">Lihat lagi tour panduan dashboard</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+    </section>
+
+    <section class="card aura-danger list-card" style="border:1px solid rgba(255,92,124,.18)">
+      <a class="list-row" href="/privacy-policy.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Kebijakan Privasi &amp; Hak Data</p>
+          <p class="list-row-sub">UU PDP · GDPR · DPO contact</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <a class="list-row" href="/security.html" style="text-decoration:none;color:inherit">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Keamanan &amp; Enkripsi</p>
+          <p class="list-row-sub">Enkripsi at rest · vulnerability disclosure</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+      <button class="list-row" id="rowExportData" type="button" style="background:none;border:none;width:100%;text-align:left;color:inherit;cursor:pointer">
+        <div class="list-row-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title">Download Data Saya</p>
+          <p class="list-row-sub">GDPR / UU PDP · JSON bundle · link valid 24 jam</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ico" style="width:18px;height:18px;color:var(--text-muted)"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="list-row" id="rowDeleteAccount" type="button" style="background:none;border:none;width:100%;text-align:left;color:inherit;cursor:pointer">
+        <div class="list-row-icon" style="color:rgb(255,130,150)"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></div>
+        <div class="list-row-body">
+          <p class="list-row-title" style="color:rgb(255,130,150)">Hapus Akun + Data</p>
+          <p class="list-row-sub">Irreversible · selesai &lt; 30 hari</p>
+        </div>
+      </button>
+    </section>
+
+    <!-- Inline script: wire "Download Data Saya" → callable function exportUserData -->
+    <script>
+      (function () {
+        var btn = document.getElementById('rowExportData');
+        if (!btn) return;
+        btn.addEventListener('click', async function () {
+          if (!window.firebase || !firebase.functions) {
+            alert('Firebase Functions belum tersedia di halaman ini.');
+            return;
+          }
+          var orig = btn.querySelector('.list-row-title').textContent;
+          btn.querySelector('.list-row-title').textContent = 'Menyiapkan bundle...';
+          try {
+            var call = firebase.app().functions('asia-southeast2').httpsCallable('exportUserData');
+            var res = await call({});
+            if (res?.data?.ok && res.data.url) {
+              window.location.href = res.data.url;
+            } else {
+              alert('Gagal export: ' + (res?.data?.error || 'unknown'));
+            }
+          } catch (e) {
+            alert('Gagal export: ' + (e?.message || e));
+          } finally {
+            btn.querySelector('.list-row-title').textContent = orig;
+          }
+        });
+      })();
+    </script>
+
+    <button class="btn-block ghost" data-action="logout" style="border-color:rgba(255,92,124,.4);color:rgb(255,130,150)">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <span>Keluar</span>
+    </button>
+
+    <!-- Delete Account confirm modal -->
+    <div id="modalDeleteAccount" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalDelTitle" style="position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:120;padding:20px">
+      <div class="card" style="max-width:420px;width:100%;padding:24px">
+        <h3 id="modalDelTitle" style="font-size:18px;font-weight:800;color:rgb(255,130,150);margin-bottom:8px">Hapus Akun Permanen?</h3>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.6">Tindakan ini akan menghapus secara permanen:</p>
+        <ul style="font-size:12.5px;color:var(--text-muted);padding-left:18px;margin:8px 0 14px">
+          <li>Profil akun &amp; preferensi</li>
+          <li>Seluruh health logs &amp; sesi lari</li>
+          <li>Assessment, alert, paired devices</li>
+          <li>Audit XAI &amp; consent record</li>
+        </ul>
+        <p style="font-size:12.5px;color:var(--text);background:rgba(255,92,124,.08);border:1px solid rgba(255,92,124,.22);border-radius:10px;padding:10px 12px;margin-bottom:14px">⚠️ Tidak dapat dibatalkan. Untuk lanjut, ketik <strong>HAPUS</strong> di bawah.</p>
+        <input type="text" id="delConfirmInput" class="form-input" placeholder='Ketik "HAPUS"' autocomplete="off" style="margin-bottom:12px" />
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn-block ghost" id="delCancel">Batalkan</button>
+          <button type="button" class="btn-block primary" id="delConfirm" disabled style="background:linear-gradient(135deg,#ff5c7c,#ff8aa5);color:#1a0510">Hapus Permanen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav" aria-label="Navigasi utama">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile" aria-current="page"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/streak-tracker.js" defer></script>
+  <script>
+    AERVINEXAuth.requireAuth().then(user => {
+      const name = user.displayName || (user.isAnonymous ? 'Guest User' : (user.email || 'User').split('@')[0]);
+      document.getElementById('userName').textContent = name;
+      document.getElementById('userEmail').textContent = user.email || (user.isAnonymous ? 'Anonymous session' : '—');
+      document.getElementById('avatar').textContent = AERVINEXAuth.getInitials(name);
+      if (user.isAnonymous) document.getElementById('guestBadge').style.display = 'inline-block';
+
+      // Render streak card
+      setTimeout(() => window.AervinexStreak?.renderCard(document.getElementById('streakCard')), 400);
+
+      // Sync subscription label
+      if (window.db && !user.isAnonymous) {
+        window.db.collection('subscriptions').doc(user.uid).get().then(d => {
+          const sub = d.exists ? d.data() : null;
+          const label = !sub || sub.plan === 'free' ? 'Plan FREE · Upgrade ke Pro' :
+                        sub.status === 'trial'   ? 'Trial Pro aktif — upgrade penuh' :
+                        sub.status === 'active'  ? `Plan ${sub.plan?.toUpperCase()} aktif` :
+                        `Plan ${sub.plan?.toUpperCase()} — ${sub.status}`;
+          const el = document.getElementById('subscriptionSub');
+          if (el) el.textContent = label;
+        }).catch(()=>{});
+      }
+    });
+
+    // Profile rows now navigate to dedicated pages (edit-profile, privacy, about, help)
+    document.getElementById('rowReplayTour')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('aervinex-tour-completed');
+      AervinexToast('Tour akan dimulai di dashboard...', 'success', 2000);
+      setTimeout(() => location.href = '/dashboard.html', 1200);
+    });
+
+    // Web Bluetooth pair
+    document.getElementById('rowPair')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      AervinexBluetooth.scan();
+    });
+
+    // PDF Export
+    document.getElementById('rowPDF')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      AervinexToast('Generating health report PDF...', 'info', 2000);
+      AervinexPDF.generateHealthReport();
+    });
+
+    // Voice toggle
+    const vToggle = document.getElementById('toggleVoice');
+    if (vToggle) {
+      vToggle.checked = AervinexVoice.enabled;
+      vToggle.addEventListener('change', () => {
+        AervinexVoice.setEnabled(vToggle.checked);
+        if (vToggle.checked) AervinexVoice.speak('Voice alerts diaktifkan.');
+        AervinexToast(`Voice ${vToggle.checked ? 'aktif' : 'dimatikan'}`, 'info');
+      });
+    }
+
+    // ── GDPR / UU PDP — Delete Account flow ──────────────
+    // Stub: this client-side handler triggers a sign-out + best-effort
+    // Firestore doc deletion. Full erasure (other collections, Auth user,
+    // Cloud Storage, audit logs) should be completed by a Cloud Function
+    // `deleteUserAccount` that runs with admin privilege. See docs/SECURITY.md.
+    (function wireDeleteAccount() {
+      const row = document.getElementById('rowDeleteAccount');
+      const modal = document.getElementById('modalDeleteAccount');
+      const input = document.getElementById('delConfirmInput');
+      const btnCancel = document.getElementById('delCancel');
+      const btnConfirm = document.getElementById('delConfirm');
+      if (!row || !modal) return;
+      const open = () => { modal.style.display = 'flex'; input.value = ''; btnConfirm.disabled = true; setTimeout(() => input.focus(), 50); };
+      const close = () => { modal.style.display = 'none'; };
+      row.addEventListener('click', open);
+      btnCancel.addEventListener('click', close);
+      modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+      input.addEventListener('input', () => {
+        btnConfirm.disabled = input.value.trim().toUpperCase() !== 'HAPUS';
+      });
+      btnConfirm.addEventListener('click', async () => {
+        if (btnConfirm.disabled) return;
+        btnConfirm.disabled = true;
+        const u = auth.currentUser;
+        if (!u) { close(); AervinexToast('Tidak ada sesi aktif.', 'warn'); return; }
+        try {
+          // 1. Best-effort: delete the user profile doc (rules allow self-delete)
+          try { await db.collection('users').doc(u.uid).delete(); } catch (e) { console.warn('users delete', e); }
+          // 2. TODO (server-side): invoke Cloud Function to cascade-delete
+          //    health_logs / sessions / assessments / alerts / paired_devices
+          //    / xai_audit / research_consent, plus delete the Firebase Auth user.
+          //    Until that function ships, we sign out + show a notice.
+          AervinexToast('Permintaan penghapusan diterima. Akun di-sign out. Penghapusan lengkap < 30 hari.', 'success', 5000);
+          // 3. Sign out locally
+          setTimeout(async () => {
+            try { await auth.signOut(); } catch {}
+            location.replace('/login.html');
+          }, 1200);
+        } catch (err) {
+          console.error('[delete-account]', err);
+          AervinexToast('Gagal memproses. Hubungi dpo@aervinex.app.', 'danger', 5000);
+          btnConfirm.disabled = false;
+        }
+      });
+    })();
+
+    // Language toggle
+    const langBtn = document.getElementById('btnToggleLang');
+    if (langBtn) {
+      const updateLangLabel = () => {
+        const cur = AervinexI18n.lang;
+        document.getElementById('langSub').textContent = cur === 'id' ? 'Bahasa Indonesia' : 'English';
+        document.getElementById('langBtnLabel').textContent = cur === 'id' ? 'Switch to EN' : 'Switch to ID';
+      };
+      updateLangLabel();
+      langBtn.addEventListener('click', () => {
+        const next = AervinexI18n.lang === 'id' ? 'en' : 'id';
+        AervinexI18n.setLang(next);
+        updateLangLabel();
+        AervinexToast(`Language: ${next === 'id' ? 'Bahasa Indonesia' : 'English'} · reload untuk full effect`, 'info', 4000);
+      });
+    }
+  </script>
+</body>
+</html>

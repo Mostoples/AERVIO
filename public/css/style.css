@@ -470,3 +470,164 @@ p{color:var(--t2);line-height:1.65}
 @media(max-width:960px){.ham-btn{display:flex;align-items:center;justify-content:center}}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190}
 .sidebar-overlay.show{display:block}
+
+/* ── CRAD — Composite Risk Analyzer Dashboard ───────── */
+.crad-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:680px){.crad-grid{grid-template-columns:repeat(2,1fr)}}
+.crad-card{
+  background:var(--bg2);border-radius:var(--r);padding:14px 12px;
+  display:flex;flex-direction:column;gap:4px;
+  border:1px solid var(--border);transition:border-color .3s
+}
+.crad-card.crad-safe{border-color:rgba(34,197,94,.25)}
+.crad-card.crad-warn{border-color:rgba(245,158,11,.28)}
+.crad-card.crad-danger{border-color:rgba(239,68,68,.32);animation:pulse-card 2s ease infinite}
+.crad-icon{font-size:1.4rem;line-height:1}
+.crad-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-top:2px}
+.crad-score{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--t1);line-height:1.1}
+.crad-badge{font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:9px;width:fit-content;text-transform:uppercase;letter-spacing:.04em}
+.crad-badge.cs{background:var(--safe-d);color:var(--safe)}
+.crad-badge.cw{background:var(--warn-d);color:var(--warn)}
+.crad-badge.cd{background:var(--danger-d);color:var(--danger)}
+.crad-bar-wrap{height:4px;background:var(--bg3);border-radius:2px;margin-top:6px}
+.crad-bar-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1),background .4s}
+.crad-rec-item{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:var(--bg3);border-radius:var(--rsm);font-size:.8rem;color:var(--t2)}
+.crad-rec-icon{flex-shrink:0;font-size:.9rem}
+
+/* ── XAI-M — Feature Contribution Bars ─────────────── */
+.xai-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.xai-feat{font-size:.68rem;color:var(--t3);width:80px;flex-shrink:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xai-bar-wrap{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.xai-bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.xai-dev{font-size:.68rem;font-weight:700;width:40px;text-align:right;flex-shrink:0}
+
+/* ── GOOGLE SIGN-IN ──────────────────────────────────── */
+.btn-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 16px;border-radius:var(--r);background:#fff;color:#3c4043;font-size:.9rem;font-weight:600;border:1px solid #dadce0;cursor:pointer;transition:box-shadow var(--ease),background var(--ease);margin-bottom:4px}
+.btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.2);background:#f8f9fa}
+.btn-google:disabled{opacity:.6;cursor:not-allowed}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--t3);font-size:.8rem}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── ENCYCLOPEDIA ────────────────────────────────────── */
+.enc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.enc-tab{padding:8px 16px;border-radius:var(--rsm);background:var(--card2);color:var(--t2);font-size:.82rem;font-weight:600;border:1px solid var(--border);cursor:pointer;transition:all var(--ease)}
+.enc-tab:hover{border-color:var(--border2);color:var(--t1)}
+.enc-tab.active{background:var(--green);color:#07101C;border-color:var(--green)}
+.enc-panel{animation:fadeIn .2s ease}
+.enc-stat-item{background:var(--bg2);border-radius:var(--rsm);padding:10px;text-align:center}
+.enc-stat-val{font-size:1.25rem;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--t1)}
+.enc-stat-lbl{font-size:.72rem;color:var(--t3);margin-top:2px}
+
+/* ── AARC Overlay (Level 3 — Kritis) ────────────────── */
+.aarc-overlay{
+  position:fixed;inset:0;z-index:3000;background:rgba(7,16,28,.96);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:30px;text-align:center;
+  opacity:0;visibility:hidden;transition:all .3s
+}
+.aarc-overlay.active{opacity:1;visibility:visible}
+.aarc-pulse{
+  width:100px;height:100px;border-radius:50%;
+  background:var(--danger-d);border:3px solid var(--danger);
+  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+  animation:aarc-ring 1.2s ease infinite
+}
+@keyframes aarc-ring{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 20px rgba(239,68,68,0)}}
+
+/* ══════════════════════════════════════════════════════════════════════ */
+/*  UI PREVIEW SECTION — sample desain baru, tampil di atas landing hero  */
+/* ══════════════════════════════════════════════════════════════════════ */
+.ui-preview-section{
+  position:relative;
+  padding:64px 24px 56px;
+  background:
+    radial-gradient(ellipse at top, rgba(0,229,212,.08) 0%, transparent 60%),
+    linear-gradient(180deg, #0a0e14 0%, #0f1923 100%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  overflow:hidden;
+}
+.ui-preview-section::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(0,229,212,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,212,.04) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+  mask-image:radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+.ui-preview-container{
+  position:relative; z-index:1;
+  max-width:1000px; margin:0 auto; text-align:center;
+}
+.ui-preview-header{ margin-bottom:36px; }
+.ui-preview-badge{
+  display:inline-block; padding:6px 14px;
+  border-radius:999px;
+  background:rgba(0,229,212,.1);
+  color:#00e5d4;
+  font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase;
+  border:1px solid rgba(0,229,212,.25);
+  margin-bottom:14px;
+}
+.ui-preview-title{
+  font-size:clamp(24px, 4vw, 36px);
+  font-weight:700; color:#f0f4f8;
+  margin:0 0 10px; line-height:1.15;
+  font-family:'Space Grotesk', sans-serif;
+}
+.ui-preview-title span{
+  background:linear-gradient(135deg, #00e5d4 0%, #00b8a9 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.ui-preview-sub{
+  color:#8a96a3; font-size:15px;
+  margin:0 auto; max-width:560px; line-height:1.5;
+}
+.ui-preview-stage{
+  display:flex; justify-content:center;
+  margin:0 auto;
+}
+.phone-frame{
+  position:relative;
+  width:380px; max-width:100%;
+  height:780px;
+  border:14px solid #1a2330;
+  border-radius:48px;
+  background:#000;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.06),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  overflow:hidden;
+}
+.phone-notch{
+  position:absolute; top:0; left:50%;
+  transform:translateX(-50%);
+  width:140px; height:24px;
+  background:#1a2330;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  z-index:10;
+}
+.phone-screen{
+  width:100%; height:100%;
+  border:none; display:block;
+  background:#0f1923;
+}
+.ui-preview-actions{
+  display:flex; gap:10px; justify-content:center;
+  flex-wrap:wrap; margin-top:28px;
+}
+@media (max-width:480px){
+  .ui-preview-section{ padding:40px 16px; }
+  .phone-frame{
+    width:100%; max-width:360px;
+    height:72vh; min-height:560px;
+    border-width:10px; border-radius:36px;
+  }
+  .phone-notch{ width:110px; height:20px; }
+}

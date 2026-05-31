@@ -1,5 +1,5 @@
 /**
- * AERVIO Sensor Simulation Engine
+ * AERVINEX Sensor Simulation Engine
  * Simulates: MAX30102 (PPG), MLX90614 (IR Temp), EDA/GSR, GPS, IMU (Gyro+Accel+Magneto)
  */
 window.SensorSim = {
@@ -71,7 +71,78 @@ window.SensorSim = {
       // 12-20 bpm rest, up to 40 bpm max exercise
       const base = 14 + activityLevel * 26;
       return Math.round(base + (Math.random()-0.5)*2);
-    }
+    },
+
+    // ── Extended HRV features (required by RRSS model) ───────────────────
+    getMeanRR() {
+      if (this.rriHistory.length < 1) return 850;
+      return +(this.rriHistory.reduce((a,b)=>a+b,0) / this.rriHistory.length).toFixed(1);
+    },
+    getMedianRR() {
+      if (this.rriHistory.length < 1) return 850;
+      const sorted = [...this.rriHistory].sort((a,b)=>a-b);
+      const m = Math.floor(sorted.length / 2);
+      return sorted.length % 2 ? +sorted[m].toFixed(1) : +((sorted[m-1]+sorted[m])/2).toFixed(1);
+    },
+    getSD1() {
+      return +(this.getRMSSD() / Math.SQRT2).toFixed(1);
+    },
+    getSD2() {
+      const sd1  = this.getRMSSD() / Math.SQRT2;
+      const sdnn = this.getSDNN();
+      return +Math.sqrt(Math.max(0, 2*sdnn*sdnn - sd1*sd1)).toFixed(1);
+    },
+    getPNN25() {
+      if (this.rriHistory.length < 2) return 35;
+      let count = 0;
+      for (let i = 1; i < this.rriHistory.length; i++)
+        if (Math.abs(this.rriHistory[i]-this.rriHistory[i-1]) > 25) count++;
+      return +((count/(this.rriHistory.length-1))*100).toFixed(1);
+    },
+    getSDSD() {
+      if (this.rriHistory.length < 3) return 35;
+      const diffs = [];
+      for (let i = 1; i < this.rriHistory.length; i++) diffs.push(this.rriHistory[i]-this.rriHistory[i-1]);
+      const mean = diffs.reduce((a,b)=>a+b,0) / diffs.length;
+      const v    = diffs.reduce((s,x)=>s+Math.pow(x-mean,2),0) / diffs.length;
+      return +Math.sqrt(v).toFixed(1);
+    },
+    getFreqDomain() {
+      const rmssd = this.getRMSSD();
+      const sdnn  = this.getSDNN();
+      // HF power correlates with RMSSD; LF derived from remaining variance
+      const hf    = +(rmssd * rmssd / 2).toFixed(1);
+      const vlf   = +(sdnn  * sdnn  * 0.25).toFixed(1);
+      const lf    = +Math.max(0, sdnn*sdnn - hf - vlf).toFixed(1);
+      const lfHf  = hf   > 0 ? +(lf / hf).toFixed(3)  : 2.0;
+      const hfLf  = lf   > 0 ? +(hf / lf).toFixed(3)  : 0.5;
+      return { vlf, lf, hf, lfHf, hfLf };
+    },
+    getSampEn() {
+      const rmssd = this.getRMSSD(), sdnn = this.getSDNN();
+      const ratio = sdnn > 0 ? Math.min(rmssd / sdnn, 1) : 0.5;
+      return +(1.0 + ratio * 1.5 + (Math.random()-0.5)*0.15).toFixed(3);
+    },
+    getHiguci() {
+      const rmssd = this.getRMSSD();
+      return +(1.5 + Math.min(rmssd/80, 0.48) + (Math.random()-0.5)*0.08).toFixed(3);
+    },
+    getKurt() {
+      if (this.rriHistory.length < 4) return 2.5;
+      const mean = this.rriHistory.reduce((a,b)=>a+b,0) / this.rriHistory.length;
+      const sdnn = this.getSDNN();
+      if (sdnn === 0) return 3;
+      const n = this.rriHistory.length;
+      return +(this.rriHistory.reduce((s,x)=>s+Math.pow((x-mean)/sdnn,4),0)/n).toFixed(3);
+    },
+    getSkew() {
+      if (this.rriHistory.length < 4) return 0;
+      const mean = this.rriHistory.reduce((a,b)=>a+b,0) / this.rriHistory.length;
+      const sdnn = this.getSDNN();
+      if (sdnn === 0) return 0;
+      const n = this.rriHistory.length;
+      return +(this.rriHistory.reduce((s,x)=>s+Math.pow((x-mean)/sdnn,3),0)/n).toFixed(3);
+    },
   },
 
   // ── MLX90614 (IR Thermal) ────────────────────────────────────────────────
@@ -298,32 +369,52 @@ window.SensorSim = {
   // ── TICK (called every 3 seconds) ─────────────────────────────────────────
   tick(overrides = {}) {
     const s = Object.assign(this.state, overrides);
-    const rri = this.ppg.nextRRI(s.stressLevel, s.activityLevel);
+    const rri      = this.ppg.nextRRI(s.stressLevel, s.activityLevel);
     const skinTemp = this.mlx.update(s.activityLevel, s.elapsed);
-    const edaVal = this.eda.update(s.stressLevel, s.activityLevel, s.elapsed);
+    const edaVal   = this.eda.update(s.stressLevel, s.activityLevel, s.elapsed);
+    const freq     = this.ppg.getFreqDomain();
 
     return {
-      // PPG
-      hr:         this.ppg.currentHR,
-      rri:        Math.round(rri),
-      spo2:       this.ppg.getSpO2(s.activityLevel),
-      rmssd:      this.ppg.getRMSSD(),
-      sdnn:       this.ppg.getSDNN(),
-      pnn50:      this.ppg.pNN50(),
-      respRate:   this.ppg.getRespirationRate(s.activityLevel),
+      // PPG — basic
+      hr:          this.ppg.currentHR,
+      rri:         Math.round(rri),
+      spo2:        this.ppg.getSpO2(s.activityLevel),
+      rmssd:       this.ppg.getRMSSD(),
+      sdnn:        this.ppg.getSDNN(),
+      pnn50:       this.ppg.pNN50(),
+      respRate:    this.ppg.getRespirationRate(s.activityLevel),
+      // PPG — extended HRV (required for RRSS model)
+      meanRR:      this.ppg.getMeanRR(),
+      medianRR:    this.ppg.getMedianRR(),
+      sd1:         this.ppg.getSD1(),
+      sd2:         this.ppg.getSD2(),
+      pnn25:       this.ppg.getPNN25(),
+      sdsd:        this.ppg.getSDSD(),
+      sdrrRmssd:   +(this.ppg.getSDNN() / Math.max(this.ppg.getRMSSD(), 1)).toFixed(3),
+      vlf:         freq.vlf,
+      lf:          freq.lf,
+      hf:          freq.hf,
+      lfHf:        freq.lfHf,
+      hfLf:        freq.hfLf,
+      sampen:      this.ppg.getSampEn(),
+      higuci:      this.ppg.getHiguci(),
+      kurt:        this.ppg.getKurt(),
+      skew:        this.ppg.getSkew(),
       // MLX
       skinTemp,
-      coreTemp:   this.mlx.getCoreEstimate(s.activityLevel),
-      thermoEff:  this.mlx.getThermoregEfficiency(s.activityLevel),
-      sweatOnset: this.mlx.sweatOnset,
+      coreTemp:    this.mlx.getCoreEstimate(s.activityLevel),
+      thermoEff:   this.mlx.getThermoregEfficiency(s.activityLevel),
+      sweatOnset:  this.mlx.sweatOnset,
       // EDA
-      eda:        edaVal,
-      sympathetic: this.eda.getSympatheticScore(s.stressLevel, s.activityLevel),
+      eda:         edaVal,
+      sympathetic:  this.eda.getSympatheticScore(s.stressLevel, s.activityLevel),
       stressEvents: this.eda.getStressEvents(s.elapsed),
       // IMU
-      imu:        s.activityLevel > 0.1 ? this.imu.update(s.phase, s.activityLevel, s.elapsed, s.fatigueLevel) : null,
-      // Hydration (decreases with activity)
-      hydration:  Utils.clamp(100 - s.dehydration * 100, 0, 100),
+      imu:         s.activityLevel > 0.1 ? this.imu.update(s.phase, s.activityLevel, s.elapsed, s.fatigueLevel) : null,
+      // Activity level (passed through for MCD bridge)
+      activityLevel: s.activityLevel,
+      // Hydration
+      hydration:   Utils.clamp(100 - s.dehydration * 100, 0, 100),
     };
   }
 };

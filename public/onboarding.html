@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Personalisasi — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
+    .ob-shell {
+      max-width: 540px; margin: 0 auto;
+      min-height: 100vh; display: flex; flex-direction: column;
+      padding: 18px 18px 110px;
+      position: relative;
+    }
+    .ob-bg {
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(circle at 80% -10%, rgba(0,229,212,0.12), transparent 50%),
+        radial-gradient(circle at -10% 100%, rgba(167,139,250,0.12), transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+    .ob-shell > * { position: relative; z-index: 1; }
+    .ob-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .ob-brand { display: flex; align-items: center; gap: 8px; }
+    .ob-brand .dot { width: 9px; height: 9px; border-radius: 50%; background: linear-gradient(135deg, #00e5d4, #a78bfa); box-shadow: 0 0 12px #00e5d4; }
+    .ob-brand .name { font-size: 12px; font-weight: 800; letter-spacing: 4px; }
+    .ob-skip {
+      background: none; border: none; color: var(--text-muted);
+      font-size: 12.5px; cursor: pointer; padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .ob-skip:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    .ob-bar {
+      height: 4px; background: rgba(255,255,255,0.06);
+      border-radius: 4px; overflow: hidden; margin-bottom: 6px;
+    }
+    .ob-bar-fill {
+      height: 100%; background: linear-gradient(90deg, #00e5d4, #a78bfa);
+      width: 0; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 4px;
+    }
+    .ob-counter { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
+    .ob-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+    .ob-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transition: all 0.3s;
+    }
+    .ob-dot.active { background: #00e5d4; box-shadow: 0 0 10px #00e5d4; transform: scale(1.3); }
+    .ob-dot.done { background: rgba(0,229,212,0.4); }
+
+    .ob-content {
+      flex: 1;
+      background: var(--card-bg, rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      padding: 26px 22px;
+      animation: obFade 0.35s ease-out;
+    }
+    @keyframes obFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes obDraw { from { stroke-dashoffset: 220 } to { stroke-dashoffset: 0 } }
+    .ob-shake { animation: obShake 0.35s; }
+    @keyframes obShake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .ob-step h2 {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+      margin: 0 0 8px;
+    }
+    .ob-sub {
+      font-size: 13.5px; line-height: 1.55; opacity: 0.78;
+      margin: 0 0 18px;
+    }
+
+    .ob-emoji { font-size: 48px; margin-bottom: 10px; animation: obWave 1.5s ease-in-out infinite; transform-origin: 70% 70%; display: inline-block; }
+    @keyframes obWave {
+      0%,100% { transform: rotate(0); }
+      20% { transform: rotate(14deg); }
+      40% { transform: rotate(-8deg); }
+      60% { transform: rotate(14deg); }
+      80% { transform: rotate(-4deg); }
+    }
+    .ob-bullets {
+      list-style: none; padding: 0; margin: 14px 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ob-bullets li {
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: 13.5px; line-height: 1.5;
+    }
+    .ob-check {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(0,229,212,0.18); color: #00e5d4;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px;
+    }
+    .ob-trust {
+      margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .ob-trust span {
+      font-size: 11px; padding: 5px 10px;
+      background: rgba(255,255,255,0.05); border-radius: 999px;
+      opacity: 0.8;
+    }
+
+    .ob-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .ob-field { display: flex; flex-direction: column; gap: 6px; }
+    .ob-field:nth-child(1), .ob-field:nth-child(3), .ob-field:nth-child(6) { grid-column: 1 / -1; }
+    .ob-field > span {
+      font-size: 11.5px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; opacity: 0.7;
+    }
+    .ob-field input {
+      padding: 11px 13px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: var(--text); font-size: 14px;
+      transition: all 0.2s;
+    }
+    .ob-field input:focus {
+      outline: none;
+      border-color: #00e5d4;
+      box-shadow: 0 0 0 3px rgba(0,229,212,0.15);
+    }
+    .ob-segments {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+      background: rgba(255,255,255,0.04);
+      padding: 4px; border-radius: 12px;
+    }
+    .ob-seg {
+      padding: 9px; background: transparent; border: none;
+      color: var(--text-muted); font-size: 13px; font-weight: 600;
+      border-radius: 9px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ob-seg.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      box-shadow: 0 4px 12px rgba(0,229,212,0.25);
+    }
+    .ob-seg:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.04); }
+
+    .ob-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .ob-cards .ob-card {
+      position: relative;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 16px 14px;
+      text-align: left;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .ob-cards .ob-card.compact { padding: 12px 12px; }
+    .ob-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.06);
+    }
+    .ob-card.selected {
+      border-color: #00e5d4;
+      background: rgba(0,229,212,0.08);
+      box-shadow: 0 0 0 3px rgba(0,229,212,0.1);
+    }
+    .ob-card-icon { font-size: 26px; margin-bottom: 8px; line-height: 1; }
+    .ob-card-title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+    .ob-card-desc { font-size: 11.5px; line-height: 1.4; opacity: 0.7; }
+    .ob-card-tick {
+      position: absolute; top: 10px; right: 10px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #00e5d4; color: #0f1923;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: scale(0.5);
+      transition: all 0.25s;
+    }
+    .ob-card-tick svg { width: 14px; height: 14px; }
+    .ob-card.selected .ob-card-tick { opacity: 1; transform: scale(1); }
+
+    .ob-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ob-chip {
+      padding: 9px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      color: var(--text); font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .ob-chip:hover { background: rgba(255,255,255,0.06); }
+    .ob-chip.selected {
+      background: rgba(0,229,212,0.18);
+      border-color: #00e5d4;
+      color: #00e5d4;
+    }
+    .ob-info-note {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: rgba(167,139,250,0.08);
+      border-left: 3px solid #a78bfa;
+      border-radius: 8px;
+      font-size: 12px; line-height: 1.5;
+    }
+
+    .ob-perms { display: flex; flex-direction: column; gap: 10px; }
+    .ob-perm {
+      position: relative;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      cursor: pointer;
+    }
+    .ob-perm-icon { font-size: 24px; flex-shrink: 0; }
+    .ob-perm-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .ob-perm-text strong { font-size: 13.5px; font-weight: 700; }
+    .ob-perm-text span { font-size: 11.5px; line-height: 1.4; opacity: 0.7; }
+    .ob-toggle { display: none; }
+    .ob-toggle-track {
+      width: 44px; height: 24px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px; position: relative;
+      transition: background 0.25s;
+      flex-shrink: 0;
+    }
+    .ob-toggle-track::after {
+      content: ''; position: absolute;
+      top: 2px; left: 2px; width: 20px; height: 20px;
+      background: #fff; border-radius: 50%;
+      transition: transform 0.25s;
+    }
+    .ob-toggle:checked ~ .ob-toggle-track { background: #00e5d4; }
+    .ob-toggle:checked ~ .ob-toggle-track::after { transform: translateX(20px); }
+
+    .ob-done { text-align: center; }
+    .ob-success-ring { width: 100px; height: 100px; margin: 0 auto 14px; }
+    .ob-success-ring svg { width: 100%; height: 100%; }
+    .ob-summary {
+      background: rgba(255,255,255,0.04);
+      border-radius: 14px; padding: 14px;
+      margin: 14px 0; text-align: left;
+    }
+    .ob-summary-row {
+      display: flex; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    .ob-summary-row:last-child { border-bottom: none; }
+    .ob-summary-row span { opacity: 0.7; }
+
+    .ob-actions {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent, var(--bg) 30%);
+      display: flex; gap: 10px; max-width: 540px; margin: 0 auto;
+      z-index: 10;
+    }
+    .ob-btn {
+      flex: 1; padding: 13px 18px;
+      border: none; border-radius: 14px;
+      font-size: 14px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .ob-btn .ico { width: 16px; height: 16px; }
+    .ob-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #ob-prev {
+      flex: 0 0 auto; padding: 13px 16px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+    }
+    #ob-prev:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+    #ob-next {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      box-shadow: 0 8px 24px rgba(0,229,212,0.3);
+    }
+    #ob-next:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,229,212,0.4); }
+  </style>
+</head>
+<body class="theme-dark" data-page="onboarding">
+  <div class="ob-bg"></div>
+
+  <div class="ob-shell">
+    <div class="ob-top">
+      <div class="ob-brand">
+        <span class="dot"></span>
+        <span class="name">AERVINEX</span>
+      </div>
+      <button type="button" class="ob-skip" id="ob-skip">Lewati</button>
+    </div>
+
+    <div class="ob-bar"><div class="ob-bar-fill" id="ob-bar-fill"></div></div>
+    <div class="ob-counter" id="ob-counter">Langkah 1 dari 7</div>
+    <div class="ob-dots" id="ob-dots"></div>
+
+    <main class="ob-content" id="ob-content"></main>
+  </div>
+
+  <div class="ob-actions">
+    <button type="button" class="ob-btn" id="ob-prev" disabled>
+      <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="ob-btn" id="ob-next">
+      <span>Mulai</span>
+      <svg viewBox="0 0 24 24" class="ico"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Require auth — but allow guest to onboard too
+    AERVINEXAuth.init(() => {}, () => location.replace('/login.html?next=/onboarding.html'));
+  </script>
+  <script src="/js/onboarding.js"></script>
+</body>
+</html>

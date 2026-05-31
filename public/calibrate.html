@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Kalibrasi Sensor — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .step-bar { display:flex; gap:6px; margin-bottom: 14px; }
+    .step-bar .seg { flex:1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; }
+    .step-bar .seg.active { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .step-bar .seg.done   { background: rgb(74,222,128); }
+    body.theme-light .step-bar .seg { background: rgba(0,0,0,0.08); }
+    .calib-input { display:block; width:100%; padding:10px 12px; margin-top:6px; border-radius:var(--radius-md);
+      background:var(--bg); color:var(--text); border:1px solid rgba(255,255,255,0.08); font:inherit; }
+    body.theme-light .calib-input { border-color:rgba(0,0,0,0.08); }
+    .calib-help { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+    .calib-section { display: none; }
+    .calib-section.active { display: block; }
+  </style>
+</head>
+<body class="theme-dark" data-page="calibrate">
+  <div class="app-shell">
+    <header class="top-bar">
+      <a href="/device.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <div class="page-title-block" style="text-align:center;flex:1"><h2>Kalibrasi Sensor</h2><p>Atur baseline untuk akurasi optimal</p></div>
+      <button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+    </header>
+
+    <div class="step-bar">
+      <div class="seg" data-seg="0"></div>
+      <div class="seg" data-seg="1"></div>
+      <div class="seg" data-seg="2"></div>
+      <div class="seg" data-seg="3"></div>
+    </div>
+
+    <!-- STEP 0 — INTRO -->
+    <section class="calib-section active" data-step="0">
+      <section class="card aura-cyan" style="padding:24px;text-align:center">
+        <h2 style="font-size:20px;font-weight:700;color:var(--text)">Wizard Kalibrasi</h2>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:10px;line-height:1.6">
+          Kalibrasi membantu menyesuaikan sensor AERVINEX dengan baseline fisiologi Anda.
+          Proses ini perlu diulang setiap 30 hari atau setelah pergantian device.
+        </p>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:14px">
+          ⚠️ Pastikan Anda dalam keadaan istirahat (duduk 5 menit) sebelum mulai.
+        </p>
+      </section>
+      <button class="btn-block primary" style="margin-top:14px" data-next>Mulai Kalibrasi</button>
+    </section>
+
+    <!-- STEP 1 — RESTING HR -->
+    <section class="calib-section" data-step="1">
+      <section class="card aura-coral" style="padding:20px">
+        <h3 style="font-size:16px;font-weight:700;color:var(--text)">1. Resting Heart Rate</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px">
+          Heart rate saat duduk tenang. Akan jadi anchor untuk HRV &amp; arrhythmia detection.
+        </p>
+        <label class="calib-help">Resting HR (bpm)</label>
+        <input class="calib-input" type="number" id="restingHr" placeholder="60-80" min="30" max="200" value="68" />
+        <p class="calib-help">Default berdasarkan populasi Asia Tenggara: 65-75 bpm. Atlet endurance: 50-60 bpm.</p>
+      </section>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-block ghost" data-prev style="flex:1">Kembali</button>
+        <button class="btn-block primary" data-next style="flex:1">Lanjut</button>
+      </div>
+    </section>
+
+    <!-- STEP 2 — BODY TEMP BASELINE -->
+    <section class="calib-section" data-step="2">
+      <section class="card aura-amber" style="padding:20px">
+        <h3 style="font-size:16px;font-weight:700;color:var(--text)">2. Skin Temp Baseline</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:6px">
+          Suhu kulit pergelangan tangan saat istirahat di ruangan ber-AC. Untuk heatstroke detection.
+        </p>
+        <label class="calib-help">Skin Temp Baseline (°C)</label>
+        <input class="calib-input" type="number" id="skinTempBase" placeholder="32.5" min="30" max="38" step="0.1" value="32.8" />
+        <p class="calib-help">Tipikal di iklim tropis: 32.5-33.5 °C. Diukur 5 menit setelah AC ON.</p>
+      </section>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-block ghost" data-prev style="flex:1">Kembali</button>
+        <button class="btn-block primary" data-next style="flex:1">Lanjut</button>
+      </div>
+    </section>
+
+    <!-- STEP 3 — REVIEW + SAVE -->
+    <section class="calib-section" data-step="3">
+      <section class="card aura-violet" style="padding:20px">
+        <h3 style="font-size:16px;font-weight:700;color:var(--text)">3. Review &amp; Simpan</h3>
+        <div id="reviewBox" style="margin-top:14px;font-size:13px;color:var(--text-muted);line-height:1.8"></div>
+      </section>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-block ghost" data-prev style="flex:1">Kembali</button>
+        <button class="btn-block primary" id="btnSave" style="flex:1">Simpan Kalibrasi</button>
+      </div>
+    </section>
+
+    <div class="spacer-bottom"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    let step = 0;
+    function setStep(s) {
+      step = s;
+      document.querySelectorAll('.calib-section').forEach((el) => el.classList.toggle('active', +el.dataset.step === s));
+      document.querySelectorAll('.step-bar .seg').forEach((el, i) => {
+        el.classList.toggle('active', i === s);
+        el.classList.toggle('done', i < s);
+      });
+      if (s === 3) buildReview();
+    }
+    document.querySelectorAll('[data-next]').forEach((b) => b.addEventListener('click', () => setStep(Math.min(3, step + 1))));
+    document.querySelectorAll('[data-prev]').forEach((b) => b.addEventListener('click', () => setStep(Math.max(0, step - 1))));
+
+    function getValues() {
+      return {
+        restingHr: +document.getElementById('restingHr').value || 0,
+        skinTempBase: +document.getElementById('skinTempBase').value || 0,
+      };
+    }
+
+    function buildReview() {
+      const v = getValues();
+      document.getElementById('reviewBox').innerHTML = `
+        <p><strong>Resting HR</strong>: ${v.restingHr} bpm</p>
+        <p><strong>Skin Temp Baseline</strong>: ${v.skinTempBase.toFixed(1)} °C</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:10px">Nilai ini disimpan di profil Anda dan dipakai untuk menormalisasi skor TEPRS, TUHAM, dan AFib screening.</p>
+      `;
+    }
+
+    document.getElementById('btnSave').addEventListener('click', async () => {
+      const user = auth.currentUser;
+      if (!user) { alert('Login dulu'); return; }
+      const calib = getValues();
+      try {
+        await db.collection('users').doc(user.uid).set({
+          calibration: {
+            ...calib,
+            calibratedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          },
+        }, { merge: true });
+        if (window.AervinexToast) AervinexToast('Kalibrasi tersimpan', 'success');
+        setTimeout(() => location.href = '/device.html', 800);
+      } catch (e) {
+        alert('Gagal simpan: ' + e.message);
+      }
+    });
+  </script>
+</body>
+</html>

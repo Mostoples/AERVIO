@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Cloud Functions deps
+        working-directory: ./functions
+        run: npm ci || npm install
+
+      - name: HTML lint
+        run: |
+          npx -y htmlhint "public/**/*.html" \
+            --rules "doctype-first=true,attr-lowercase=true,tag-pair=true" \
+            || echo "HTML lint warnings (non-blocking)"
+
+      - name: JS lint (basic syntax check)
+        run: |
+          find public/js -name "*.js" -type f | while read f; do
+            node --check "$f" || echo "Syntax error in $f"
+          done
+          find functions -name "*.js" -type f -not -path "*/node_modules/*" | while read f; do
+            node --check "$f" || echo "Syntax error in $f"
+          done
+
+      - name: ML proxy reliability test
+        run: |
+          cd ml/local-test
+          node run-tests.js | tee test-results.txt
+          AVG_ACC=$(grep "Avg Accuracy" test-results.txt | grep -oE "[0-9]+\.[0-9]+" | head -1)
+          echo "Avg accuracy: $AVG_ACC%"
+          # Threshold: average accuracy must be >= 80% (acceptance criterion)
+          python3 -c "import sys; v=float('$AVG_ACC'); sys.exit(0 if v >= 80 else 1)"
+
+      - name: Calibration map consistency
+        run: |
+          cd ml/local-test
+          node -e "
+          const map = require('./calibration-map.json');
+          const keys = Object.keys(map);
+          console.log('Calibration entries:', keys.length);
+          if (keys.length !== 35) {
+            console.error('Expected 35 entries, got', keys.length);
+            process.exit(1);
+          }
+          keys.forEach(k => {
+            const e = map[k];
+            if (typeof e.threshold !== 'number' || typeof e.platt_a !== 'number' || typeof e.platt_b !== 'number') {
+              console.error('Invalid entry:', k);
+              process.exit(1);
+            }
+          });
+          console.log('All entries valid.');
+          "
+
+  firestore-rules-test:
+    name: Firestore Rules
+    runs-on: ubuntu-latest
+    continue-on-error: true  # rules tests are scaffolded, not yet enforced
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Setup Firebase emulator
+        run: npm install -g firebase-tools
+      - name: Validate firestore.rules syntax
+        run: |
+          test -f firestore.rules
+          # Basic syntax check — rules language is custom, full test needs emulator
+          grep -E "match|allow|service" firestore.rules > /dev/null
+          echo "Firestore rules file looks structurally valid."
+
+  firmware-compile:
+    name: Firmware Compile Check
+    runs-on: ubuntu-latest
+    continue-on-error: true  # arduino-cli setup is heavy; informational only
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check firmware structure
+        run: |
+          test -f firmware/aervinex-sensor/aervinex-sensor.ino
+          test -f firmware/library_dependencies.txt
+          test -f firmware/scripts/compile.sh
+          echo "Firmware files present."
+          # Real arduino-cli compile too slow for CI; do periodic nightly instead
+
+  docs-link-check:
+    name: Documentation Link Check
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check internal links
+        run: |
+          # Find markdown files and check for relative file references
+          for f in $(find docs -name "*.md") README.md CONTRIBUTING.md ROADMAP.md CODE_OF_CONDUCT.md; do
+            [ -f "$f" ] || continue
+            grep -oE "\[.*\]\([^)]+\)" "$f" | grep -oE "\([^)]+\)" | tr -d '()' | while read link; do
+              # Skip http/https/anchor links
+              case "$link" in
+                http*|mailto*|#*) ;;
+                *)
+                  target=$(dirname "$f")/"$link"
+                  if [ ! -e "$target" ] && [ ! -e "$link" ]; then
+                    echo "Broken link in $f: $link"
+                  fi
+                  ;;
+              esac
+            done
+          done

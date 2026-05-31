@@ -1,5 +1,5 @@
 /**
- * AERVIO Running Mode Module
+ * AERVINEX Running Mode Module
  * Features: Phase system, gait analysis, GPS map, lactate/fatigue detection
  */
 (function() {
@@ -15,12 +15,15 @@
   let mhr           = 195;
   let restHR        = 68;
   let baselineCAD   = 175;
-  let envData       = { pm25: 18, uvi: 4, temp: 28, source: 'Simulasi' };
+  let envData       = { pm25: 18, aqi: 72, uvi: 4, temp: 28, humidity: 72, windSpeed: 5, source: 'Simulasi' };
+  let epoAdj        = null; // current EPO adjustment
   let map           = null;
   let routeLine     = null;
   let userMarker    = null;
   let routeCoords   = [];
   let phaseHistory  = { warmup:[], steady:[], push:[], cooldown:[] };
+  let zoneTimers    = { Z1:0, Z2:0, Z3:0, Z4:0, Z5:0 }; // seconds in each HR zone
+  let totalPower    = 0; // Joules accumulated
 
   // ── PHASE LOGIC ──────────────────────────────────────
   function getPhase(distKm, totalKm) {
@@ -94,8 +97,16 @@
     SensorSim.state.elapsed       = elapsed;
     updateFatigue();
 
-    // Recommended pace for current phase
-    const recPace = phaseRecommendedPace(phase, basePace);
+    // EPO: compute heat index and adjusted pace
+    if (typeof EPO !== 'undefined') {
+      const hi = EPO.computeHeatIndex(envData.temp, envData.humidity);
+      epoAdj   = EPO.getAdjustment(hi, envData.pm25);
+      epoAdj.heatIndex = hi;
+    }
+
+    // Recommended pace for current phase (EPO-adjusted)
+    const recPaceBase  = phaseRecommendedPace(phase, basePace);
+    const recPace      = epoAdj ? Math.round(recPaceBase * (1 + epoAdj.pctSlower / 100)) : recPaceBase;
     // Current pace: drifts toward recommended + fatigue penalty
     const fatiguePenalty = SensorSim.state.fatigueLevel * 45;
     currentPace = Utils.lerp(currentPace, recPace + fatiguePenalty, 0.06);
@@ -113,7 +124,9 @@
     const analysis = HealthEngine.analyze(raw, {
       age: userAge, pm25: envData.pm25, uvi: envData.uvi,
       ambientTemp: envData.temp, paceSecPerKm: currentPace,
-      elapsed, restHR
+      elapsed, restHR,
+      aqi: envData.aqi, humidity: envData.humidity, windSpeed: envData.windSpeed,
+      activityLevel: actLvl, userProfile: AERVINEXAuth.userProfile,
     });
     const imu = SensorSim.imu;
 
@@ -123,6 +136,8 @@
     renderGait(imu, analysis);
     renderRunAlerts(raw, analysis, imu);
     renderPaceRec(phase, recPace, analysis);
+    renderEPO(epoAdj);
+    renderRPAE(raw, imu);
     updateMap(gpsData);
 
     // Phase-specific audio/toast cues
@@ -219,9 +234,69 @@
     el.innerHTML = `<span class="pace-rec-icon">${rec.icon}</span><span><strong style="color:${rec.color}">${rec.title}</strong> — Pace target: <strong style="color:var(--green)">${Utils.formatPace(recPace)}</strong>/km</span>`;
   }
 
+  // ── EPO Panel ────────────────────────────────────────
+  function renderEPO(adj) {
+    if (!adj) return;
+    setText('epo-hi',       adj.heatIndex + '°C');
+    setText('epo-pace-adj', (adj.pctSlower > 0 ? '+' : '') + adj.pctSlower + '%');
+    setText('epo-zone',     adj.zoneName);
+    const badge = document.getElementById('epo-badge');
+    if (badge) { badge.textContent = adj.label; badge.style.background = adj.color + '22'; badge.style.color = adj.color; }
+    const recEl = document.getElementById('epo-rec');
+    if (recEl && typeof EPO !== 'undefined') recEl.textContent = EPO.getRecommendation(adj, envData.pm25);
+    // Color pace-adj text
+    const paceEl = document.getElementById('epo-pace-adj');
+    if (paceEl) paceEl.style.color = adj.pctSlower > 10 ? 'var(--danger)' : adj.pctSlower > 0 ? 'var(--warn)' : 'var(--safe)';
+  }
+
   function setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
+  }
+
+  // ── RPAE — Running Performance Analytics Engine (F9) ─
+  // Zone timer + Power Output estimation
+  function renderRPAE(raw, imu) {
+    // Determine HR zone (Z1-Z5 based on %MHR)
+    const pct = raw.hr / mhr;
+    const zone = pct < 0.60 ? 'Z1' : pct < 0.70 ? 'Z2' : pct < 0.80 ? 'Z3' : pct < 0.90 ? 'Z4' : 'Z5';
+    zoneTimers[zone] = (zoneTimers[zone] || 0) + 3; // +3 seconds per tick
+
+    // Power Output (W) = F × v
+    // Simplified: P = m × g × v_vert + m × v × Cr  (running economy model)
+    // Using: P ≈ weight(kg) × speed(m/s) × (1.045 + grade * 0.01) × efficiency
+    const weightKg   = AERVINEXAuth.userProfile?.weight || 70;
+    const speedMs    = 1000 / currentPace; // m/s
+    const grade      = 0.005; // avg 0.5% grade
+    const efficiency = 0.25;  // metabolic efficiency ~25%
+    const powerW     = Math.round(weightKg * speedMs * (1.045 + grade * 100 * 0.01) / efficiency);
+    totalPower      += powerW * 3; // W×s = Joules this tick
+
+    // Update zone timer UI
+    const totalZoneTime = Object.values(zoneTimers).reduce((a,b)=>a+b,0) || 1;
+    ['Z1','Z2','Z3','Z4','Z5'].forEach((z, i) => {
+      const secEl  = document.getElementById(`rpae-${z}-time`);
+      const barEl  = document.getElementById(`rpae-${z}-bar`);
+      const t      = zoneTimers[z] || 0;
+      const pctBar = (t / totalZoneTime) * 100;
+      if (secEl) secEl.textContent = Utils.formatTime(t);
+      if (barEl) barEl.style.width = pctBar + '%';
+      // Highlight active zone
+      const rowEl = document.getElementById(`rpae-row-${z}`);
+      if (rowEl) rowEl.style.opacity = (z === zone) ? '1' : '0.5';
+    });
+
+    // Power output
+    const pwrEl = document.getElementById('rpae-power');
+    if (pwrEl) pwrEl.textContent = powerW + ' W';
+    const kJEl = document.getElementById('rpae-kj');
+    if (kJEl) kJEl.textContent = (totalPower / 1000).toFixed(1) + ' kJ';
+    const actZoneEl = document.getElementById('rpae-active-zone');
+    if (actZoneEl) {
+      actZoneEl.textContent = zone;
+      const zColors = { Z1:'var(--safe)', Z2:'#38BDF8', Z3:'var(--warn)', Z4:'#F97316', Z5:'var(--danger)' };
+      actZoneEl.style.color = zColors[zone];
+    }
   }
 
   // ── SESSION CONTROLS ─────────────────────────────────
@@ -229,6 +304,8 @@
     if (state === 'active') return;
     // Reset
     elapsed = 0; distance = 0; lastPhase = null;
+    zoneTimers  = { Z1:0, Z2:0, Z3:0, Z4:0, Z5:0 };
+    totalPower  = 0;
     SensorSim.state.dehydration  = 0;
     SensorSim.state.fatigueLevel = 0;
     SensorSim.gps.track          = [];
@@ -300,10 +377,10 @@
     App.toast('Sesi selesai! 🎉 Data disimpan.', 'success', 5000);
 
     // Save to Firestore
-    if (AervioAuth.currentUser) {
+    if (AERVINEXAuth.currentUser) {
       try {
         await db.collection('sessions').add({
-          uid: AervioAuth.currentUser.uid,
+          uid: AERVINEXAuth.currentUser.uid,
           ts: firebase.firestore.FieldValue.serverTimestamp(),
           distance: +Utils.fmt(distance,2), elapsed, targetDist,
           avgPace: Math.round(currentPace), avgHR: SensorSim.ppg.currentHR,
@@ -320,18 +397,32 @@
     lat = lat ?? SensorSim.gps.lat;
     lon = lon ?? SensorSim.gps.lon;
     const [w, a] = await Promise.all([Utils.fetchWeather(lat, lon), Utils.fetchAQI(lat, lon)]);
-    if (w) { envData.temp = w.temp; envData.uvi = w.uvIndex || envData.uvi; }
-    if (a && a.pm25 !== null) envData.pm25 = a.pm25;
+    if (w) { envData.temp = w.temp; envData.uvi = w.uvIndex || envData.uvi; envData.humidity = w.humidity ?? envData.humidity; envData.windSpeed = w.wind ?? envData.windSpeed; }
+    if (a && a.pm25 !== null) { envData.pm25 = a.pm25; envData.aqi = a.aqi || envData.pm25 * 4; }
     const stLabel = a?.city ? `${a.city}${a.distKm != null ? ' · ' + a.distKm + ' km' : ''}` : 'Open-Meteo';
     envData.source = stLabel;
     const el = document.getElementById('run-env-bar');
-    if (el) el.innerHTML = `<span>🌡️ ${Utils.fmt(envData.temp)}°C</span><span>💨 PM2.5: ${envData.pm25} μg/m³</span><span>☀️ UV: ${envData.uvi}</span><span class="env-source">📍 Stasiun: ${envData.source}</span>`;
+    if (el) {
+      // Security: envData.source comes from external weather/AQI API responses.
+      // Build with textContent so a hostile/buggy upstream cannot inject markup.
+      el.textContent = '';
+      const mk = (text, cls) => {
+        const s = document.createElement('span');
+        if (cls) s.className = cls;
+        s.textContent = text;
+        return s;
+      };
+      el.appendChild(mk('🌡️ ' + Utils.fmt(envData.temp) + '°C'));
+      el.appendChild(mk('💨 PM2.5: ' + envData.pm25 + ' μg/m³'));
+      el.appendChild(mk('☀️ UV: ' + envData.uvi));
+      el.appendChild(mk('📍 Stasiun: ' + envData.source, 'env-source'));
+    }
   }
 
   // ── LIFECYCLE ────────────────────────────────────────
   const module = {
     onEnter() {
-      userAge = AervioAuth.userProfile?.age || 25;
+      userAge = AERVINEXAuth.userProfile?.age || 25;
       mhr     = 220 - userAge;
       restHR  = 60 + Math.round(Math.random()*12);
       SensorSim.setAge(userAge);

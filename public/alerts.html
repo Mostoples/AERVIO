@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Notifikasi — AERVINEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .filter-chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: var(--radius-pill);
+      background: var(--bg); box-shadow: var(--shadow-raised-sm);
+      color: var(--text-muted); font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-chip.active { background: var(--accent); color: #06222a; box-shadow: var(--shadow-accent); }
+    .level-pill {
+      display: inline-block; padding: 3px 9px; border-radius: var(--radius-pill);
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    }
+    .lvl-1 { background: rgba(255,181,71,0.15);  color: rgb(255,181,71); }
+    .lvl-2 { background: rgba(255,92,124,0.18);  color: rgb(255,130,150); }
+    .lvl-3 { background: rgba(255,92,124,0.30);  color: rgb(255,130,150); animation: pulse 1.4s infinite; }
+    .lvl-info { background: rgba(0,229,212,0.15); color: var(--accent); }
+    .alert-time { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .alert-row { cursor: pointer; }
+    .alert-row.read { opacity: 0.55; }
+  </style>
+</head>
+<body class="theme-dark" data-page="alerts">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="javascript:history.back()" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Notifikasi</h2>
+        <p><span id="unreadCount">3</span> belum dibaca</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="filter-row">
+      <span class="filter-chip active" data-filter="all">Semua</span>
+      <span class="filter-chip" data-filter="3">Kritis</span>
+      <span class="filter-chip" data-filter="2">Level 2</span>
+      <span class="filter-chip" data-filter="1">Level 1</span>
+      <span class="filter-chip" data-filter="info">Info</span>
+    </section>
+
+    <section class="card aura-coral list-card" id="alertList">
+      <!-- populated via JS -->
+    </section>
+
+    <button class="btn-block ghost" id="btnMarkAll">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span>Tandai semua dibaca</span>
+    </button>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item" data-nav="dashboard"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item" data-nav="history"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/running.html" class="nav-item fab" data-nav="running" aria-label="Start"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item" data-nav="recovery"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item" data-nav="profile"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/icon-lib.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+    const ICO = (emoji) => (window.AervinexIcons?.fromEmoji(emoji)) || emoji;
+
+    const ALERTS = [
+      { id: 1, level: 3, icon: '🚨', t: 'PM2.5 SPIKE — 168 μg/m³', s: 'Kualitas udara berbahaya · pindah ke indoor segera', time: '2 menit lalu', read: false, href: '/risk-detail.html?id=asma' },
+      { id: 2, level: 2, icon: '🥵', t: 'Heat Index 36°C', s: 'Risiko heatstroke meningkat · kurangi intensitas', time: '8 menit lalu', read: false, href: '/risk-detail.html?id=heatstroke' },
+      { id: 3, level: 1, icon: '💧', t: 'Hidrasi turun ke 58%', s: 'Minum air 250-500ml dalam 30 menit', time: '24 menit lalu', read: false, href: '/risk-detail.html?id=dehidrasi' },
+      { id: 4, level: 'info', icon: '✅', t: 'Sinkronisasi data harian selesai', s: 'Semua sensor reading tersinkronisasi ke cloud', time: '1 jam lalu', read: true, href: '/device.html' },
+      { id: 5, level: 2, icon: '☀️', t: 'UV Index 8 — Sangat Tinggi', s: 'Pakai SPF 50+ atau cari teduh', time: '2 jam lalu', read: true, href: '/risk-detail.html?id=sunburn' },
+      { id: 6, level: 1, icon: '❤️', t: 'Resting HR naik 6 bpm dari baseline', s: 'Pertimbangkan istirahat ekstra malam ini', time: '5 jam lalu', read: true, href: '/metric-detail.html?id=rest' },
+      { id: 7, level: 'info', icon: '🔋', t: 'Energy harvest mencatat +12% hari ini', s: 'Thermoelectric + biofuel cell sumbangkan 0.18 Wh', time: '8 jam lalu', read: true, href: '/device.html' },
+      { id: 8, level: 3, icon: '⚠️', t: 'Aritmia terdeteksi (singkat, 12 detik)', s: 'HR irregular · skrining, bukan diagnosis medis', time: 'Kemarin', read: true, href: '/risk-detail.html?id=afib' },
+      { id: 9, level: 1, icon: '🌫️', t: 'PM2.5 di rute commute pagi tinggi', s: 'Pertimbangkan masker N95 untuk besok', time: 'Kemarin', read: true, href: '/risk-detail.html?id=teprs' },
+      { id: 10, level: 'info', icon: '🏃', t: 'Streak 5 hari aktivitas tercapai!', s: 'Pertahankan momentum recovery yang baik', time: '2 hari lalu', read: true, href: '/history.html' }
+    ];
+
+    let currentFilter = 'all';
+
+    function levelClass(lvl) {
+      if (lvl === 'info') return 'lvl-info';
+      return 'lvl-' + lvl;
+    }
+    function levelLabel(lvl) {
+      if (lvl === 'info') return 'INFO';
+      if (lvl === 1) return 'L1';
+      if (lvl === 2) return 'L2';
+      if (lvl === 3) return 'KRITIS';
+      return '';
+    }
+
+    function render() {
+      const list = document.getElementById('alertList');
+      const filtered = ALERTS.filter(a => currentFilter === 'all' || String(a.level) === currentFilter);
+      list.innerHTML = filtered.map(a => `
+        <a class="list-row alert-row ${a.read ? 'read' : ''}" href="${a.href}" data-id="${a.id}" style="text-decoration:none;color:inherit">
+          <div class="list-row-icon">${ICO(a.icon)}</div>
+          <div class="list-row-body">
+            <p class="list-row-title">${a.t}</p>
+            <p class="list-row-sub">${a.s}</p>
+            <p class="alert-time">${a.time}</p>
+          </div>
+          <span class="level-pill ${levelClass(a.level)}">${levelLabel(a.level)}</span>
+        </a>
+      `).join('') || '<p style="text-align:center;padding:30px;color:var(--text-dim);font-size:13px">Tidak ada notifikasi pada filter ini</p>';
+
+      document.getElementById('unreadCount').textContent = ALERTS.filter(a => !a.read).length;
+    }
+    render();
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentFilter = chip.dataset.filter;
+        render();
+      });
+    });
+
+    document.getElementById('btnMarkAll').addEventListener('click', () => {
+      ALERTS.forEach(a => a.read = true);
+      render();
+      AervinexToast('Semua notifikasi ditandai dibaca', 'success');
+    });
+  </script>
+</body>
+</html>

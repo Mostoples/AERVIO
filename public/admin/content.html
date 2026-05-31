@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content / FAQ — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="content">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Content / FAQ</h1><p>Educational content + bantuan</p></div></div>
+      <div class="admin-header-actions"><button class="btn-pill primary" id="btnNewArticle"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg><span>Tulis Artikel</span></button><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">📖</div></div><div class="kpi-value">124</div><div class="kpi-label">Encyclopedia Entries</div></div>
+      <div class="card aura-violet kpi-card"><div class="kpi-head"><div class="kpi-icon">❓</div></div><div class="kpi-value">42</div><div class="kpi-label">FAQ Items</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">✅</div></div><div class="kpi-value">98%</div><div class="kpi-label">Translation Coverage</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">📈</div></div><div class="kpi-value">18.2k</div><div class="kpi-label">Views (7 hari)</div></div>
+    </section>
+
+    <div class="admin-cols cols-1-1">
+      <section class="card">
+        <h3 class="section-title">Encyclopedia — Top Articles</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">📊</div><div class="list-row-body"><p class="list-row-title">Apa itu TEPRS?</p><p class="list-row-sub">Updated 12 hari lalu · 4,128 views</p></div><span class="list-row-meta">PUBLISHED</span></div>
+          <div class="list-row"><div class="list-row-icon">🫁</div><div class="list-row-body"><p class="list-row-title">PM2.5 dan Sistem Pernapasan</p><p class="list-row-sub">Updated 8 hari lalu · 2,892 views</p></div><span class="list-row-meta">PUBLISHED</span></div>
+          <div class="list-row"><div class="list-row-icon">🥵</div><div class="list-row-body"><p class="list-row-title">Cara Mengenali Heatstroke</p><p class="list-row-sub">Updated 5 hari lalu · 2,418 views</p></div><span class="list-row-meta">PUBLISHED</span></div>
+          <div class="list-row"><div class="list-row-icon">❤️</div><div class="list-row-body"><p class="list-row-title">HRV dan Recovery</p><p class="list-row-sub">Updated 14 hari lalu · 1,892 views</p></div><span class="list-row-meta">PUBLISHED</span></div>
+          <div class="list-row"><div class="list-row-icon">☀️</div><div class="list-row-body"><p class="list-row-title">UV Index untuk Pelari</p><p class="list-row-sub">Draft · ditulis 2 hari lalu</p></div><span class="list-row-meta" style="color:rgb(255,181,71)">DRAFT</span></div>
+        </div>
+      </section>
+      <section class="card">
+        <h3 class="section-title">FAQ</h3>
+        <div class="list-card" style="padding:0">
+          <div class="list-row"><div class="list-row-icon">❓</div><div class="list-row-body"><p class="list-row-title">Apakah AERVINEX bisa diagnosis medis?</p><p class="list-row-sub">Kategori: General · 892 views</p></div></div>
+          <div class="list-row"><div class="list-row-icon">❓</div><div class="list-row-body"><p class="list-row-title">Cara pair device ke aplikasi</p><p class="list-row-sub">Kategori: Setup · 742 views</p></div></div>
+          <div class="list-row"><div class="list-row-icon">❓</div><div class="list-row-body"><p class="list-row-title">Bagaimana cara kalibrasi sensor?</p><p class="list-row-sub">Kategori: Setup · 624 views</p></div></div>
+          <div class="list-row"><div class="list-row-icon">❓</div><div class="list-row-body"><p class="list-row-title">Apa beda L1, L2, L3 alert?</p><p class="list-row-sub">Kategori: Alerts · 418 views</p></div></div>
+          <div class="list-row"><div class="list-row-icon">❓</div><div class="list-row-body"><p class="list-row-title">Kenapa baterai cepat habis?</p><p class="list-row-sub">Kategori: Troubleshoot · 384 views</p></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnNewArticle').addEventListener('click', () => AervinexToast('Editor markdown akan terbuka (demo)', 'info'));
+  // Encyclopedia & FAQ rows → toast
+  document.querySelectorAll('.list-row').forEach(row => {
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', () => {
+      const title = row.querySelector('.list-row-title')?.textContent || 'article';
+      AervinexToast(`Buka editor: "${title}"`, 'info');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API Keys — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="api-keys">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>API Keys</h1><p>External access &amp; scope management</p></div></div>
+      <div class="admin-header-actions"><button class="btn-pill primary" id="btnGenKey"><svg viewBox="0 0 24 24" class="ico"><path d="M12 5v14M5 12h14"/></svg><span>Generate Key</span></button><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">🔑</div></div><div class="kpi-value">12</div><div class="kpi-label">Active Keys</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">⏰</div></div><div class="kpi-value">2</div><div class="kpi-label">Expiring Soon</div></div>
+      <div class="card aura-coral kpi-card"><div class="kpi-head"><div class="kpi-icon">🚫</div></div><div class="kpi-value">3</div><div class="kpi-label">Revoked (30d)</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">📊</div></div><div class="kpi-value">2.4M</div><div class="kpi-label">Calls / 24h</div></div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">Active Keys</h3>
+      <div class="admin-table-wrap"><table class="admin-table">
+        <thead><tr><th>Name</th><th>Key</th><th>Scope</th><th>Last Used</th><th>Expires</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><strong>BMKG Prod</strong></td><td class="mono">avx_live_•••••••a8f2</td><td>read:env</td><td>2 detik lalu</td><td>30 hari</td><td><span class="tbl-status ok">Active</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>IQAir Prod</strong></td><td class="mono">avx_live_•••••••c4b1</td><td>read:env</td><td>4 detik lalu</td><td>62 hari</td><td><span class="tbl-status ok">Active</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>Mobile App iOS</strong></td><td class="mono">avx_live_•••••••f9e3</td><td>full</td><td>2 mnt lalu</td><td>never</td><td><span class="tbl-status ok">Active</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>Mobile App Android</strong></td><td class="mono">avx_live_•••••••e1d8</td><td>full</td><td>1 mnt lalu</td><td>never</td><td><span class="tbl-status ok">Active</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>Research Partner UI</strong></td><td class="mono">avx_live_•••••••b7c2</td><td>read:aggregate</td><td>5 hari lalu</td><td>14 hari</td><td><span class="tbl-status warn">Expiring</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>Internal Dashboard</strong></td><td class="mono">avx_live_•••••••a3f7</td><td>read:metrics</td><td>1 jam lalu</td><td>90 hari</td><td><span class="tbl-status ok">Active</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+          <tr><td><strong>BMKG Staging</strong></td><td class="mono">avx_test_•••••••d6e4</td><td>read:env</td><td>2 hari lalu</td><td>7 hari</td><td><span class="tbl-status warn">Expiring</span></td><td><button class="tbl-action"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="card aura-coral">
+      <h3 class="section-title">⚠️ Security Best Practices</h3>
+      <ul style="font-size:13px;color:var(--text-muted);line-height:1.8;padding-left:20px">
+        <li>Rotasi key produksi minimal tiap 90 hari</li>
+        <li>Jangan commit key ke source code — pakai env vars</li>
+        <li>Pakai scope minimal (least privilege principle)</li>
+        <li>Revoke key segera jika ada indikasi kompromi</li>
+        <li>Pakai <span class="kbd">avx_test_</span> prefix untuk staging/dev</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  document.getElementById('btnGenKey').addEventListener('click', () => {
+    const k = 'avx_live_' + Math.random().toString(36).substring(2, 18);
+    AervinexToast('Key baru: ' + k + ' (copy sekarang, hanya tampil 1x)', 'success', 8000);
+  });
+  // Revoke buttons (delegated)
+  document.querySelectorAll('.admin-table .tbl-action').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const row = e.currentTarget.closest('tr');
+      const name = row?.querySelector('strong')?.textContent || 'key';
+      if (confirm(`Revoke "${name}"? Semua aplikasi yang pakai key ini akan kehilangan akses.`)) {
+        row.style.opacity = '0.3';
+        row.style.transition = 'opacity 0.4s';
+        setTimeout(() => row.remove(), 400);
+        AervinexToast(`Key "${name}" di-revoke`, 'warn');
+      }
+    });
+  });
+</script>
+</body>
+</html>

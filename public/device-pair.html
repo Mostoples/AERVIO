@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Pairing Device — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/aervinex-ui.css" />
+  <style>
+    .pair-status-card { padding: 24px; }
+    .pair-state-dot { width: 12px; height: 12px; border-radius: 50%; background: rgb(255,181,71); box-shadow: 0 0 8px rgb(255,181,71); display: inline-block; margin-right: 8px; animation: pulse 1.6s infinite; }
+    .pair-state-dot.ok    { background: rgb(74,222,128);  box-shadow: 0 0 8px rgb(74,222,128); }
+    .pair-state-dot.err   { background: rgb(255,92,124);  box-shadow: 0 0 8px rgb(255,92,124); animation: none; }
+    .pair-log {
+      font-family: 'Inter', sans-serif; font-size: 11px; color: var(--text-muted);
+      background: rgba(0,0,0,0.18); border-radius: var(--radius-md);
+      padding: 12px; height: 140px; overflow: auto; white-space: pre-wrap; line-height: 1.5;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    body.theme-light .pair-log { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.06); }
+    .telemetry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .telemetry-tile { padding: 14px; }
+    .telemetry-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
+    .telemetry-value { font-size: 24px; font-weight: 800; color: var(--text); margin-top: 4px; }
+    .telemetry-unit  { font-size: 11px; color: var(--text-dim); margin-left: 4px; font-weight: 500; }
+    .unsupported-banner {
+      background: rgba(255,92,124,0.12); border: 1px solid rgba(255,92,124,0.4);
+      padding: 14px; border-radius: var(--radius-md);
+      font-size: 12px; color: rgb(255,180,196); line-height: 1.6;
+    }
+  </style>
+</head>
+<body class="theme-dark" data-page="device-pair">
+  <div class="app-shell">
+
+    <header class="top-bar">
+      <a href="/device.html" class="btn-icon" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </a>
+      <div class="page-title-block" style="text-align:center;flex:1">
+        <h2>Pairing Device</h2>
+        <p>Hubungkan AERVINEX sensor via Web Bluetooth</p>
+      </div>
+      <button class="btn-icon theme-toggle" aria-label="Ganti tema">
+        <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </header>
+
+    <section class="card aura-cyan pair-status-card" id="statusCard">
+      <p style="font-size:12px;color:var(--text-muted);letter-spacing:1px">STATUS</p>
+      <h2 style="font-size:22px;font-weight:700;color:var(--text);margin-top:6px">
+        <span class="pair-state-dot" id="stateDot"></span>
+        <span id="stateLabel">Belum terhubung</span>
+      </h2>
+      <p id="stateDetail" style="font-size:12px;color:var(--text-dim);margin-top:6px">Tekan "Pair Device" untuk memulai pencarian Bluetooth.</p>
+    </section>
+
+    <div id="unsupportedBox" style="display:none">
+      <div class="unsupported-banner">
+        <strong>Web Bluetooth tidak tersedia.</strong><br/>
+        Browser ini tidak mendukung Web Bluetooth API. Gunakan:
+        <ul style="margin:8px 0 0 18px;padding:0;line-height:1.8">
+          <li>Chrome / Edge (Desktop)</li>
+          <li>Chrome (Android)</li>
+          <li>Bluefy (iOS — workaround pihak ketiga)</li>
+        </ul>
+        Lihat <a href="/docs/firmware-ota-flow.md" style="color:var(--accent)">dokumentasi fallback</a>.
+      </div>
+    </div>
+
+    <h3 class="section-title">Aksi</h3>
+    <button class="btn-block primary" id="btnPair">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M6 2l12 10L6 22V2z"/></svg>
+      <span>Pair Device</span>
+    </button>
+    <button class="btn-block ghost" id="btnDisconnect" style="margin-top:8px" disabled>
+      <svg viewBox="0 0 24 24" class="ico"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <span>Disconnect</span>
+    </button>
+
+    <h3 class="section-title">Telemetri Live</h3>
+    <section class="telemetry-grid">
+      <div class="card aura-coral telemetry-tile">
+        <p class="telemetry-label">HEART RATE</p>
+        <p class="telemetry-value"><span id="tHr">--</span><span class="telemetry-unit">bpm</span></p>
+      </div>
+      <div class="card aura-blue telemetry-tile">
+        <p class="telemetry-label">SpO₂</p>
+        <p class="telemetry-value"><span id="tSpo2">--</span><span class="telemetry-unit">%</span></p>
+      </div>
+      <div class="card aura-violet telemetry-tile">
+        <p class="telemetry-label">PM2.5</p>
+        <p class="telemetry-value"><span id="tPm25">--</span><span class="telemetry-unit">μg/m³</span></p>
+      </div>
+      <div class="card aura-amber telemetry-tile">
+        <p class="telemetry-label">UV INDEX</p>
+        <p class="telemetry-value"><span id="tUv">--</span></p>
+      </div>
+      <div class="card aura-green telemetry-tile">
+        <p class="telemetry-label">BATTERY</p>
+        <p class="telemetry-value"><span id="tBatt">--</span><span class="telemetry-unit">%</span></p>
+      </div>
+      <div class="card telemetry-tile">
+        <p class="telemetry-label">FIRMWARE</p>
+        <p class="telemetry-value" style="font-size:16px"><span id="tFw">--</span></p>
+      </div>
+    </section>
+
+    <h3 class="section-title">Log</h3>
+    <div class="pair-log" id="logBox">Menunggu aksi pairing...</div>
+
+    <div class="spacer-bottom"></div>
+
+    <nav class="bottom-nav">
+      <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+      <a href="/history.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Stats</span></a>
+      <a href="/live-data.html" class="nav-item fab"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></a>
+      <a href="/recovery.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><span>Recovery</span></a>
+      <a href="/profile.html" class="nav-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profile</span></a>
+    </nav>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/aervinex-app.js"></script>
+  <script src="js/web-ble-pair.js"></script>
+  <script src="js/medical-disclaimer.js"></script>
+  <script>
+    AERVINEXAuth.requireAuth();
+
+    const $ = (id) => document.getElementById(id);
+    const logBox = $('logBox');
+    function logLine(msg) {
+      const ts = new Date().toLocaleTimeString();
+      logBox.textContent = `[${ts}] ${msg}\n` + logBox.textContent;
+      if (logBox.textContent.length > 6000) logBox.textContent = logBox.textContent.slice(0, 6000);
+    }
+
+    function setState(label, detail, klass) {
+      $('stateLabel').textContent = label;
+      $('stateDetail').textContent = detail;
+      $('stateDot').className = 'pair-state-dot' + (klass ? ' ' + klass : '');
+    }
+
+    if (!AervinexBLE.isSupported()) {
+      $('unsupportedBox').style.display = 'block';
+      $('btnPair').disabled = true;
+      setState('Tidak didukung', 'Browser ini tidak mendukung Web Bluetooth API.', 'err');
+    }
+
+    AervinexBLE.on((event, payload) => {
+      if (event === 'status') {
+        if (payload.connected) {
+          setState('Terhubung', 'Streaming telemetri aktif.', 'ok');
+          $('btnDisconnect').disabled = false;
+          $('btnPair').disabled = true;
+          logLine('Connected — GATT siap.');
+        } else {
+          const reason = payload.reason || 'idle';
+          setState(reason === 'connecting' ? 'Menghubungkan...' : 'Terputus', `Reason: ${reason}`, reason.startsWith('reconnect_give') ? 'err' : '');
+          if (reason !== 'connecting') {
+            $('btnDisconnect').disabled = true;
+            $('btnPair').disabled = !AervinexBLE.isSupported();
+          }
+          logLine('Status: ' + reason);
+        }
+      } else if (event === 'telemetry') {
+        if (payload.hr != null)   $('tHr').textContent   = Math.round(payload.hr);
+        if (payload.spo2 != null) $('tSpo2').textContent = Math.round(payload.spo2);
+        if (payload.pm25 != null) $('tPm25').textContent = payload.pm25.toFixed(1);
+        if (payload.uv != null)   $('tUv').textContent   = payload.uv.toFixed(1);
+        if (payload.batt != null) $('tBatt').textContent = Math.round(payload.batt);
+        if (payload.fw)           $('tFw').textContent   = payload.fw;
+        logLine(`telemetry: hr=${payload.hr ?? '-'} spo2=${payload.spo2 ?? '-'} pm25=${payload.pm25 ?? '-'} uv=${payload.uv ?? '-'}`);
+      } else if (event === 'battery') {
+        $('tBatt').textContent = payload.percent;
+      } else if (event === 'hr') {
+        $('tHr').textContent = payload.hr;
+      }
+    });
+
+    $('btnPair').addEventListener('click', async () => {
+      try {
+        setState('Memilih device...', 'Pilih AERVINEX sensor dari daftar.', '');
+        const info = await AervinexBLE.pair();
+        logLine(`Paired with ${info.name || info.id}`);
+        if (window.AervinexToast) AervinexToast('Pair berhasil', 'success');
+      } catch (e) {
+        logLine('Pair failed: ' + (e?.message || e));
+        setState('Gagal pair', e?.message || 'unknown', 'err');
+        if (window.AervinexToast) AervinexToast('Pair gagal: ' + (e?.message || 'error'), 'warn');
+      }
+    });
+
+    $('btnDisconnect').addEventListener('click', async () => {
+      await AervinexBLE.disconnect();
+      logLine('Manual disconnect.');
+    });
+  </script>
+</body>
+</html>

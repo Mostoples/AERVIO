@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geo Stations — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+</head>
+<body class="theme-dark" data-page="geo">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Geo Stations</h1><p>BMKG &amp; IQAir monitoring stations</p></div></div>
+      <div class="admin-header-actions"><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <section class="kpi-grid">
+      <div class="card aura-cyan kpi-card"><div class="kpi-head"><div class="kpi-icon">📍</div></div><div class="kpi-value">142</div><div class="kpi-label">Total Stations</div></div>
+      <div class="card aura-green kpi-card"><div class="kpi-head"><div class="kpi-icon">✓</div></div><div class="kpi-value">128</div><div class="kpi-label">Online</div></div>
+      <div class="card aura-amber kpi-card"><div class="kpi-head"><div class="kpi-icon">⚠️</div></div><div class="kpi-value">12</div><div class="kpi-label">Degraded</div></div>
+      <div class="card aura-coral kpi-card"><div class="kpi-head"><div class="kpi-icon">🔴</div></div><div class="kpi-value">2</div><div class="kpi-label">Offline</div></div>
+    </section>
+
+    <section class="card aura-cyan" style="padding:6px">
+      <div id="geoMap" style="width:100%;height:400px;border-radius:18px"></div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">Stations List</h3>
+      <div class="admin-table-wrap"><table class="admin-table">
+        <thead><tr><th>Station</th><th>Provider</th><th>Region</th><th>PM2.5</th><th>Last Update</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kemayoran</strong></td><td>BMKG</td><td>Jakarta Pusat</td><td>62 μg/m³</td><td>2 mnt lalu</td><td><span class="tbl-status danger">PM HIGH</span></td></tr>
+          <tr><td><strong>Husein S.</strong></td><td>BMKG</td><td>Bandung</td><td>28 μg/m³</td><td>3 mnt lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+          <tr><td><strong>Juanda</strong></td><td>BMKG</td><td>Surabaya</td><td>38 μg/m³</td><td>1 mnt lalu</td><td><span class="tbl-status warn">DEGRADED</span></td></tr>
+          <tr><td><strong>Polonia</strong></td><td>BMKG</td><td>Medan</td><td>45 μg/m³</td><td>2 mnt lalu</td><td><span class="tbl-status warn">PM MED</span></td></tr>
+          <tr><td><strong>Adi Sucipto</strong></td><td>BMKG</td><td>Yogyakarta</td><td>22 μg/m³</td><td>4 mnt lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+          <tr><td><strong>Ngurah Rai</strong></td><td>BMKG</td><td>Bali</td><td>18 μg/m³</td><td>2 mnt lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+          <tr><td><strong>Jakarta Central</strong></td><td>IQAir</td><td>Jakarta Pusat</td><td>58 μg/m³</td><td>1 mnt lalu</td><td><span class="tbl-status warn">PM HIGH</span></td></tr>
+          <tr><td><strong>Bandung Dago</strong></td><td>IQAir</td><td>Bandung</td><td>24 μg/m³</td><td>3 mnt lalu</td><td><span class="tbl-status ok">OK</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </main>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script src="/js/admin.js"></script>
+<script>
+  const map = L.map('geoMap', { zoomControl: true, attributionControl: false }).setView([-2.5, 117], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+  const STATIONS = [
+    { name: 'Kemayoran',     lat: -6.16, lng: 106.84, status: 'danger', pm: 62 },
+    { name: 'Husein S.',     lat: -6.91, lng: 107.58, status: 'ok',     pm: 28 },
+    { name: 'Juanda',        lat: -7.38, lng: 112.78, status: 'warn',   pm: 38 },
+    { name: 'Polonia',       lat:  3.56, lng:  98.67, status: 'warn',   pm: 45 },
+    { name: 'Adi Sucipto',   lat: -7.78, lng: 110.43, status: 'ok',     pm: 22 },
+    { name: 'Ngurah Rai',    lat: -8.74, lng: 115.16, status: 'ok',     pm: 18 },
+  ];
+  const COL = { ok: '#4ade80', warn: '#ffb547', danger: '#ff5c7c' };
+  STATIONS.forEach(s => {
+    L.circleMarker([s.lat, s.lng], { radius: 10, color: '#fff', weight: 2, fillColor: COL[s.status], fillOpacity: 0.85 })
+      .addTo(map).bindTooltip(`<b>${s.name}</b><br>PM2.5: ${s.pm} μg/m³`);
+  });
+</script>
+</body>
+</html>

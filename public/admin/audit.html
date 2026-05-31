@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audit Log — AERVINEX Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <link rel="stylesheet" href="/css/admin-ui.css" />
+</head>
+<body class="theme-dark" data-page="audit">
+<div class="admin-shell">
+  <aside id="admin-sidebar" class="admin-sidebar"></aside>
+  <main class="admin-main">
+    <div class="admin-header">
+      <div style="display:flex;align-items:center;gap:12px"><button class="admin-ham"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div class="admin-page-title"><h1>Audit Log</h1><p>Trail semua admin actions · immutable</p></div></div>
+      <div class="admin-header-actions"><button class="btn-pill" id="btnExport"><svg viewBox="0 0 24 24" class="ico"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>Export</span></button><button class="btn-icon theme-toggle"><svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search"><svg viewBox="0 0 24 24" class="ico"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="auditSearch" placeholder="Cari action, admin, atau resource..." /></div>
+      <select class="filter-select" id="filterAct">
+        <option value="">Semua action</option><option>USER_ROLE_CHANGE</option><option>DEVICE_OTA_PUSH</option><option>ML_RETRAIN</option><option>ALERT_BROADCAST</option><option>API_KEY_GENERATE</option><option>CONTENT_UPDATE</option>
+      </select>
+      <select class="filter-select">
+        <option>24 jam terakhir</option><option>7 hari</option><option>30 hari</option><option>Custom range...</option>
+      </select>
+    </div>
+
+    <section class="card">
+      <div class="admin-table-wrap"><table class="admin-table">
+        <thead><tr><th>Timestamp</th><th>Admin</th><th>Action</th><th>Resource</th><th>IP</th><th>Status</th></tr></thead>
+        <tbody id="auditTbody"></tbody>
+      </table></div>
+    </section>
+  </main>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+  const LOGS = [
+    { ts: '2026-05-29 14:42:18', admin: 'fadli.rahman', act: 'ALERT_BROADCAST', res: 'L3 · 4,128 users · "PM2.5 Spike"',          ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-29 14:28:02', admin: 'system',       act: 'ML_RETRAIN',      res: 'TEPRS v2.4.1 deployed',                       ip: 'internal',   s: 'ok' },
+    { ts: '2026-05-29 14:10:55', admin: 'fadli.rahman', act: 'DEVICE_OTA_PUSH', res: 'v1.0.3 → 8,219 devices',                      ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-29 13:18:01', admin: 'lukman.hadi',  act: 'USER_ROLE_CHANGE',res: 'adia@gmail.com User→Premium',                 ip: '180.244.x.x', s: 'ok' },
+    { ts: '2026-05-29 12:55:32', admin: 'fadli.rahman', act: 'API_KEY_GENERATE',res: 'iqair-prod (scope: read)',                    ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-29 12:01:14', admin: 'system',       act: 'BACKUP_FIRESTORE',res: 'incremental · 2.4 GB',                        ip: 'internal',   s: 'ok' },
+    { ts: '2026-05-29 11:42:08', admin: 'lukman.hadi',  act: 'CONTENT_UPDATE',  res: 'FAQ entry #42 updated',                       ip: '180.244.x.x', s: 'ok' },
+    { ts: '2026-05-29 10:18:55', admin: 'fadli.rahman', act: 'USER_SUSPEND',    res: 'joko.sap@hotmail.com (chargeback)',           ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-29 09:30:22', admin: 'lukman.hadi',  act: 'USER_ROLE_CHANGE',res: 'hendra.wj@aervi.id User→Athlete',             ip: '180.244.x.x', s: 'ok' },
+    { ts: '2026-05-29 08:14:01', admin: 'fadli.rahman', act: 'BMKG_INTEGRATION',res: 'Stasiun Surabaya · API refresh',              ip: '103.84.x.x', s: 'warn' },
+    { ts: '2026-05-29 02:00:00', admin: 'system',       act: 'BACKUP_FIRESTORE',res: 'nightly snapshot · 28.4 GB',                  ip: 'internal',   s: 'ok' },
+    { ts: '2026-05-28 23:42:12', admin: 'fadli.rahman', act: 'ML_RETRAIN',      res: 'MCD v1.8.2 → v1.8.3 (canary)',                 ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-28 18:08:45', admin: 'lukman.hadi',  act: 'CONTENT_UPDATE',  res: 'Encyclopedia: heatstroke article',            ip: '180.244.x.x', s: 'ok' },
+    { ts: '2026-05-28 14:22:18', admin: 'fadli.rahman', act: 'FEATURE_FLAG',    res: 'glassmorphism_theme: enabled (100%)',         ip: '103.84.x.x', s: 'ok' },
+    { ts: '2026-05-28 11:55:08', admin: 'system',       act: 'ML_INFER_FAIL',   res: 'RRSS · user u_3f8a · auto-retry success',     ip: 'internal',   s: 'warn' },
+  ];
+  function render(list) {
+    document.getElementById('auditTbody').innerHTML = list.map(l => `
+      <tr>
+        <td class="mono" style="font-size:11px;color:var(--text-muted)">${l.ts}</td>
+        <td><strong>${l.admin}</strong></td>
+        <td><span class="mono" style="background:var(--bg-soft);padding:2px 8px;border-radius:8px;font-size:11px">${l.act}</span></td>
+        <td>${l.res}</td>
+        <td class="mono" style="color:var(--text-dim);font-size:11px">${l.ip}</td>
+        <td><span class="tbl-status ${l.s}">${l.s==='ok'?'Success':l.s==='warn'?'Warning':'Failed'}</span></td>
+      </tr>`).join('');
+  }
+  function flt() {
+    const q = document.getElementById('auditSearch').value.toLowerCase();
+    const a = document.getElementById('filterAct').value;
+    let list = LOGS;
+    if (q) list = list.filter(l => l.admin.includes(q) || l.act.toLowerCase().includes(q) || l.res.toLowerCase().includes(q));
+    if (a) list = list.filter(l => l.act === a);
+    render(list);
+  }
+  document.getElementById('auditSearch').addEventListener('input', flt);
+  document.getElementById('filterAct').addEventListener('change', flt);
+  // Time-range select (3rd select) — re-render with toast
+  document.querySelectorAll('.filter-select')[1].addEventListener('change', (e) => {
+    AervinexToast(`Filter waktu: ${e.target.value}`, 'info', 1500);
+    flt();
+  });
+  document.getElementById('btnExport').addEventListener('click', () => AervinexToast('Export audit log ke CSV · ETA 30 detik', 'success'));
+  // Row click → modal-ish toast
+  document.querySelector('tbody#auditTbody').addEventListener('click', (e) => {
+    const tr = e.target.closest('tr');
+    if (!tr) return;
+    const act = tr.querySelector('.mono')?.textContent || 'event';
+    AervinexToast(`Detail event: ${act} (klik untuk lihat payload)`, 'info', 2500);
+  });
+  render(LOGS);
+</script>
+</body>
+</html>

@@ -28,6 +28,42 @@ window.Utils = {
     return               { status: 'danger', label: 'Berbahaya', pct: Math.min(100, pm25/50*100), color: 'var(--danger)' };
   },
 
+  // ── TUHAM — Thresholds Under Indonesian Health & Air Monitoring (F4) ─
+  // Indonesia BMKG/KLHK ISPU standard vs WHO 2021.
+  // Returns { status, label, aarc, description }
+  // aarc field drives AARC escalation level (0=none,1=waspada,2=berbahaya,3=kritis)
+  getTUHAM(pm25, uvi = 0, coreTemp = 37.0) {
+    const results = {};
+
+    // PM2.5 — ISPU Indonesia: ≤15 Baik, 15-65 Sedang, 65-150 Tidak Sehat, >150 Berbahaya
+    if (pm25 <= 15)  results.pm25 = { status: 'safe',   label: 'Baik',         aarc: 0 };
+    else if (pm25 <= 65)  results.pm25 = { status: 'warn',   label: 'Sedang',       aarc: 1 };
+    else if (pm25 <= 150) results.pm25 = { status: 'danger', label: 'Tidak Sehat',  aarc: 2 };
+    else                  results.pm25 = { status: 'danger', label: 'Berbahaya',    aarc: 3 };
+
+    // WHO vs ISPU comparison note (for UI)
+    results.pm25.whoNote = pm25 > 5 ? `WHO 2021: Melebihi batas aman (≤5 μg/m³)` : 'Sesuai WHO 2021';
+
+    // UV — Indonesian Dermatology Association + WHO guidance
+    if (uvi <= 2)       results.uvi = { status: 'safe',   label: 'Rendah (Aman)',      aarc: 0 };
+    else if (uvi <= 5)  results.uvi = { status: 'warn',   label: 'Sedang (Tabir surya)',aarc: 1 };
+    else if (uvi <= 7)  results.uvi = { status: 'warn',   label: 'Tinggi (Batasi 10-14)', aarc: 1 };
+    else if (uvi <= 10) results.uvi = { status: 'danger', label: 'Sangat Tinggi',      aarc: 2 };
+    else                results.uvi = { status: 'danger', label: 'Ekstrem (BAHAYA)',    aarc: 3 };
+
+    // Core temp — Indonesian MoH Emergency protocol
+    if (coreTemp < 36.0)      results.temp = { status: 'warn',   label: 'Hipotermia', aarc: 2 };
+    else if (coreTemp < 37.5) results.temp = { status: 'safe',   label: 'Normal',     aarc: 0 };
+    else if (coreTemp < 38.0) results.temp = { status: 'warn',   label: 'Subfebris',  aarc: 1 };
+    else if (coreTemp < 39.5) results.temp = { status: 'warn',   label: 'Demam',      aarc: 2 };
+    else                      results.temp = { status: 'danger', label: 'HEATSTROKE', aarc: 3 };
+
+    // Aggregate worst AARC level
+    results.maxAarc = Math.max(results.pm25.aarc, results.uvi.aarc, results.temp.aarc);
+
+    return results;
+  },
+
   // ── UV INDEX (WHO) ────────────────────────────────────
   getUVStatus(uvi) {
     if (uvi <= 2)  return { status: 'safe',   label: 'Rendah',         color: 'var(--safe)' };

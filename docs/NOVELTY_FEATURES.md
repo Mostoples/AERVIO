@@ -1,4 +1,4 @@
-# Rumusan Fitur Novelty — Aervio
+# Rumusan Fitur Novelty — AERVINEX
 ## "From Detection to Action: A Smartwatch System for Monitoring and Responding to Environment-Induced Health Risks"
 
 > Dokumen ini merumuskan **11 fitur novelty** yang diusulkan berdasarkan:
@@ -43,7 +43,7 @@ Sistem mengintegrasikan dua lapisan data dalam satu platform wearable melalui **
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
-│                     AERVIO DLSFA PLATFORM                      │
+│                     AERVINEX DLSFA PLATFORM                      │
 ├───────────────────────────┬───────────────────────────────────┤
 │   LAYER 1 — ONBOARD       │   LAYER 2 — GEOSPATIAL ENV        │
 │   (Wrist-worn Sensors)    │   (Nearest Government Station)     │
@@ -64,7 +64,7 @@ Sistem mengintegrasikan dua lapisan data dalam satu platform wearable melalui **
 ```
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (DLSFA) |
+| Aspek | State-of-the-Art | AERVINEX (DLSFA) |
 |-------|-----------------|----------------|
 | Sensor lingkungan | Perangkat terpisah / tidak ada | Nearest-station otomatis via GPS haversine |
 | Sinkronisasi data | Manual / post-hoc | Real-time, per-siklus, timestamp-aligned |
@@ -118,7 +118,7 @@ Di mana:
 | 3 | 75–100 | 🔴 Merah | Kritis | Alert darurat + notifikasi caregiver |
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (TEPRS) |
+| Aspek | State-of-the-Art | AERVINEX (TEPRS) |
 |-------|-----------------|----------------|
 | Basis alert | Hanya fisiologi | Fisiologi + lingkungan |
 | Granularitas | Binary (alert/no alert) | 4-level graduated |
@@ -175,7 +175,7 @@ Rantai respons otomatis yang dipicu oleh level TEPRS:
 - Hasil dikirim ke log pembelajaran untuk personalisasi berikutnya
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (AARC) |
+| Aspek | State-of-the-Art | AERVINEX (AARC) |
 |-------|-----------------|----------------|
 | Respons pasca-deteksi | Hanya alert | Alert + rekomendasi + eskalasi + feedback |
 | Aktor yang dilibatkan | Pengguna saja | Pengguna, caregiver, faskes |
@@ -219,7 +219,7 @@ Modul kalibrasi dan adaptasi yang menyesuaikan seluruh sistem dengan konteks urb
    - API BMKG UV Index harian
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (TUHAM) |
+| Aspek | State-of-the-Art | AERVINEX (TUHAM) |
 |-------|-----------------|----------------|
 | Geografis | Negara maju, iklim temperate | Tropis, Asia Tenggara |
 | Standar kualitas udara | WHO / EPA | BMKG / KLHK Indonesia |
@@ -265,7 +265,7 @@ Sistem on-device learning yang membangun dan memperbarui profil risiko personal 
 - Pengguna dapat reset baseline kapan saja
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (APRB) |
+| Aspek | State-of-the-Art | AERVINEX (APRB) |
 |-------|-----------------|----------------|
 | Threshold | Global, satu untuk semua | Personal, konteks-aware |
 | Adaptasi | Statis / tidak ada | Continuous online learning |
@@ -320,7 +320,7 @@ Jika (anomali fisiologi terdeteksi):
 - Log untuk model improvement
 
 ### Keunggulan Dibanding State-of-the-Art
-| Aspek | State-of-the-Art | Aervio (MCD) |
+| Aspek | State-of-the-Art | AERVINEX (MCD) |
 |-------|-----------------|--------------|
 | False positive handling | Tidak ada filter | Context-aware discrimination |
 | Sumber konteks | HR saja | HR + akselerometer + env + waktu + GPS |
@@ -349,7 +349,7 @@ Jika (anomali fisiologi terdeteksi):
 
 ## Posisi Novelty Utama (Klaim Orisinalitas)
 
-> **Aervio adalah sistem pertama yang mengintegrasikan secara kohesif:** deteksi paparan lingkungan berbahaya (DLSFA) → kuantifikasi risiko gabungan environment-fisiologi yang dipersonalisasi (TEPRS + APRB) → aksi terstruktur dan terukur (AARC), dengan pengurangan false positive berbasis konteks (MCD), yang dikalibrasi untuk populasi dan kondisi lingkungan urban tropis Asia Tenggara (TUHAM).
+> **AERVINEX adalah sistem pertama yang mengintegrasikan secara kohesif:** deteksi paparan lingkungan berbahaya (DLSFA) → kuantifikasi risiko gabungan environment-fisiologi yang dipersonalisasi (TEPRS + APRB) → aksi terstruktur dan terukur (AARC), dengan pengurangan false positive berbasis konteks (MCD), yang dikalibrasi untuk populasi dan kondisi lingkungan urban tropis Asia Tenggara (TUHAM).
 
 Tidak satupun dari 50 paper yang dianalisis dalam SLR ini mengimplementasikan ketiga komponen inti (Deteksi → Analisis → Aksi) dalam satu platform wearable terintegrasi.
 
@@ -403,7 +403,7 @@ Engine analisis multi-dimensi yang mengagregasi seluruh data sensor menjadi prof
 
 ## Fitur 8–11: Sport Science & Sport Technology Module (SSTM)
 
-> Modul ini memperluas cakupan Aervio dari monitoring kesehatan umum ke domain **sport science** — khususnya untuk **pencegahan cedera** dan **optimasi performa atlet** berbasis data sensor real-time.
+> Modul ini memperluas cakupan AERVINEX dari monitoring kesehatan umum ke domain **sport science** — khususnya untuk **pencegahan cedera** dan **optimasi performa atlet** berbasis data sensor real-time.
 
 ---
 
@@ -585,7 +585,7 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 
 ---
 
-## Rekomendasi Machine Learning untuk Aervio
+## Rekomendasi Machine Learning untuk AERVINEX
 
 ### Jawaban: Ya, ML sangat cocok — dan berikut rekomendasi arsitektur modelnya
 
@@ -607,10 +607,10 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 
 ---
 
-## Kaggle Datasets Relevan untuk Aervio (Terorganisir)
+## Kaggle Datasets Relevan untuk AERVINEX (Terorganisir)
 
 ### Kategori 1: Wearable Health Monitoring
-| Dataset | URL | Fitur Aervio |
+| Dataset | URL | Fitur AERVINEX |
 |---------|-----|-------------|
 | Wearable Health Device Performance 2025 | [Link](https://www.kaggle.com/datasets/pratyushpuri/wearable-health-devices-performance-analysis) | DLSFA, TEPRS |
 | Wearable Sports Health Monitoring | [Link](https://www.kaggle.com/datasets/ziya07/wearable-sports-health-monitoring-dataset) | AIRI, RPAE, RRSS |
@@ -618,7 +618,7 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 | Smartwatch Health Data | [Link](https://www.kaggle.com/datasets/mohammedarfathr/smartwatch-health-data-uncleaned) | TEPRS, MCD |
 
 ### Kategori 2: Stress & Physiological Response
-| Dataset | URL | Fitur Aervio |
+| Dataset | URL | Fitur AERVINEX |
 |---------|-----|-------------|
 | WESAD — Wearable Stress & Affect Detection | [Link](https://www.kaggle.com/datasets/orvile/wesad-wearable-stress-affect-detection-dataset) | MCD, TEPRS, AIRI |
 | SWELL HRV Dataset | [Link](https://www.kaggle.com/datasets/qiriro/swell-heart-rate-variability-hrv) | RRSS, AIRI |
@@ -626,7 +626,7 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 | Heart Rate Prediction for Stress | [Link](https://www.kaggle.com/datasets/vinayakshanawad/heart-rate-prediction-to-monitor-stress-level) | TEPRS, AIRI |
 
 ### Kategori 3: Environmental Quality
-| Dataset | URL | Fitur Aervio |
+| Dataset | URL | Fitur AERVINEX |
 |---------|-----|-------------|
 | Air Quality & Health Impact | [Link](https://www.kaggle.com/datasets/rabieelkharoua/air-quality-and-health-impact-dataset) | DLSFA, TEPRS, CRAD |
 | Urban Air Quality & Health Impact | [Link](https://www.kaggle.com/datasets/abdullah0a/urban-air-quality-and-health-impact-dataset) | TUHAM, EPO |
@@ -634,7 +634,7 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 | Global Air Quality Dataset | [Link](https://www.kaggle.com/datasets/waqi786/global-air-quality-dataset) | TUHAM, EPO |
 
 ### Kategori 4: Sport Science & Injury Prevention
-| Dataset | URL | Fitur Aervio |
+| Dataset | URL | Fitur AERVINEX |
 |---------|-----|-------------|
 | Athlete Injury & Performance Dataset | [Link](https://www.kaggle.com/datasets/ziya07/athlete-injury-and-performance-dataset) | AIRI |
 | Injury Prediction for Competitive Runners | [Link](https://www.kaggle.com/datasets/shashwatwork/injury-prediction-for-competitive-runners) | AIRI |
@@ -642,7 +642,7 @@ EIP_adjustment = f(Heat_Index, AQI, UV_Index, Altitude, Humidity)
 | Comprehensive Sports Sensor DB | [Link](https://www.kaggle.com/datasets/sujaykapadnis/comprehensive-sports-database) | RPAE, AIRI |
 
 ### Kategori 5: Athletic Performance & VO2max
-| Dataset | URL | Fitur Aervio |
+| Dataset | URL | Fitur AERVINEX |
 |---------|-----|-------------|
 | Cycling VO2 Dataset | [Link](https://www.kaggle.com/datasets/andreazignoli/cycling-vo2) | RPAE |
 | Athlete Performance Prediction | [Link](https://www.kaggle.com/datasets/zadafiyabhrami/athlete-performance-prediction-dataset) | RPAE, RRSS |
@@ -805,7 +805,7 @@ Berikan rekomendasi dalam 3 kalimat singkat untuk pengguna awam.
 
 ## Posisi Novelty Utama (Updated)
 
-> **Aervio v2.0** adalah **platform smartwatch pertama** yang menyatukan tiga domain dalam satu ekosistem terintegrasi:
+> **AERVINEX v2.0** adalah **platform smartwatch pertama** yang menyatukan tiga domain dalam satu ekosistem terintegrasi:
 >
 > 1. **Environmental Health Monitoring** — deteksi real-time paparan lingkungan berbahaya (PM2.5, VOC, CO, UV, suhu)
 > 2. **Clinical Risk Analysis** — TEPRS + CRAD untuk quantifikasi dan visualisasi risiko holistik
@@ -815,4 +815,4 @@ Berikan rekomendasi dalam 3 kalimat singkat untuk pengguna awam.
 
 *Dokumen ini dihasilkan berdasarkan SLR PRISMA terhadap 50 paper dari PubMed (diakses 4 Mei 2026).*
 *Diperkaya dengan riset dataset Kaggle dan domain sport science/sport technology.*
-*Versi: 2.0 | Proyek: Aervio | Status: Draft untuk Review*
+*Versi: 2.0 | Proyek: AERVINEX | Status: Draft untuk Review*
