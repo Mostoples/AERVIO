@@ -656,6 +656,78 @@
     }
     .lp-plan-cta.primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,229,212,0.4); }
 
+    /* Team */
+    .lp-team {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+    }
+    @media (max-width: 1000px) { .lp-team { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 540px)  { .lp-team { grid-template-columns: 1fr; } }
+    .lp-team-card {
+      position: relative;
+      padding: 28px 22px 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      text-align: center;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    .lp-team-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, var(--team-aura, rgba(0,229,212,0.18)), transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .lp-team-card:hover { transform: translateY(-6px); border-color: rgba(0,229,212,0.3); box-shadow: 0 20px 50px rgba(0,229,212,0.12); }
+    .lp-team-card:hover::before { opacity: 1; }
+    .lp-team-avatar {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--team-c1, #00e5d4), var(--team-c2, #a78bfa));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 36px; font-weight: 800; color: #0f1923;
+      letter-spacing: -1.5px;
+      position: relative; z-index: 1;
+      box-shadow: 0 12px 30px rgba(0,229,212,0.25);
+    }
+    .lp-team-avatar::after {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--team-c1, #00e5d4), var(--team-c2, #a78bfa));
+      opacity: 0.35; filter: blur(14px);
+      z-index: -1;
+    }
+    .lp-team-name {
+      font-size: 19px; font-weight: 800; letter-spacing: -0.3px;
+      margin: 0 0 4px; position: relative;
+    }
+    .lp-team-role {
+      display: inline-block;
+      font-size: 10.5px; font-weight: 800;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--team-c1, #00e5d4);
+      background: var(--team-bg, rgba(0,229,212,0.12));
+      border: 1px solid var(--team-border, rgba(0,229,212,0.3));
+      padding: 4px 10px; border-radius: 999px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .lp-team-bio {
+      font-size: 13px; line-height: 1.6; opacity: 0.82;
+      margin: 0; position: relative;
+    }
+    .lp-team-divider {
+      width: 30px; height: 2px;
+      background: linear-gradient(90deg, var(--team-c1, #00e5d4), var(--team-c2, #a78bfa));
+      margin: 12px auto 14px;
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
     /* Testimonials */
     .lp-testimonials {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
@@ -833,6 +905,7 @@
         <a href="#how">Cara Kerja</a>
         <a href="#compare">Banding</a>
         <a href="#pricing">Harga</a>
+        <a href="#team">Tim</a>
         <a href="#faq">FAQ</a>
         <a href="/evidence.html">Riset</a>
         <a href="/ml-results-report.html">Tes Akurasi</a>
@@ -861,6 +934,7 @@
     <a href="#how">Cara Kerja</a>
     <a href="#compare">Banding</a>
     <a href="#pricing">Harga</a>
+    <a href="#team">Tim</a>
     <a href="#testimonials">Testimoni</a>
     <a href="#faq">FAQ</a>
     <a href="/evidence.html">Riset</a>
@@ -1197,6 +1271,52 @@
         </div>
       </div>
       <p style="text-align:center;font-size:12px;opacity:0.6;margin-top:22px">Semua harga dalam IDR. Pembayaran via QRIS, GoPay, OVO, Dana, kartu kredit. Tidak ada hidden fee.</p>
+    </div>
+  </section>
+
+  <!-- ============ TEAM ============ -->
+  <section class="lp-section" id="team">
+    <div class="lp-container">
+      <div class="lp-section-head">
+        <span class="lp-eyebrow">Tim Inti</span>
+        <h2 class="lp-section-title">Empat orang, <span class="grad">satu misi kesehatan urban</span></h2>
+        <p class="lp-section-sub">Tim multidisiplin dengan keahlian product, business, AI/IoT, dan riset — fokus membangun ekosistem health monitoring yang tepercaya untuk pelari & warga urban Indonesia.</p>
+      </div>
+      <div class="lp-team">
+
+        <div class="lp-team-card" style="--team-c1:#ff5470;--team-c2:#a78bfa;--team-aura:rgba(255,84,112,0.18);--team-bg:rgba(255,84,112,0.12);--team-border:rgba(255,84,112,0.35)">
+          <div class="lp-team-avatar">Z</div>
+          <h3 class="lp-team-name">ZABRINA</h3>
+          <span class="lp-team-role">CEO</span>
+          <div class="lp-team-divider"></div>
+          <p class="lp-team-bio">Memimpin visi, inovasi, dan keseluruhan pengembangan AERVINEX dari konsep hingga produk yang menyentuh pengguna.</p>
+        </div>
+
+        <div class="lp-team-card" style="--team-c1:#fcd34d;--team-c2:#ff5470;--team-aura:rgba(252,211,77,0.18);--team-bg:rgba(252,211,77,0.12);--team-border:rgba(252,211,77,0.35)">
+          <div class="lp-team-avatar">M</div>
+          <h3 class="lp-team-name">MAHAR</h3>
+          <span class="lp-team-role">CBO</span>
+          <div class="lp-team-divider"></div>
+          <p class="lp-team-bio">Membangun kemitraan strategis dan mengarahkan pertumbuhan bisnis berkelanjutan di ranah smart health technology.</p>
+        </div>
+
+        <div class="lp-team-card" style="--team-c1:#00e5d4;--team-c2:#06b6d4;--team-aura:rgba(0,229,212,0.18);--team-bg:rgba(0,229,212,0.12);--team-border:rgba(0,229,212,0.35)">
+          <div class="lp-team-avatar">S</div>
+          <h3 class="lp-team-name">SYASA</h3>
+          <span class="lp-team-role">CTO</span>
+          <div class="lp-team-divider"></div>
+          <p class="lp-team-bio">Memimpin pengembangan AI, integrasi IoT, dan sistem monitoring kesehatan lingkungan secara real-time end-to-end.</p>
+        </div>
+
+        <div class="lp-team-card" style="--team-c1:#a78bfa;--team-c2:#06b6d4;--team-aura:rgba(167,139,250,0.18);--team-bg:rgba(167,139,250,0.12);--team-border:rgba(167,139,250,0.35)">
+          <div class="lp-team-avatar">S</div>
+          <h3 class="lp-team-name">SHYRA</h3>
+          <span class="lp-team-role">CRO</span>
+          <div class="lp-team-divider"></div>
+          <p class="lp-team-bio">Mengelola riset, reliabilitas sistem, performa sensor, dan keberlanjutan jangka panjang teknologi AERVINEX.</p>
+        </div>
+
+      </div>
     </div>
   </section>
 
