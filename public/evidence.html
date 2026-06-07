@@ -68,12 +68,38 @@
       padding: 24px;
       box-shadow: var(--shadow-raised);
       overflow-x: auto;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+      display: block;
     }
     body.theme-glass .mermaid {
       backdrop-filter: blur(22px) saturate(180%);
       -webkit-backdrop-filter: blur(22px) saturate(180%);
       border: 1px solid rgba(255,255,255,0.16);
     }
+    @media (max-width: 600px) {
+      .mermaid { padding: 12px; min-height: 160px; }
+      .mermaid svg { font-size: 11px; }
+    }
+
+    /* Fix: SLR stat cards numbers + labels were rendering blank because the
+       inline color tokens (--accent / --text-dim) sometimes resolved transparent
+       in dark theme during initial paint. Force explicit colors here. */
+    .ev-stat-card { padding: 16px; text-align: center; }
+    .ev-stat-num { font-size: 28px; font-weight: 800; color: var(--accent, #00e5d4); line-height: 1.1; }
+    .ev-stat-num.violet { color: rgb(167,139,250); }
+    .ev-stat-num.green  { color: rgb(74,222,128); }
+    .ev-stat-num.amber  { color: rgb(255,181,71); }
+    .ev-stat-lbl { font-size: 11px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600; }
+    body.theme-light .ev-stat-lbl { color: rgba(0,0,0,0.7); }
 
     .ev-table {
       width: 100%;
@@ -228,10 +254,10 @@ flowchart TB
   style META fill:#a78bfa,color:#fff
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:20px">
-      <div class="card aura-cyan" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--accent)">1,247</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px">Records initial</div></div>
-      <div class="card aura-violet" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800">87</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px">Synthesis</div></div>
-      <div class="card aura-green" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800">42</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px">Meta-analysis</div></div>
-      <div class="card aura-amber" style="padding:16px;text-align:center"><div style="font-size:24px;font-weight:800">35</div><div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px">Risk conditions</div></div>
+      <div class="card aura-cyan ev-stat-card"><div class="ev-stat-num">1,247</div><div class="ev-stat-lbl">Records initial</div></div>
+      <div class="card aura-violet ev-stat-card"><div class="ev-stat-num violet">87</div><div class="ev-stat-lbl">Synthesis</div></div>
+      <div class="card aura-green ev-stat-card"><div class="ev-stat-num green">42</div><div class="ev-stat-lbl">Meta-analysis</div></div>
+      <div class="card aura-amber ev-stat-card"><div class="ev-stat-num amber">35</div><div class="ev-stat-lbl">Risk conditions</div></div>
     </div>
   </section>
 
