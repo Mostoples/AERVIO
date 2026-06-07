@@ -1,10 +1,36 @@
 // Shared auth utilities — Firebase email/password + Google + Anonymous (guest/debug)
-// Hardened: rate-limit detection, email verification flow, friendlier errors.
+// Hardened: rate-limit detection, email verification flow, friendlier errors,
+// mobile redirect fallback (Android Chrome popup unreliability), getRedirectResult.
+
+// Mobile detection — Android Chrome popup auth often fails silently; use redirect.
+function _isMobile() {
+  try {
+    if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+      return navigator.userAgentData.mobile;
+    }
+  } catch {}
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '');
+}
+
 window.AERVINEXAuth = {
   currentUser: null,
   userProfile: null,
+  _redirectHandled: false,
 
   init(onLogin, onLogout) {
+    // Handle Google redirect-sign-in result (mobile flow)
+    if (!this._redirectHandled) {
+      this._redirectHandled = true;
+      auth.getRedirectResult().then(async (cred) => {
+        if (cred && cred.user) {
+          await this._ensureUserDocForGoogle(cred.user);
+        }
+      }).catch((err) => {
+        if (err && err.code && err.code !== 'auth/null-user') {
+          console.warn('[auth] getRedirectResult error:', err.code, err.message);
+        }
+      });
+    }
     auth.onAuthStateChanged(async user => {
       if (user) {
         this.currentUser = user;
@@ -23,6 +49,26 @@ window.AERVINEXAuth = {
         onLogout && onLogout();
       }
     });
+  },
+
+  async _ensureUserDocForGoogle(user) {
+    try {
+      const ref = db.collection('users').doc(user.uid);
+      const snap = await ref.get();
+      if (!snap.exists) {
+        await ref.set({
+          uid: user.uid,
+          name: user.displayName || 'Google User',
+          email: user.email || '',
+          photoURL: user.photoURL || '',
+          emailVerified: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          provider: 'google'
+        });
+      }
+    } catch (e) {
+      console.warn('[auth] ensure Google user doc failed:', e.code || e.message);
+    }
   },
 
   async loginEmail(email, password) {
@@ -81,26 +127,54 @@ window.AERVINEXAuth = {
   async signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
-    const cred = await auth.signInWithPopup(provider);
-    // First-time Google users: write profile if missing
-    const ref = db.collection('users').doc(cred.user.uid);
-    const snap = await ref.get();
-    if (!snap.exists) {
-      await ref.set({
-        uid: cred.user.uid,
-        name: cred.user.displayName || 'Google User',
-        email: cred.user.email || '',
-        photoURL: cred.user.photoURL || '',
-        emailVerified: true,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        provider: 'google'
-      });
+    provider.addScope('email');
+    provider.addScope('profile');
+
+    // Mobile (esp. Android Chrome) — popup-based sign-in is unreliable due to
+    // tab-grouping, custom tabs, and aggressive popup blockers. Use redirect.
+    // The redirect result is then handled by getRedirectResult() in init().
+    if (_isMobile()) {
+      try { sessionStorage.setItem('aervinex-google-redirect-pending', '1'); } catch {}
+      await auth.signInWithRedirect(provider);
+      // Page will navigate away; this Promise effectively never resolves.
+      return new Promise(() => {});
     }
-    return cred;
+
+    // Desktop — try popup, fall back to redirect on popup block / network glitch.
+    try {
+      const cred = await auth.signInWithPopup(provider);
+      await this._ensureUserDocForGoogle(cred.user);
+      return cred;
+    } catch (err) {
+      const code = err && err.code;
+      // Common popup failure modes on mobile-ish browsers — retry via redirect.
+      if (code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' ||
+          code === 'auth/cancelled-popup-request' || code === 'auth/network-request-failed') {
+        try { sessionStorage.setItem('aervinex-google-redirect-pending', '1'); } catch {}
+        await auth.signInWithRedirect(provider);
+        return new Promise(() => {});
+      }
+      throw err;
+    }
   },
 
   async signInAsGuest() {
-    return auth.signInAnonymously();
+    try {
+      const cred = await auth.signInAnonymously();
+      return cred;
+    } catch (err) {
+      const code = err && err.code;
+      // 'admin-restricted-operation' = Anonymous provider OFF di Firebase Console.
+      // 'operation-not-allowed' = same root cause, different SDK version surface.
+      // Log clearly to aid debugging on user's device.
+      console.error('[auth] Anonymous sign-in failed:', code, err.message);
+      if (code === 'auth/admin-restricted-operation' || code === 'auth/operation-not-allowed') {
+        const e = new Error('Guest login belum diaktifkan. Hubungi admin untuk enable Anonymous auth di Firebase Console.');
+        e.code = code;
+        throw e;
+      }
+      throw err;
+    }
   },
 
   async sendPasswordReset(email) {
