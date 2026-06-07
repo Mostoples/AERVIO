@@ -727,6 +727,10 @@ input { font-family: inherit; }
 .aura-green  { --aura: var(--aura-green);  }
 .aura-violet { --aura: var(--aura-violet); }
 .aura-pink   { --aura: var(--aura-pink);   }
+.aura-danger { --aura: var(--aura-coral);  }  /* alias for danger semantic */
+.aura-success{ --aura: var(--aura-green);  }
+.aura-warning{ --aura: var(--aura-amber);  }
+.aura-info   { --aura: var(--aura-blue);   }
 
 /* Inject glow + inner gradient on every .card. The outer halo lives in
    box-shadow (escapes overflow:hidden); the inner gradient lives in ::before
