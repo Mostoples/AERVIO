@@ -4,7 +4,7 @@
      - CSS / JS / fonts  → stale-while-revalidate (instant paint, background refresh).
      - SVG / icons / manifest → cache-first w/ background refresh.
      - Firebase API hosts → bypass (always network). */
-const VERSION = 'aervinex-v13';
+const VERSION = 'aervinex-v14';
 const RUNTIME = 'aervinex-runtime-v1';
 const SHELL = [
   '/',
@@ -34,6 +34,8 @@ const SHELL = [
   '/community.html',
   '/community-channel.html',
   '/ai-chat.html',
+  '/datasets.html',
+  '/xai-audit.html',
   '/edit-profile.html',
   '/css/aervinex-ui.css',
   '/css/a11y-tokens.css',

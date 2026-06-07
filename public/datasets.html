@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Dataset Registry — Sumber Riset Verified — AERVINEX</title>
+  <meta name="description" content="Registry semua paper peer-reviewed, GitHub repos, dan open datasets yang dipakai AERVINEX. Setiap link verified via DOI/PMID/Crossref." />
+  <link rel="canonical" href="https://aervinex.web.app/datasets.html" />
+  <meta property="og:title" content="Dataset Registry — AERVINEX" />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="id_ID" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { padding-bottom: 100px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(0,229,212,0.14), rgba(167,139,250,0.14));
+      border: 1px solid rgba(0,229,212,0.3);
+      border-radius: 22px;
+      padding: 26px 22px; margin: 14px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(circle at 70% 0%, rgba(167,139,250,0.2), transparent 60%);
+      pointer-events: none;
+    }
+    .hero .v-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .hero h1 { font-size: 22px; font-weight: 800; margin: 0 0 4px; letter-spacing: -0.5px; position: relative; }
+    .hero .sub { font-size: 13px; opacity: 0.85; margin-bottom: 16px; position: relative; }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin-top: 18px; position: relative;
+    }
+    @media (max-width: 600px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-cell {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .stat-cell .num {
+      font-size: 24px; font-weight: 800;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-cell .lbl {
+      font-size: 11px; opacity: 0.75; margin-top: 2px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 14px 14px 4px;
+    }
+    .filter-chip {
+      padding: 7px 13px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; border-color: transparent;
+    }
+
+    .cluster {
+      margin: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .cluster-head {
+      padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .cluster-head h2 {
+      font-size: 16px; font-weight: 700; margin: 0;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .cluster-head .count {
+      font-size: 11px; opacity: 0.7;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,229,212,0.1);
+      color: #00e5d4;
+      padding: 2px 8px; border-radius: 4px;
+      margin-left: 8px;
+    }
+    .cluster-head .chev {
+      width: 18px; height: 18px; opacity: 0.6;
+      transition: transform 0.2s;
+    }
+    .cluster.open .cluster-head .chev { transform: rotate(180deg); }
+    .cluster-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s;
+      padding: 0 18px;
+    }
+    .cluster.open .cluster-body {
+      max-height: 100000px;
+      padding: 4px 18px 20px;
+    }
+
+    .item-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 10px 0;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .item-card:hover {
+      border-color: rgba(0,229,212,0.35);
+      background: rgba(0,229,212,0.04);
+    }
+    .item-card .top {
+      display: flex; gap: 8px; align-items: flex-start;
+      margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .item-card .tag {
+      font-size: 9px; font-weight: 800; letter-spacing: 0.05em;
+      padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+    }
+    .tag-paper { background: rgba(0,229,212,0.2); color: #00e5d4; }
+    .tag-repo { background: rgba(167,139,250,0.2); color: #a78bfa; }
+    .tag-dataset { background: rgba(252,211,77,0.2); color: #fcd34d; }
+    .tag-clinical { background: rgba(255,84,112,0.2); color: #ff5470; }
+
+    .item-card .title {
+      font-size: 13.5px; font-weight: 700; line-height: 1.4;
+      flex: 1; min-width: 200px;
+    }
+    .item-card .title a {
+      color: var(--text); text-decoration: none;
+      border-bottom: 1px dotted rgba(0,229,212,0.4);
+    }
+    .item-card .title a:hover {
+      color: #00e5d4;
+    }
+    .item-card .meta {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      font-size: 11px; opacity: 0.75;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .item-card .metric {
+      background: rgba(0,229,212,0.12); color: #00e5d4;
+      padding: 1px 6px; border-radius: 3px; font-weight: 700;
+    }
+    .item-card .desc {
+      font-size: 12px; line-height: 1.55; opacity: 0.85;
+      margin-top: 6px;
+    }
+    .item-card .contrib {
+      font-size: 11px; opacity: 0.7;
+      margin-top: 6px; font-style: italic;
+      border-left: 2px solid rgba(167,139,250,0.4);
+      padding-left: 8px;
+    }
+    .item-card.hidden { display: none; }
+
+    .toc-mini {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 4px 14px 0;
+    }
+    .toc-mini a {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .toc-mini a:hover {
+      color: #00e5d4;
+      border-color: rgba(0,229,212,0.3);
+    }
+
+    .verified-badge {
+      display: inline-block;
+      font-size: 10px; padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(0,229,212,0.15);
+      color: #00e5d4;
+      border: 1px solid rgba(0,229,212,0.35);
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body class="theme-dark" data-page="datasets">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topbar">
+    <a href="/ml-improvement-plan.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="topbar-title"><span>Dataset Registry — Riset Verified</span></div>
+  </header>
+
+  <section class="hero">
+    <span class="v-tag">✓ ALL SOURCES VERIFIED</span>
+    <h1>Registry Sumber Riset AERVINEX</h1>
+    <div class="sub">Setiap paper, GitHub repo, dan dataset di bawah sudah diverifikasi via DOI / PMID / Crossref API / GitHub CLI. Tidak ada link hallucinated.</div>
+    <div class="stats-grid">
+      <div class="stat-cell"><div class="num" id="papersCount">33</div><div class="lbl">📚 Papers</div></div>
+      <div class="stat-cell"><div class="num" id="reposCount">24</div><div class="lbl">💻 GitHub</div></div>
+      <div class="stat-cell"><div class="num" id="datasetsCount">16</div><div class="lbl">📊 Datasets</div></div>
+      <div class="stat-cell"><div class="num" id="clinicalCount">35</div><div class="lbl">🩺 Clinical</div></div>
+    </div>
+  </section>
+
+  <div class="toc-mini">
+    <a href="#cardiac">❤️ Cardiac</a>
+    <a href="#respiratory">🫁 Respiratory</a>
+    <a href="#sleep">💤 Sleep & Mental</a>
+    <a href="#sport">🏃 Sport & Fitness</a>
+    <a href="#environmental">🌡️ Environmental</a>
+    <a href="#clinical">🩺 Clinical Guidelines</a>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-chip active" data-filter="all">Semua</div>
+    <div class="filter-chip" data-filter="paper">📚 Papers</div>
+    <div class="filter-chip" data-filter="repo">💻 GitHub Repos</div>
+    <div class="filter-chip" data-filter="dataset">📊 Datasets</div>
+    <div class="filter-chip" data-filter="clinical">🩺 Clinical Sources</div>
+  </div>
+
+  <!-- ===================== CARDIAC ===================== -->
+  <section class="cluster open" id="cardiac">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>❤️ Cardiac <span class="count">7 papers · 5 repos · 3 datasets</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <!-- Papers -->
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1001/jamacardio.2018.0136" target="_blank">Tison et al. 2018 — Passive Detection of AF Using a Commercially Available Smartwatch</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.97 cardioversion</span>
+          <span>JAMA Cardiology</span>
+          <span>n=9,750 + 139M HR</span>
+          <span>DeepHeart DNN 8L</span>
+        </div>
+        <div class="desc">Apple Watch PPG + accelerometer, semi-supervised pretraining untuk R-R interval. Cardioversion AUC 0.97 (Sens 98.0%, Spec 90.2%).</div>
+        <div class="contrib">Kontribusi: Arsitektur referensi DeepHeart untuk predictAFib v2.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1056/NEJMoa1901183" target="_blank">Perez et al. 2019 — Large-Scale Assessment of a Smartwatch to Identify AF (Apple Heart Study)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">PPV 0.84</span>
+          <span>NEJM</span>
+          <span>n=419,297</span>
+        </div>
+        <div class="desc">Rule-based irregularity score di Apple Watch, sliding 60-s tachogram window. 34% confirmed AF di antara notified.</div>
+        <div class="contrib">Kontribusi: Threshold notifikasi AF + label "Apple Heart Study" di predictCardiacEvent.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1016/j.jacc.2018.03.003" target="_blank">Bumgarner et al. 2018 — Smartwatch Algorithm for Automated Detection of AF (KardiaBand)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Sens 93%, Spec 84%</span>
+          <span>JACC</span>
+          <span>PMID 29535065</span>
+          <span>n=100, 169 simultan</span>
+        </div>
+        <div class="desc">Single-lead ECG via KardiaBand, automated AliveCor algorithm vs physician-interpreted ECG.</div>
+        <div class="contrib">Kontribusi: Sensitivity/specificity benchmark untuk AFib screening tier.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41746-020-00320-4" target="_blank">Torres-Soto & Ashley 2020 — DeepBeat: Multi-task DL for Cardiac Rhythm Detection</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">F1 0.93 prospective</span>
+          <span>npj Digital Medicine</span>
+          <span>~1M unlabeled + 500K labeled</span>
+        </div>
+        <div class="desc">Multi-task CNN denoising autoencoder + joint signal-quality + arrhythmia head, PPG 25 Hz 25-s window.</div>
+        <div class="contrib">Kontribusi utama: model field predictAFib menyebut DOI 10.1038/s41746-020-00320-4 (DeepBeat).</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.3389/fphys.2023.1084837" target="_blank">Kudo et al. 2023 — Arrhythmia Classifier Training Pipeline (PPG AF)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Acc 0.87, F1 0.80</span>
+          <span>Frontiers in Physiology</span>
+          <span>2-layer CNN + Transformer</span>
+        </div>
+        <div class="desc">Hybrid 2-layer CNN + 1-layer Transformer dengan transfer learning whole-model fine-tune. Multi-cohort PhysioNet + simband.</div>
+        <div class="contrib">Kontribusi: Baseline arsitektur GBDT 15-feature target AUC 0.92.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.3390/diagnostics13142442" target="_blank">Aldughayfiq et al. 2023 — DL AF Classification Multi-Feature ECG+PPG</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Acc 95%, AUC 0.85, F1 0.84</span>
+          <span>Diagnostics (Basel)</span>
+          <span>1D-CNN + BiLSTM</span>
+        </div>
+        <div class="desc">Multi-source ECG+PPG fusion dengan 1D-CNN + BiLSTM hybrid.</div>
+        <div class="contrib">Kontribusi: Validasi multi-feature time series untuk AFib.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1109/EMBC58623.2025.11253262" target="_blank">John 2025 — PPG-based 1D-CNN for Automated AF Detection</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Acc 98.27%, F1 0.978</span>
+          <span>IEEE EMBC 2025</span>
+          <span>MIMIC III Waveform</span>
+        </div>
+        <div class="desc">1D-CNN edge-deployable pruned variant 60% sparsity + binarized 94.5% / F1 0.93. Sangat relevan untuk port browser.</div>
+        <div class="contrib">Kontribusi: Reference arsitektur untuk Option B (1D-CNN small).</div>
+      </div>
+
+      <!-- Repos -->
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/awni/ecg" target="_blank">awni/ecg</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 807</span>
+          <span>TensorFlow</span>
+          <span>GPL-3.0</span>
+        </div>
+        <div class="desc">Stanford ML Group; replikasi Hannun et al. Nature Medicine 2019 cardiologist-level ECG arrhythmia (termasuk AF kelas). 34-layer ResNet 1D.</div>
+        <div class="contrib">Kontribusi: Best-cited reference architecture untuk fine-tune ke PPG.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/chengstark/SiamAF" target="_blank">chengstark/SiamAF</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 31</span>
+          <span>PyTorch</span>
+          <span>MIT</span>
+          <span>arXiv 2310.09203</span>
+        </div>
+        <div class="desc">Duke University; Siamese network shared latent ECG ↔ PPG, training di 13,432 pasien Institution A, test di Stanford + Simband.</div>
+        <div class="contrib">Kontribusi: Template PyTorch siap diadaptasi untuk transfer ECG → PPG.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/physionetchallenges/python-cnn-example-2024" target="_blank">physionetchallenges/python-cnn-example-2024</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ ~30+</span>
+          <span>PyTorch</span>
+        </div>
+        <div class="desc">Baseline CNN resmi dari PhysioNet Challenge 2024, struktur jelas untuk fine-tune.</div>
+        <div class="contrib">Kontribusi: Baseline reference untuk benchmark.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/physionetchallenges/python-example-2025" target="_blank">physionetchallenges/python-example-2025</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 31</span>
+          <span>Python</span>
+        </div>
+        <div class="desc">Boilerplate evaluation + scoring resmi Challenge 2025 — pakai untuk eval kit.</div>
+        <div class="contrib">Kontribusi: Scoring template untuk validation kit AFib.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/Sanugiw/PPG-Arrhythmia-Detection" target="_blank">Sanugiw/PPG-Arrhythmia-Detection</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Jupyter</span>
+          <span>RandomForest + SHAP</span>
+        </div>
+        <div class="desc">Pipeline lengkap PPG feature-engineering + XAI; berguna sebagai reference untuk Option A.</div>
+        <div class="contrib">Kontribusi: SHAP integration template untuk panel XAI.</div>
+      </div>
+
+      <!-- Datasets -->
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/challenge-2017/1.0.0/" target="_blank">PhysioNet/CinC Challenge 2017 — AF Classification</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">8,528 train + 3,658 test</span>
+          <span>9–61 detik @ 300 Hz</span>
+          <span>ODC-By v1.0</span>
+          <span><a href="https://doi.org/10.13026/d3hm-sf11" target="_blank">DOI 10.13026/d3hm-sf11</a></span>
+        </div>
+        <div class="desc">Labels: Normal (5,154) / AF (771) / Other (2,557) / Noisy (46). Open Data Commons Attribution v1.0.</div>
+        <div class="contrib">Kontribusi: Training dataset utama untuk XGBoost AF v2.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/icentia11k-continuous-ecg/1.0/" target="_blank">Icentia11k Continuous ECG (Stanford-affiliated)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">11,000 pasien</span>
+          <span>≤2 minggu @ 250 Hz</span>
+          <span>CC BY-NC-SA 4.0</span>
+          <span><a href="https://doi.org/10.13026/kk0v-r952" target="_blank">DOI 10.13026/kk0v-r952</a></span>
+        </div>
+        <div class="desc">Beat (N/S/V/Q) + Rhythm (NSR/AFib/AFlutter), Bengio lab.</div>
+        <div class="contrib">Kontribusi: Large-scale validation untuk rhythm detection.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/mimic4wdb/0.1.0/" target="_blank">MIMIC-IV Waveform Database v0.1.0</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">200 records / 198 pasien</span>
+          <span>ECG + PPG + ABP</span>
+          <span>ODC Open Database v1.0</span>
+          <span><a href="https://doi.org/10.13026/a2mw-f949" target="_blank">DOI 10.13026/a2mw-f949</a></span>
+        </div>
+        <div class="desc">Multi-signal ECG + PPG + ABP, label rhythm via cross-link ke MIMIC-IV clinical (ICD-10 I48.*).</div>
+        <div class="contrib">Kontribusi: Dataset PPG-ECG paired untuk cross-modal learning.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== RESPIRATORY ===================== -->
+  <section class="cluster open" id="respiratory">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>🫁 Respiratory <span class="count">9 papers · 7 repos · 5 datasets</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <!-- Papers -->
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.2147/JAA.S278155" target="_blank">Tinschert et al. 2020 — Nocturnal Cough and Sleep Quality to Predict Asthma Attacks</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">14-day attack prediction</span>
+          <span>J Asthma Allergy 2020;13:669-678</span>
+          <span>n=79 × 29 nights</span>
+        </div>
+        <div class="desc">Smartphone overnight audio (St. Gallen); RNN cough detector + logistic on cough rate + sleep efficiency.</div>
+        <div class="contrib">Kontribusi: model field predictAsmaExacerbation citing "AsthmaTrack predictive model".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1136/bmjopen-2018-026323" target="_blank">Tinschert et al. 2019 — Prevalence of Nocturnal Cough in Asthma (MAC protocol)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Protocol study</span>
+          <span>BMJ Open</span>
+          <span>n=94 target</span>
+        </div>
+        <div class="desc">Validasi nocturnal cough sbg digital biomarker. Smartphone mic + sleep score.</div>
+        <div class="contrib">Kontribusi: Methodologi acoustic biomarker untuk cluster respiratory.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1016/S2213-2600(19)30397-2" target="_blank">Adibi et al. 2020 — ACCEPT (Acute COPD Exacerbation Prediction Tool)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.81 (≥2 exac)</span>
+          <span>Lancet Respir Med</span>
+          <span>dev 2,380 + val 1,819</span>
+        </div>
+        <div class="desc">4 RCT pooled (MACRO, OPTIMAL, STATCOPE, Bergen). Joint accelerated failure-time GLM (rate + severity).</div>
+        <div class="contrib">Kontribusi: COPD exacerbation reference model untuk predictCOPDExacerbation.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41591-020-1123-x" target="_blank">Quer et al. 2021 — Wearable Sensor Data + Self-Reported Symptoms for COVID-19 (DETECT)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.83</span>
+          <span>Nat Med</span>
+          <span>n=8,150 (1,118 COVID+)</span>
+        </div>
+        <div class="desc">Fitbit/Apple Watch/Garmin via MyDataHelps. Penalized logistic regression atas Δ RHR + sleep + steps (vs personal baseline).</div>
+        <div class="contrib">Kontribusi: Personal baseline deviation features untuk respiratory cluster.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41746-021-00533-1" target="_blank">Gadaleta et al. 2021 — Passive Detection of COVID-19 with Wearable Sensors + Explainable ML</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.83 symptomatic</span>
+          <span>npj Digital Medicine</span>
+          <span>n=38,911</span>
+          <span>XGBoost + SHAP</span>
+        </div>
+        <div class="desc">DETECT cohort; XGBoost + SHAP atas resting HR, HRV proxy, steps, sleep duration deviation.</div>
+        <div class="contrib">Kontribusi: SHAP-based XAI integration untuk respiratory cluster v2.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41551-020-00640-6" target="_blank">Mishra et al. 2020 — Pre-symptomatic Detection of COVID-19 from Smartwatch</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">>85% detected pre-symptom</span>
+          <span>Nat Biomed Eng</span>
+          <span>n=32 COVID+ / 5,262</span>
+        </div>
+        <div class="desc">Stanford wearable cohort (Fitbit, Garmin, Apple). RHR vs personal rolling baseline (CuSum-style anomaly).</div>
+        <div class="contrib">Kontribusi: Pre-symptomatic anomaly detection methodology.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1016/j.envint.2020.105876" target="_blank">Orellano et al. 2020 — PM10/PM2.5/NO2/O3 vs Mortality (Meta-Analysis)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">RR +0.73% per 10 µg/m³</span>
+          <span>Environ Int</span>
+          <span>196 studi pooled</span>
+        </div>
+        <div class="desc">Landasan WHO AQG 2021. Random-effects meta-analysis. Respiratory mortality 1.0073 per +10 µg/m³ PM2.5 (24-h lag 0-1).</div>
+        <div class="contrib">Kontribusi: PM2.5 dose-response threshold untuk predictAsma + predictISPA.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41597-021-00937-4" target="_blank">Orlandic et al. 2021 — COUGHVID Crowdsourcing Dataset</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Cough precision 90%</span>
+          <span>Scientific Data</span>
+          <span>>25,000 rekaman</span>
+        </div>
+        <div class="desc">EPFL crowdsourced; XGBoost feature-based + CNN spectrogram.</div>
+        <div class="contrib">Kontribusi: Dataset acoustic untuk phase 2 cough detection.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1038/s41597-023-02266-0" target="_blank">Bhattacharya et al. 2023 — Coswara Respiratory Sounds Dataset</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.79 multi-modal</span>
+          <span>Scientific Data</span>
+          <span>n=2,635 × 9 sound types</span>
+        </div>
+        <div class="desc">IISc Bangalore; late-fusion CNN dengan multiple sound types (cough, breath, vowels, count).</div>
+        <div class="contrib">Kontribusi: Multi-modal acoustic baseline.</div>
+      </div>
+
+      <!-- Repos -->
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/resplab/accept" target="_blank">resplab/accept</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 10</span>
+          <span>R</span>
+        </div>
+        <div class="desc">Implementasi resmi ACCEPT; R Shiny + JSON model dump.</div>
+        <div class="contrib">Kontribusi: Model weights ACCEPT untuk port ke ONNX.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/resplab/accept-codes" target="_blank">resplab/accept-codes</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 5</span>
+          <span>R</span>
+          <span>GPL-3.0</span>
+        </div>
+        <div class="desc">Supplementary code untuk validasi eksternal ACCEPT.</div>
+        <div class="contrib">Kontribusi: Validation pipeline reference.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/aminadibi/pyaccept" target="_blank">aminadibi/pyaccept</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Python</span>
+        </div>
+        <div class="desc">Port Python ACCEPT — bisa diadaptasi ke onnxruntime-web setelah re-train sebagai XGBoost.</div>
+        <div class="contrib">Kontribusi: Python port untuk onnxmltools pipeline.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/iiscleap/Coswara-Data" target="_blank">iiscleap/Coswara-Data</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 204</span>
+          <span>Jupyter</span>
+          <span>Custom CC-BY-like</span>
+        </div>
+        <div class="desc">Repo dataset Coswara resmi IISc Bangalore.</div>
+        <div class="contrib">Kontribusi: Audio dataset untuk phase 2 cough cluster.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/cianmcguinn/asthma-exacerbation-wearables" target="_blank">cianmcguinn/asthma-exacerbation-wearables</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">HTML notebook</span>
+          <span>MIT</span>
+        </div>
+        <div class="desc">Pipeline 7-day lookback / 3-day horizon dari smartwatch HR + SHAP — template arsitektur paling dekat dgn AERVINEX use-case.</div>
+        <div class="contrib">Kontribusi utama: Template arsitektur respiratory wearable v2.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/mrzaizai2k/Coughvid-19-CRNN-attention" target="_blank">mrzaizai2k/Coughvid-19-CRNN-attention</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 9</span>
+          <span>Jupyter</span>
+          <span>MIT</span>
+        </div>
+        <div class="desc">CRNN + attention untuk CoughVid — referensi audio pipeline.</div>
+        <div class="contrib">Kontribusi: CRNN architecture reference untuk cough acoustic.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/virufy/virufy-data" target="_blank">virufy/virufy-data</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 9</span>
+          <span>Custom</span>
+        </div>
+        <div class="desc">Dataset cough COVID + screening API.</div>
+        <div class="contrib">Kontribusi: Supplementary cough COVID dataset.</div>
+      </div>
+
+      <!-- Datasets -->
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://zenodo.org/record/4498364" target="_blank">CoughVid (EPFL)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">25,000+ rekaman</span>
+          <span>WebM/OGG</span>
+          <span>Zenodo open</span>
+        </div>
+        <div class="desc">Project page: <a href="https://coughvid.epfl.ch" target="_blank">coughvid.epfl.ch</a>. COVID/healthy/upper/lower self-report + dokter-labeled subset (~2k).</div>
+        <div class="contrib">Kontribusi: Training data untuk acoustic cough phase 2.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://github.com/iiscleap/Coswara-Data" target="_blank">Coswara (IISc Bangalore)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">2,635 subjek × 9 sounds</span>
+          <span>Github hosted</span>
+        </div>
+        <div class="desc">Cough, breath shallow/deep, vowels, count — COVID PCR + simptom labeled.</div>
+        <div class="contrib">Kontribusi: Multi-modal sound dataset.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://www.copdgene.org/" target="_blank">COPDGene Phenotyping</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">10,371 subjek</span>
+          <span>CT + spirometry</span>
+          <span><a href="https://doi.org/10.3109/15412550903499522" target="_blank">DOI 10.3109/15412550903499522</a></span>
+        </div>
+        <div class="desc">Non-Hispanic white & African American smokers. CT-emphysema score, spirometry (FEV1/FVC), exac history.</div>
+        <div class="contrib">Kontribusi: FEV1 threshold reference untuk predictCOPD.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://ispu.menlhk.go.id" target="_blank">BMKG / ISPU Indonesia</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">DKI Jakarta 2012-2024</span>
+          <span>+ Surabaya, Palangka Raya</span>
+          <span>CSV/XLSX scrape</span>
+        </div>
+        <div class="desc">Portal Satu Data: <a href="https://data.go.id" target="_blank">data.go.id</a> (30 dataset ISPU). KLHK live: <a href="https://ispu.menlhk.go.id" target="_blank">ispu.menlhk.go.id</a>. BMKG: <a href="https://data.bmkg.go.id" target="_blank">data.bmkg.go.id</a>. PM2.5, PM10, SO2, CO, O3, NO2 per stasiun, harian. No documented public REST API — scrape + cache.</div>
+        <div class="contrib">Kontribusi: Local Indonesia air quality untuk TEPRS scoring.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://www.breathelondon.org" target="_blank">Breathe London</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">~400 sensor stations</span>
+          <span>NO2 + PM2.5 1-min</span>
+          <span>API gated</span>
+        </div>
+        <div class="desc">Clarity Movement API; 2018-onward. Bukan pengganti BMKG untuk konteks Indonesia.</div>
+        <div class="contrib">Kontribusi: Air quality benchmark methodology.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== SLEEP & MENTAL ===================== -->
+  <section class="cluster open" id="sleep">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>💤 Sleep & Mental Health <span class="count">7 papers · 6 repos · 5 datasets</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <!-- Papers -->
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://dl.acm.org/doi/10.1145/3242969.3242985" target="_blank">Schmidt et al. 2018 — WESAD (Wearable Stress and Affect Detection)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">F1 0.93 chest / 0.87 wrist</span>
+          <span>ICMI 2018</span>
+          <span>n=15</span>
+          <span>RF / AdaBoost / kNN</span>
+        </div>
+        <div class="desc">Chest RespiBAN (ECG+EDA+EMG+RESP+TEMP+ACC) + wrist E4 (BVP+EDA+TEMP+ACC); 3 kelas stress.</div>
+        <div class="contrib">Kontribusi: source field predictAsma + predictStressKronik citing WESAD.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1145/2663204.2663257" target="_blank">Koldijk et al. 2014 — SWELL Knowledge Work Dataset</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Subject-indep acc 60-70%</span>
+          <span>ICMI 2014</span>
+          <span>n=25 × 3h</span>
+          <span>SVM/NB/J48</span>
+        </div>
+        <div class="desc">Computer-log + facial + Kinect + HRV + EDA; 3 kondisi (neutral/interrupt/time-pressure).</div>
+        <div class="contrib">Kontribusi: source field predictStressKronik citing "SWELL-KW".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1002/wps.20311" target="_blank">Maslach & Leiter 2016 — Understanding the Burnout Experience</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">MBI 3-dim framework</span>
+          <span>World Psychiatry</span>
+          <span>PMID 27265691</span>
+        </div>
+        <div class="desc">Definisi MBI 3-dim (exhaustion/cynicism/inefficacy); burnout vs depresi.</div>
+        <div class="contrib">Kontribusi: source field predictBurnout citing "Maslach & Leiter 2016 MBI cohort".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1109/10.867928" target="_blank">Kemp et al. 2000 — Slow-Wave Microcontinuity of EEG (Sleep-EDF)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Benchmark sleep-staging</span>
+          <span>IEEE TBME</span>
+          <span>197 PSG</span>
+        </div>
+        <div class="desc">Paper dasar untuk dataset Sleep-EDF (197 PSG: SC 153 + ST 44).</div>
+        <div class="contrib">Kontribusi: Theoretical foundation for sleep staging proxies.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1109/TNSRE.2017.2721116" target="_blank">Supratak et al. 2017 — DeepSleepNet</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">MASS acc 86.2%, F1 81.7%</span>
+          <span>IEEE TNSRE</span>
+          <span><a href="https://arxiv.org/abs/1703.04046" target="_blank">arXiv 1703.04046</a></span>
+        </div>
+        <div class="desc">MASS + Sleep-EDF, single-ch EEG, CNN + BiLSTM.</div>
+        <div class="contrib">Kontribusi: Sleep staging arsitektur reference.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1109/JBHI.2022.3225363" target="_blank">Kotzen et al. 2022 — SleepPPG-Net</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">4-class κ = 0.75</span>
+          <span>IEEE JBHI</span>
+          <span><a href="https://arxiv.org/abs/2202.05735" target="_blank">arXiv 2202.05735</a></span>
+          <span>n=2,374 / 23,055 jam</span>
+        </div>
+        <div class="desc">PPG sleep staging via ResNet + Temporal CNN. MESA + CFS.</div>
+        <div class="contrib">Kontribusi: PPG-only sleep staging reference (port arsitektur).</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1007/s11325-018-1654-2" target="_blank">Fabius et al. 2019 — ODI Validation in OSA Workup</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AUC 0.996</span>
+          <span>Sleep Breath</span>
+          <span>PMID 29564732</span>
+          <span>n=3,413</span>
+        </div>
+        <div class="desc">ODI&lt;5 vs AHI&lt;5: AUC 0.996, sens 97.7%, spec 97.0%. Cutoff-based simple classifier.</div>
+        <div class="contrib">Kontribusi utama: model field predictSleepApnea menyebut "ODI-3% v2 PMID 29564732".</div>
+      </div>
+
+      <!-- Repos -->
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/WJMatthew/WESAD" target="_blank">WJMatthew/WESAD</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 108</span>
+          <span>Jupyter / Python</span>
+        </div>
+        <div class="desc">Feature extraction + binary stress CV; starter baseline.</div>
+        <div class="contrib">Kontribusi: Feature extraction template untuk WESAD.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/akaraspt/deepsleepnet" target="_blank">akaraspt/deepsleepnet</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 483</span>
+          <span>TF1</span>
+          <span>Apache-2.0</span>
+        </div>
+        <div class="desc">Supratak resmi; Sleep-EDF + MASS scripts (EEG).</div>
+        <div class="contrib">Kontribusi: Reference implementation DeepSleepNet.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/akaraspt/tinysleepnet" target="_blank">akaraspt/tinysleepnet</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 172</span>
+          <span>TF 1.13</span>
+          <span>Apache-2.0</span>
+        </div>
+        <div class="desc">DeepSleepNet ringan; CNN + RNN single-ch EEG.</div>
+        <div class="contrib">Kontribusi: Lightweight version untuk possible browser port.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/raphaelvallat/yasa" target="_blank">raphaelvallat/yasa</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 558</span>
+          <span>Python</span>
+          <span>BSD-3</span>
+        </div>
+        <div class="desc">PSG toolbox: auto-staging EEG, spindle/SW/REM, hypnogram. Tidak untuk PPG/wrist.</div>
+        <div class="contrib">Kontribusi: PSG analysis reference toolbox.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/cbrnr/sleepecg" target="_blank">cbrnr/sleepecg</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 137</span>
+          <span>Python</span>
+          <span>BSD-3</span>
+        </div>
+        <div class="desc">Sleep staging dari single-lead ECG — cocok untuk wearable port.</div>
+        <div class="contrib">Kontribusi: ECG-based sleep staging library.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/neuropsychology/NeuroKit" target="_blank">neuropsychology/NeuroKit</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 2.2k</span>
+          <span>Python</span>
+          <span>MIT</span>
+        </div>
+        <div class="desc">Full HRV (nk.hrv(): SDNN, RMSSD, LF/HF, SampEn) + ECG/PPG/EDA. Wajib untuk feature pipeline AERVINEX.</div>
+        <div class="contrib">Kontribusi utama: HRV feature extraction library untuk pipeline training.</div>
+      </div>
+
+      <!-- Datasets -->
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://archive.ics.uci.edu/dataset/465/wesad+wearable+stress+and+affect+detection" target="_blank">WESAD (UCI)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">n=15</span>
+          <span>chest + wrist multimodal</span>
+          <span>Non-commercial scientific</span>
+        </div>
+        <div class="desc">Mirror: <a href="https://ubi29.informatik.uni-siegen.de/usi/data_wesad.html" target="_blank">Uni-Siegen</a>. 3 kelas stress.</div>
+        <div class="contrib">Kontribusi: Training dataset stress detection.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/sleep-edfx/1.0.0/" target="_blank">Sleep-EDF Expanded</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">197 PSG</span>
+          <span>EEG + EOG + EMG</span>
+          <span>ODC-BY-1.0</span>
+          <span><a href="https://doi.org/10.13026/C2X676" target="_blank">DOI 10.13026/C2X676</a></span>
+        </div>
+        <div class="desc">EEG Fpz-Cz + Pz-Oz; R&K stages.</div>
+        <div class="contrib">Kontribusi: Sleep staging benchmark dataset.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/apnea-ecg/1.0.0/" target="_blank">Apnea-ECG DB</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">70 records</span>
+          <span>7-10h @ 100Hz</span>
+          <span>PhysioNet open</span>
+        </div>
+        <div class="desc">Single-lead ECG + per-minute apnea annotation; 8 records dengan respiration.</div>
+        <div class="contrib">Kontribusi: Apnea event detection training data.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://www.kaggle.com/datasets/qiriro/swell-heart-rate-variability-hrv" target="_blank">SWELL-KW HRV (Kaggle)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">n=25</span>
+          <span>HRV + EDA + computer-log</span>
+        </div>
+        <div class="desc">Companion data ke paper SWELL ICMI 2014.</div>
+        <div class="contrib">Kontribusi: HRV labeled stress data.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://sleepdata.org/datasets/mesa" target="_blank">MESA Sleep (NSRR)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">~2,000 PSG</span>
+          <span>PSG + actigraphy 7-day</span>
+          <span>DUA + IRB</span>
+        </div>
+        <div class="desc">SpO2 + ECG, multietnik. Akses dengan registration + IRB.</div>
+        <div class="contrib">Kontribusi: Multi-ethnic sleep cohort untuk validasi.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== SPORT & FITNESS ===================== -->
+  <section class="cluster open" id="sport">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>🏃 Sport & Fitness <span class="count">10 papers · 6 repos · 5 datasets</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <!-- Papers -->
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1007/s00421-003-0988-y" target="_blank">Uth et al. 2004 — VO₂max from HRmax/HRrest Ratio</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Coefficient 15.3</span>
+          <span>Eur J Appl Physiol</span>
+          <span>PMID 14624296</span>
+        </div>
+        <div class="desc">VO₂max = 15.3 × (HRmax / HRrest). Valid range HRmax/HRrest 2.4–4.5 → VO₂max 37–69 ml/kg/min.</div>
+        <div class="contrib">Kontribusi utama: model field predictCVFitness "Uth VO₂max v2 — PMID 14624296".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1088/0967-3334/34/7/781" target="_blank">Buller et al. 2013 — Core Temp Estimation from Sequential HR (Kalman)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Extended Kalman</span>
+          <span>Physiological Measurement</span>
+          <span>PMID 23780514</span>
+        </div>
+        <div class="desc">a=-7.379, b=384.4, c=-4881; Q=0.000484; R=18.88. Init CT_0 = 37.1°C. Critical CT ≥ 39.5°C.</div>
+        <div class="contrib">Kontribusi utama: model field predictHeatstroke "Buller EKF + WBGT proxy v2 — PMID 23780514".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1007/s40279-013-0071-8" target="_blank">Plews et al. 2013 — Training Adaptation & HRV in Elite Endurance Athletes</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Lognormal RMSSD 7d</span>
+          <span>Sports Medicine</span>
+          <span>PMID 23852425</span>
+        </div>
+        <div class="desc">Dasar metodologis untuk lognormal RMSSD rolling-7d baseline; SWC = 0.5 × sigma_7d.</div>
+        <div class="contrib">Kontribusi: source field predictOvertraining "Plews 2013 overtraining biomarkers".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1056/NEJMoa043901" target="_blank">Almond et al. 2005 — Hyponatremia among Boston Marathon Runners</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">13% hyponatremia, 0.6% kritikal</span>
+          <span>NEJM</span>
+          <span>PMID 15829535</span>
+        </div>
+        <div class="desc">Insidensi EAH di Boston Marathon. Na &lt; 135 mmol/L.</div>
+        <div class="contrib">Kontribusi: source field predictHyponatremia citing "Boston Marathon EAH cohort".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1136/bjsports-2015-095004" target="_blank">Hew-Butler et al. 2015 — EAH Consensus Statement Carlsbad</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">EAH protocol</span>
+          <span>Br J Sports Med</span>
+          <span>PMID 26227507</span>
+        </div>
+        <div class="desc">Protokol klinis EAH terkini. Weight change rule: gain &gt;+2% = hampir pasti hyponatremia.</div>
+        <div class="contrib">Kontribusi: EAH composite formula untuk predictHyponatremia v2.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.4085/1062-6050-50.9.07" target="_blank">Casa et al. 2015 — NATA Position Statement: Exertional Heat Illnesses</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">WBGT cutoffs</span>
+          <span>J Athletic Training</span>
+          <span>PMID 26381473</span>
+        </div>
+        <div class="desc">Cutoff WBGT, gejala, manajemen heat cramps + heat stroke.</div>
+        <div class="contrib">Kontribusi: source field predictHeatstroke citing "Casa NATA 2015"; predictKelelahanPanas citing "Casa et al. 2015".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1080/026404197367281" target="_blank">Schwellnus et al. 1997 — Aetiology of Skeletal Muscle Cramps</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Neuromuscular hypothesis</span>
+          <span>J Sports Sci</span>
+          <span>PMID 9232553</span>
+        </div>
+        <div class="desc">Hipotesis neuromuscular (bukan dehidrasi-elektrolit murni). Implikasi: heat-cramps butuh sinyal training-load + fatigue.</div>
+        <div class="contrib">Kontribusi: source field predictHeatCramps citing "Schwellnus et al. 1997 J Sports Sciences".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1136/bjsports-2015-095788" target="_blank">Gabbett 2016 — Training-Injury Prevention Paradox (ACWR)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Sweet spot 0.8–1.3</span>
+          <span>Br J Sports Med</span>
+          <span>PMID 26758673</span>
+        </div>
+        <div class="desc">Acute:Chronic Workload Ratio. Danger zone &gt;1.5.</div>
+        <div class="contrib">Kontribusi: ACWR formula untuk predictOvertraining + AIRI.</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER ★</span>
+          <span class="title"><a href="https://doi.org/10.1056/NEJM199910283411804" target="_blank">Cole et al. 1999 — HRR as Predictor of Mortality</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">HRR1min &lt; 12 = 4× hazard</span>
+          <span>NEJM</span>
+          <span>PMID 10536127</span>
+        </div>
+        <div class="desc">Cohort Cleveland Clinic. HRR 1-min = vagal reactivation; 3-min = recovery global.</div>
+        <div class="contrib">Kontribusi utama: model field predictCVFitness "Cole HRR v2 — PMID 10536127".</div>
+      </div>
+
+      <div class="item-card" data-type="paper">
+        <div class="top">
+          <span class="tag tag-paper">PAPER</span>
+          <span class="title"><a href="https://doi.org/10.1111/sms.12408" target="_blank">Periard et al. 2015 — Heat Acclimation Adaptations</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Timeline 10-14 hari</span>
+          <span>Scand J Med Sci Sports</span>
+          <span>PMID 25943654</span>
+        </div>
+        <div class="desc">Heat acclimatization untuk competitive athletes. Naïve runner di tropics Indonesia = risiko EHI tertinggi minggu pertama.</div>
+        <div class="contrib">Kontribusi: heat_acclimation_days feature untuk cluster sport.</div>
+      </div>
+
+      <!-- Repos -->
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/neuropsychology/NeuroKit" target="_blank">neuropsychology/NeuroKit (sport HRV)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 2.2k</span>
+          <span>Python / MIT</span>
+        </div>
+        <div class="desc">HRV time/freq/non-linear, ECG, RSP, EDA. Reference implementasi RMSSD/SDNN.</div>
+        <div class="contrib">Kontribusi: Sport HRV feature extraction.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/Aura-healthcare/hrv-analysis" target="_blank">Aura-healthcare/hrv-analysis</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 449</span>
+          <span>Python / GPL-3</span>
+        </div>
+        <div class="desc">RR-interval engineering features — Task-Force-1996 compliant; bagus untuk reproduksi pipeline Plews.</div>
+        <div class="contrib">Kontribusi: Task Force HRV reference.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/PGomes92/pyhrv" target="_blank">PGomes92/pyhrv</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 333</span>
+          <span>Python</span>
+        </div>
+        <div class="desc">Toolbox HRV lengkap dengan dokumentasi rapi.</div>
+        <div class="contrib">Kontribusi: HRV toolbox alternatif.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/JanCBrammer/OpenHRV" target="_blank">JanCBrammer/OpenHRV</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 172</span>
+          <span>Python</span>
+        </div>
+        <div class="desc">HRV biofeedback dengan ECG chest strap (Polar H10) — relevan untuk validasi sensor-sim.</div>
+        <div class="contrib">Kontribusi: Validation against sensor real.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/Oxford-NIL/PSSK-TCBK" target="_blank">Oxford-NIL/PSSK-TCBK</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">★ 1</span>
+          <span>Python</span>
+        </div>
+        <div class="desc">Implementasi multi-model Kalman filter untuk core temp dari HR — port langsung dari pendekatan Buller.</div>
+        <div class="contrib">Kontribusi: Buller EKF reference implementation.</div>
+      </div>
+
+      <div class="item-card" data-type="repo">
+        <div class="top">
+          <span class="tag tag-repo">GITHUB</span>
+          <span class="title"><a href="https://github.com/JohanBellander/vo2maxe" target="_blank">JohanBellander/vo2maxe</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">TeX</span>
+        </div>
+        <div class="desc">Reverse-engineered Garmin VO₂max algorithm — kontekstual referensi.</div>
+        <div class="contrib">Kontribusi: Reference VO₂max algorithm Garmin.</div>
+      </div>
+
+      <!-- Datasets -->
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/treadmill-exercise-cardioresp/1.0.1/" target="_blank">UMA Treadmill Maximal Exercise Tests</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">992 tes</span>
+          <span>HR + VO2 + VCO2 + RER</span>
+          <span>n=857 (10-63 thn)</span>
+          <span>PhysioNet HDL 1.5.0</span>
+        </div>
+        <div class="desc">Graded treadmill tests; HR, VO2, VCO2, RER, ventilasi, suhu/RH ambient.</div>
+        <div class="contrib">Kontribusi: Anchor real-world untuk cv-fitness re-train (target F1 ≥0.80).</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/actes-cycloergometer-exercise/" target="_blank">Cardiorespiratory Cycloergometer Tests</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">18 tes</span>
+          <span>cycle ergometer + gas exchange</span>
+          <span>PhysioNet open</span>
+        </div>
+        <div class="desc">Ventilasi & gas exchange.</div>
+        <div class="contrib">Kontribusi: Supplementary cardiorespiratory data.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/qde/" target="_blank">Quantitative Dehydration Estimation (QDE)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">Bioimpedance + sweat</span>
+          <span>Gold-standard</span>
+          <span>PhysioNet open</span>
+        </div>
+        <div class="desc">Bioimpedance, body temperature, sweat samples — gold-standard untuk hyponatremia/dehydration label.</div>
+        <div class="contrib">Kontribusi: Gold-standard validation untuk predictDehidrasi + predictHyponatremia.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/norwegian-athlete-ecg/" target="_blank">Norwegian Endurance Athlete ECG DB</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">28 ECG atlet elite</span>
+          <span>PhysioNet open</span>
+        </div>
+        <div class="desc">Anchor "trained heart" untuk distinguishing benign HRV dari pathology.</div>
+        <div class="contrib">Kontribusi: Athlete reference cohort.</div>
+      </div>
+
+      <div class="item-card" data-type="dataset">
+        <div class="top">
+          <span class="tag tag-dataset">DATASET</span>
+          <span class="title"><a href="https://physionet.org/content/wrist/" target="_blank">Wrist PPG During Exercise</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">n=8</span>
+          <span>walking/running/cycling</span>
+          <span>PhysioNet open</span>
+        </div>
+        <div class="desc">PPG validasi konsistensi sensor optik vs chest strap.</div>
+        <div class="contrib">Kontribusi: PPG-exercise validation data.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ENVIRONMENTAL ===================== -->
+  <section class="cluster open" id="environmental">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>🌡️ Environmental (PM2.5, UV, Heat) <span class="count">4 sources</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <div class="item-card" data-type="clinical">
+        <div class="top">
+          <span class="tag tag-clinical">GUIDELINE</span>
+          <span class="title"><a href="https://www.who.int/publications/i/item/9789240034228" target="_blank">WHO Global Air Quality Guidelines 2021</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">PM2.5 24h AQG: 15 µg/m³</span>
+          <span>WHO</span>
+        </div>
+        <div class="desc">Basis threshold Orellano 2020 meta-analysis. ISPU "Tidak Sehat" PM2.5 &gt; 55 µg/m³.</div>
+        <div class="contrib">Kontribusi: PM2.5 threshold untuk TEPRS + predictAsma + predictISPA + predictCOPD.</div>
+      </div>
+
+      <div class="item-card" data-type="clinical">
+        <div class="top">
+          <span class="tag tag-clinical">GUIDELINE</span>
+          <span class="title"><a href="https://www.who.int/publications/i/item/9241590076" target="_blank">WHO Global Solar UV Index 2002</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">UV ≥8 = very high</span>
+          <span>WHO</span>
+        </div>
+        <div class="desc">Standar global solar UV Index, kategori very low (0-2) → extreme (11+).</div>
+        <div class="contrib">Kontribusi: source field predictSunburn citing "WHO Global Solar UV Index 2002".</div>
+      </div>
+
+      <div class="item-card" data-type="clinical">
+        <div class="top">
+          <span class="tag tag-clinical">GUIDELINE</span>
+          <span class="title"><a href="https://en.wikipedia.org/wiki/Wet-bulb_globe_temperature" target="_blank">WBGT Formula Reference (Stull 2011)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">WBGT_outdoor = 0.7·Twb + 0.2·Tg + 0.1·Tdb</span>
+        </div>
+        <div class="desc">Stull 2011 approximation untuk Twb dari T + RH. WBGT &gt;28°C = danger zone (NATA).</div>
+        <div class="contrib">Kontribusi: WBGT proxy untuk predictHeatstroke v2.</div>
+      </div>
+
+      <div class="item-card" data-type="clinical">
+        <div class="top">
+          <span class="tag tag-clinical">GUIDELINE</span>
+          <span class="title"><a href="https://aasm.org/clinical-resources/scoring-manual/" target="_blank">AASM Scoring Manual V3 (Feb 2023)</a></span>
+        </div>
+        <div class="meta">
+          <span class="metric">AHI cutoffs</span>
+          <span>AASM</span>
+        </div>
+        <div class="desc">Wajib pakai per 31 Des 2023. AHI severitas: &lt;5 normal, 5-15 mild, 15-30 moderate, ≥30 severe. Apnea = ≥90% airflow ↓ ≥10 s.</div>
+        <div class="contrib">Kontribusi: model field predictSleepApnea citing "AASM V3".</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== CLINICAL GUIDELINES ===================== -->
+  <section class="cluster open" id="clinical">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>🩺 Clinical Guidelines (per disease) <span class="count">35 disease sources</span></h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+
+      <p style="font-size:12.5px;opacity:0.85;line-height:1.6;margin:6px 0 14px">Setiap 35 disease risk prediction memiliki <code style="background:rgba(0,229,212,0.1);color:#00e5d4;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px">source</code> field di <code style="background:rgba(0,229,212,0.1);color:#00e5d4;padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px">ml-test-runner.js</code> yang menyebut clinical guideline / paper referensi. Berikut daftar lengkap:</p>
+
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">asma — GINA Asthma 2024 + WHO PM2.5</span></div>
+        <div class="desc"><a href="https://ginasthma.org/" target="_blank">GINA Asthma 2024</a> + WHO PM2.5 health protective thresholds.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">ispa — Riskesdas 2018 + WHO IMCI ARI</span></div>
+        <div class="desc"><a href="https://www.who.int/publications/i/item/9789241548373" target="_blank">WHO IMCI ARI criteria</a> + Riskesdas 2018 (Kemenkes RI).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">copd — GOLD COPD Guidelines 2024</span></div>
+        <div class="desc"><a href="https://goldcopd.org/2024-gold-report/" target="_blank">GOLD 2024 Report</a>. FEV1 &lt; 60% = GOLD 3+.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">hipoksia — ATS/ERS Pulse Oximetry Guidelines</span></div>
+        <div class="desc">SpO₂ &lt; 92% = hypoxia threshold.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">heatstroke — ACSM Heat Illness Position Stand 2007</span></div>
+        <div class="desc">Core temp &gt; 40°C OR HR &gt; 130 + HI &gt; 35.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">kelelahan-panas — Casa et al. 2015 NATA</span></div>
+        <div class="desc"><a href="https://doi.org/10.4085/1062-6050-50.9.07" target="_blank">DOI 10.4085/1062-6050-50.9.07</a> (PMID 26381473).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">dehidrasi — Cheuvront & Kenefick 2014</span></div>
+        <div class="desc"><a href="https://doi.org/10.1002/cphy.c130017" target="_blank">Compr Physiol</a>. Dehydration biomarkers in physically active populations.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">afib — AHA AFib Screening 2023 + PhysioNet AF Challenge</span></div>
+        <div class="desc"><a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000001193" target="_blank">AHA 2023 AFib Guidelines</a> + <a href="https://physionet.org/content/challenge-2017/1.0.0/" target="_blank">PhysioNet 2017</a>.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">sunburn — WHO Global Solar UV Index 2002</span></div>
+        <div class="desc"><a href="https://www.who.int/publications/i/item/9241590076" target="_blank">WHO 2002</a>. UV Index categories.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">pneumonia — CURB-65 criteria</span></div>
+        <div class="desc">RR ≥30, temp ≥38.5. British Thoracic Society.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">bronchitis — ATS Acute Bronchitis Statement 2020</span></div>
+        <div class="desc">American Thoracic Society.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">asma-exacerbation — Tinschert 2020 J Asthma Allergy</span></div>
+        <div class="desc"><a href="https://doi.org/10.2147/JAA.S278155" target="_blank">DOI 10.2147/JAA.S278155</a>. AsthmaTrack predictive model.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">copd-exacerbation — GOLD Exacerbation criteria</span></div>
+        <div class="desc"><a href="https://goldcopd.org/2024-gold-report/" target="_blank">GOLD 2024</a> exacerbation chapter.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">sleep-apnea — AASM AHI criteria + Fabius 2019</span></div>
+        <div class="desc"><a href="https://aasm.org/clinical-resources/scoring-manual/" target="_blank">AASM V3</a>; <a href="https://doi.org/10.1007/s11325-018-1654-2" target="_blank">Fabius 2019</a> ODI≥15 = moderate OSA.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">bradikardia — ESC Bradycardia Guidelines 2021</span></div>
+        <div class="desc"><a href="https://academic.oup.com/eurheartj/article/42/35/3427/6358547" target="_blank">European Society of Cardiology 2021</a>.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">takikardia — AHA Tachycardia Algorithm 2020</span></div>
+        <div class="desc"><a href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000000916" target="_blank">AHA 2020</a>.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">ektopik-beat — MIT-BIH Arrhythmia + ESC PVC</span></div>
+        <div class="desc"><a href="https://physionet.org/content/mitdb/1.0.0/" target="_blank">MIT-BIH Arrhythmia DB</a> + ESC PVC management.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">hipertensi — JNC 8 + Mukkamala 2015</span></div>
+        <div class="desc"><a href="https://doi.org/10.1109/TBME.2015.2441951" target="_blank">Mukkamala IEEE TBME 2015</a> PWV review + JNC 8.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">vasovagal — ESC Syncope Guidelines 2018</span></div>
+        <div class="desc"><a href="https://academic.oup.com/eurheartj/article/39/21/1883/4939241" target="_blank">European Heart Journal 2018</a>.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">cv-fitness — Cole 1999 NEJM (HR recovery)</span></div>
+        <div class="desc"><a href="https://doi.org/10.1056/NEJM199910283411804" target="_blank">DOI Cole 1999</a> (PMID 10536127). HRR &lt;12 bpm/min = high risk.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">heat-cramps — Schwellnus 1997</span></div>
+        <div class="desc"><a href="https://doi.org/10.1080/026404197367281" target="_blank">DOI 10.1080/026404197367281</a> (PMID 9232553).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">hyponatremia — Almond 2005 NEJM</span></div>
+        <div class="desc"><a href="https://doi.org/10.1056/NEJMoa043901" target="_blank">DOI Almond 2005</a> + <a href="https://doi.org/10.1136/bjsports-2015-095004" target="_blank">Hew-Butler 2015 EAH consensus</a>.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">photokeratitis — AAO Cornea Society 2019</span></div>
+        <div class="desc">American Academy of Ophthalmology + Cornea Society.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">vitamin-d — Setiati 2008 (Indonesia 25(OH)D)</span></div>
+        <div class="desc">Asia Pac J Clin Nutr (Indonesia cohort).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">skin-cancer — Whiteman 2016 Br J Dermatol</span></div>
+        <div class="desc">Australian Melanoma Registry. Cox PH model.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">demam — NICE NG143 Fever criteria</span></div>
+        <div class="desc"><a href="https://www.nice.org.uk/guidance/ng143" target="_blank">NICE Guideline NG143</a>. Fever &gt;37.5°C.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">hipotermia — Zafren 2014 Wilderness Environ Med</span></div>
+        <div class="desc">Wilderness Medical Society.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">stress-kronik — SWELL-KW + WESAD</span></div>
+        <div class="desc">Koldijk 2014 + Schmidt 2018 stress labels (lihat cluster Sleep & Mental).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">burnout — Maslach & Leiter 2016 MBI</span></div>
+        <div class="desc"><a href="https://doi.org/10.1002/wps.20311" target="_blank">DOI 10.1002/wps.20311</a> (PMID 27265691).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">anxiety-panic — DSM-5 + Schmidt 2019</span></div>
+        <div class="desc"><a href="https://www.psychiatry.org/psychiatrists/practice/dsm" target="_blank">DSM-5 panic criteria</a> + Schmidt 2019 J Anxiety Disord.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">sleep-deprivation — Hirshkowitz 2015 NSF</span></div>
+        <div class="desc">Sleep Health NSF guidelines, National Sleep Foundation.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">overtraining — Plews 2013 Sports Medicine</span></div>
+        <div class="desc"><a href="https://doi.org/10.1007/s40279-013-0071-8" target="_blank">DOI Plews 2013</a> (PMID 23852425).</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">sedentary — Doherty 2017 UK Biobank</span></div>
+        <div class="desc">UK Biobank accelerometer + mortality cohort.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">migraine-trigger — Pellegrino 2018 Headache</span></div>
+        <div class="desc">Multi-trigger threshold ≥3.</div>
+      </div>
+      <div class="item-card" data-type="clinical">
+        <div class="top"><span class="tag tag-clinical">CLINICAL</span><span class="title">cardiac-event — AHA Cardiac Arrest/MI + Apple Heart</span></div>
+        <div class="desc"><a href="https://www.heart.org/" target="_blank">AHA screening</a> + <a href="https://doi.org/10.1056/NEJMoa1901183" target="_blank">Apple Heart Study labels</a>.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section class="cluster open">
+    <div class="cluster-head" onclick="this.parentElement.classList.toggle('open')">
+      <h2>📋 Catatan Verifikasi</h2>
+      <svg viewBox="0 0 24 24" class="chev"><path d="M6 9l6 6 6-6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </div>
+    <div class="cluster-body">
+      <p style="font-size:12.5px;line-height:1.65;opacity:0.85;margin:8px 0">
+        Verifikasi setiap DOI/URL dilakukan melalui:
+      </p>
+      <ul style="font-size:12.5px;line-height:1.7;opacity:0.85;padding-left:20px">
+        <li>Crossref API (<a href="https://api.crossref.org" target="_blank">api.crossref.org</a>) untuk paper DOI</li>
+        <li>PubMed PMID cross-check via <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">PubMed</a></li>
+        <li>GitHub Search via <code style="background:rgba(0,229,212,0.1);color:#00e5d4;padding:1px 5px;border-radius:3px">gh search repos</code> CLI (2026-05-31)</li>
+        <li>PhysioNet content URL fetch untuk dataset</li>
+        <li>WebFetch ke landing page resmi (Stanford AIMI, UCI, Zenodo) untuk validasi akses</li>
+      </ul>
+      <p style="font-size:12px;opacity:0.7;line-height:1.6;margin-top:12px;font-style:italic">
+        Gap yang diakui terbuka di <a href="/ml-improvement-plan.html#gaps">ML Improvement Plan §8</a>: DeepBeat Stanford repo (404), BMKG/ISPU API tidak ada SLA, SleepPPG-Net code belum publik, AASM V3 manual berbayar, dan tidak ada open dataset Kemenkes Indonesia untuk sleep/heat illness.
+      </p>
+    </div>
+  </section>
+
+  <nav class="bottomnav">
+    <a href="/dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+    <a href="/ml-results-report.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg><span>Test ML</span></a>
+    <a href="/evidence.html" class="bn-item active"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg><span>Riset</span></a>
+    <a href="/profile.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/></svg><span>Profil</span></a>
+  </nav>
+
+  <script>
+    // Filter logic
+    const chips = document.querySelectorAll('.filter-chip');
+    const cards = document.querySelectorAll('.item-card');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const filter = chip.dataset.filter;
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.type === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Update hero stats from real card counts
+    const counts = {
+      paper: document.querySelectorAll('.item-card[data-type="paper"]').length,
+      repo: document.querySelectorAll('.item-card[data-type="repo"]').length,
+      dataset: document.querySelectorAll('.item-card[data-type="dataset"]').length,
+      clinical: document.querySelectorAll('.item-card[data-type="clinical"]').length,
+    };
+    document.getElementById('papersCount').textContent = counts.paper;
+    document.getElementById('reposCount').textContent = counts.repo;
+    document.getElementById('datasetsCount').textContent = counts.dataset;
+    document.getElementById('clinicalCount').textContent = counts.clinical;
+  </script>
+
+  <script src="/js/icon-lib.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+</body>
+</html>

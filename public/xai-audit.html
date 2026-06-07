@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>XAI Audit — Explainability Per Fitur — AERVINEX</title>
+  <meta name="description" content="Audit XAI Level 0-3 per fitur AERVINEX: feature importance, citation, formula, data source. Transparansi end-to-end." />
+  <link rel="canonical" href="https://aervinex.web.app/xai-audit.html" />
+  <meta property="og:title" content="XAI Audit — AERVINEX" />
+  <meta property="og:image" content="https://aervinex.web.app/icon-512.svg" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="id_ID" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { padding-bottom: 100px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(0,229,212,0.14), rgba(167,139,250,0.14));
+      border: 1px solid rgba(0,229,212,0.3);
+      border-radius: 22px;
+      padding: 26px 22px; margin: 14px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 70% 0%, rgba(167,139,250,0.2), transparent 60%);
+      pointer-events: none;
+    }
+    .hero .v-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .hero h1 { font-size: 22px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px; position: relative; }
+    .hero .sub { font-size: 13px; opacity: 0.85; margin-bottom: 16px; line-height: 1.55; position: relative; }
+
+    .level-legend {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin-top: 14px; position: relative;
+    }
+    @media (max-width: 700px) { .level-legend { grid-template-columns: 1fr 1fr; } }
+    .level-card {
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      border-left: 4px solid var(--lvl-color);
+    }
+    .level-card .head { font-size: 12px; font-weight: 800; color: var(--lvl-color); margin-bottom: 4px; }
+    .level-card .desc { font-size: 11px; opacity: 0.7; line-height: 1.4; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin: 14px; padding: 0;
+    }
+    @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    .stat-cell {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 14px;
+      text-align: center;
+    }
+    .stat-cell .num { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+    .stat-cell .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-top: 4px; }
+    .num.g3 { color: #4ade80; }
+    .num.g2 { color: #fcd34d; }
+    .num.g1 { color: #fb923c; }
+    .num.g0 { color: #ff5470; }
+
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px; margin: 6px 0;
+      position: sticky; top: 0; background: var(--bg, #0f1923); padding-top: 10px; padding-bottom: 10px;
+      z-index: 30;
+    }
+    .filter-chip {
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      font-size: 11.5px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; border-color: transparent;
+    }
+    .filter-chip .count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; opacity: 0.7; margin-left: 4px;
+    }
+
+    .section {
+      margin: 14px; padding: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+    }
+    .section h2 {
+      font-size: 17px; font-weight: 700;
+      margin: 0 0 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .num {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; font-size: 13px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .section h2 .badge {
+      margin-left: auto;
+      font-size: 11px; padding: 3px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .feat-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 12px;
+      table-layout: auto;
+    }
+    .feat-table thead th {
+      text-align: left; padding: 10px 8px;
+      background: rgba(0,229,212,0.06);
+      font-size: 10.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      opacity: 0.85;
+    }
+    .feat-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    .feat-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+    .feat-table tbody td {
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    .feat-table .name { font-weight: 700; }
+    .feat-table .sub { font-size: 10.5px; opacity: 0.65; margin-top: 2px; }
+    .lvl-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 999px;
+      font-size: 10.5px; font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .lvl-badge.g3 { background: rgba(74,222,128,0.18); color: #4ade80; }
+    .lvl-badge.g2 { background: rgba(252,211,77,0.18); color: #fcd34d; }
+    .lvl-badge.g1 { background: rgba(251,146,60,0.18); color: #fb923c; }
+    .lvl-badge.g0 { background: rgba(255,84,112,0.18); color: #ff5470; }
+    .check { font-size: 13px; font-weight: 800; }
+    .check.ok { color: #4ade80; }
+    .check.no { color: rgba(255,255,255,0.25); }
+
+    @media (max-width: 760px) {
+      .feat-table { font-size: 11px; }
+      .feat-table thead th, .feat-table tbody td { padding: 7px 5px; }
+      .feat-table th:nth-child(4), .feat-table td:nth-child(4),
+      .feat-table th:nth-child(5), .feat-table td:nth-child(5),
+      .feat-table th:nth-child(6), .feat-table td:nth-child(6) {
+        display: none;
+      }
+    }
+
+    .reco-card {
+      background: rgba(252,211,77,0.06);
+      border-left: 3px solid #fcd34d;
+      padding: 10px 14px; border-radius: 8px;
+      margin: 8px 0; font-size: 12.5px; line-height: 1.55;
+    }
+    .reco-card strong { color: #fcd34d; }
+
+    .toc-mini {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 6px 14px;
+    }
+    .toc-mini a {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .toc-mini a:hover { color: #00e5d4; border-color: rgba(0,229,212,0.3); }
+
+    .meth-card {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(0,229,212,0.2);
+      border-radius: 10px;
+      padding: 12px; margin: 8px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; line-height: 1.6;
+    }
+    .meth-card .lbl { color: #00e5d4; font-weight: 700;
+      display: block; margin-bottom: 6px;
+      font-family: 'Inter', sans-serif; font-size: 12px; }
+  </style>
+</head>
+<body class="theme-dark" data-page="xai-audit">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topbar">
+    <a href="/evidence.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="topbar-title"><span>XAI Audit</span></div>
+    <span style="background:rgba(74,222,128,0.18);color:#4ade80;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800">v1.0</span>
+  </header>
+
+  <section class="hero">
+    <span class="v-tag">EXPLAINABILITY AUDIT</span>
+    <h1>XAI per Fitur — Transparansi Level 0 → 3</h1>
+    <div class="sub">Audit menyeluruh: apakah setiap fitur AERVINEX punya feature importance, citation paper, formula matematis, dan data source yang dapat di-traceable. <strong>Trust = Trace.</strong></div>
+
+    <div class="level-legend">
+      <div class="level-card" style="--lvl-color:#4ade80">
+        <div class="head">🟢 LEVEL 3 — Full XAI</div>
+        <div class="desc">Feature importance + citation + formula + data source semua visible.</div>
+      </div>
+      <div class="level-card" style="--lvl-color:#fcd34d">
+        <div class="head">🟡 LEVEL 2 — Partial XAI</div>
+        <div class="desc">Salah satu visible: citation, formula, atau feature breakdown.</div>
+      </div>
+      <div class="level-card" style="--lvl-color:#fb923c">
+        <div class="head">🟠 LEVEL 1 — Minimal</div>
+        <div class="desc">Hanya output + disclaimer, tanpa explainability layer.</div>
+      </div>
+      <div class="level-card" style="--lvl-color:#ff5470">
+        <div class="head">🔴 LEVEL 0 — Black Box</div>
+        <div class="desc">Tidak ada explainability sama sekali. Wajib di-upgrade.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-row">
+    <div class="stat-cell"><div class="num g3" id="cnt3">—</div><div class="lbl">Level 3 (Full)</div></div>
+    <div class="stat-cell"><div class="num g2" id="cnt2">—</div><div class="lbl">Level 2 (Partial)</div></div>
+    <div class="stat-cell"><div class="num g1" id="cnt1">—</div><div class="lbl">Level 1 (Minimal)</div></div>
+    <div class="stat-cell"><div class="num g0" id="cnt0">—</div><div class="lbl">Level 0 (Black Box)</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-chip active" data-lvl="all">Semua <span class="count" id="cntAll">—</span></button>
+    <button class="filter-chip" data-lvl="3">🟢 L3</button>
+    <button class="filter-chip" data-lvl="2">🟡 L2</button>
+    <button class="filter-chip" data-lvl="1">🟠 L1</button>
+    <button class="filter-chip" data-lvl="0">🔴 L0</button>
+  </div>
+
+  <div class="toc-mini">
+    <a href="#ml-cluster">🤖 ML Models (35)</a>
+    <a href="#baseline">📊 Baseline Models</a>
+    <a href="#vitals">❤️ Vital Signs</a>
+    <a href="#ux">🎨 UX & Analytics</a>
+    <a href="#recos">💡 Recommendations</a>
+  </div>
+
+  <!-- ============ ML Cluster ============ -->
+  <section class="section" id="ml-cluster">
+    <h2><span class="num">1</span> ML Risk Predictions (35 disease) <span class="badge" id="mlSum">—</span></h2>
+    <p style="font-size:13px;opacity:0.78">Per <code style="background:rgba(0,229,212,0.1);padding:1px 6px;border-radius:4px;color:#00e5d4;font-family:'JetBrains Mono'">ml-client.js</code> + <code style="background:rgba(0,229,212,0.1);padding:1px 6px;border-radius:4px;color:#00e5d4;font-family:'JetBrains Mono'">risk-detail.html</code> XAI panel. Setiap risk score punya factor breakdown, citation, dan threshold yang exposed.</p>
+    <div style="overflow-x:auto">
+      <table class="feat-table" id="mlTable">
+        <thead>
+          <tr>
+            <th>Fitur</th>
+            <th>Level</th>
+            <th>Feature Importance</th>
+            <th>Citation</th>
+            <th>Formula</th>
+            <th>Data Source</th>
+            <th>Catatan</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ Baseline ============ -->
+  <section class="section" id="baseline">
+    <h2><span class="num">2</span> Baseline & Composite Models <span class="badge" id="baseSum">—</span></h2>
+    <div style="overflow-x:auto">
+      <table class="feat-table" id="baseTable">
+        <thead>
+          <tr><th>Fitur</th><th>Level</th><th>FI</th><th>Citation</th><th>Formula</th><th>Source</th><th>Catatan</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ Vital Signs ============ -->
+  <section class="section" id="vitals">
+    <h2><span class="num">3</span> Vital Signs & Real-time Metrics <span class="badge" id="vitSum">—</span></h2>
+    <div style="overflow-x:auto">
+      <table class="feat-table" id="vitTable">
+        <thead>
+          <tr><th>Fitur</th><th>Level</th><th>FI</th><th>Citation</th><th>Formula</th><th>Source</th><th>Catatan</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ UX ============ -->
+  <section class="section" id="ux">
+    <h2><span class="num">4</span> UX, Recommendations & Analytics <span class="badge" id="uxSum">—</span></h2>
+    <div style="overflow-x:auto">
+      <table class="feat-table" id="uxTable">
+        <thead>
+          <tr><th>Fitur</th><th>Level</th><th>FI</th><th>Citation</th><th>Formula</th><th>Source</th><th>Catatan</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ Methodology ============ -->
+  <section class="section">
+    <h2><span class="num">5</span> Metodologi Audit XAI</h2>
+    <p>Audit dilakukan dengan kriteria objektif per fitur. Setiap "✓" harus traceable secara visual di UI atau code.</p>
+
+    <div class="meth-card">
+      <span class="lbl">Feature Importance (FI)</span>
+      ✓ jika UI menampilkan kontribusi tiap factor (weight bar, percentage)<br>
+      ✗ jika hanya output single value tanpa breakdown
+    </div>
+
+    <div class="meth-card">
+      <span class="lbl">Citation</span>
+      ✓ jika ada paper DOI/PMID atau guideline (WHO/AHA/GINA/dll) yang dirujuk di UI atau code comment<br>
+      ✗ jika tidak ada referensi peer-reviewed atau institusional
+    </div>
+
+    <div class="meth-card">
+      <span class="lbl">Formula</span>
+      ✓ jika formula matematis exposed (di ml-improvement-plan.html, ml-results-report.html, atau model field di JS)<br>
+      ✗ jika hanya output dari black-box fungsi tanpa documentation
+    </div>
+
+    <div class="meth-card">
+      <span class="lbl">Data Source</span>
+      ✓ jika dataset/sensor input clearly disclosed (e.g., "MAX30102 PPG", "PhysioNet AF Challenge", "BMKG ISPU")<br>
+      ✗ jika tidak ada disclosure tentang asal data
+    </div>
+
+    <p style="margin-top:14px;font-size:12.5px;opacity:0.7">Threshold Level: <strong style="color:#4ade80">L3</strong> = 4/4 kriteria · <strong style="color:#fcd34d">L2</strong> = 2-3/4 · <strong style="color:#fb923c">L1</strong> = 1/4 (hanya disclaimer) · <strong style="color:#ff5470">L0</strong> = 0/4</p>
+  </section>
+
+  <!-- ============ Recommendations ============ -->
+  <section class="section" id="recos">
+    <h2><span class="num">6</span> Rekomendasi Peningkatan</h2>
+    <div id="recoList"></div>
+  </section>
+
+  <nav class="bottomnav">
+    <a href="/dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+    <a href="/ml-results-report.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg><span>Test ML</span></a>
+    <a href="/evidence.html" class="bn-item active"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg><span>Riset</span></a>
+    <a href="/profile.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/></svg><span>Profil</span></a>
+  </nav>
+
+  <script src="/js/i18n.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+  <script>
+    // ── Audit data ─────────────────────────────────────────────────
+    // 35 ML models — all use risk-detail.html XAI panel (feature breakdown,
+    // citation in source field, formula in model field, factor list visible).
+    const ML_AUDIT = [
+      { name: 'predictAsma', sub: 'asma', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'GINA 2024 + WHO PM2.5 thresholds, factor PM2.5/RR/SpO₂ breakdown visible' },
+      { name: 'predictISPA', sub: 'ispa', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Riskesdas 2018 + WHO IMCI ARI criteria, PM2.5 + PM10 + RR + body temp' },
+      { name: 'predictCOPD', sub: 'copd', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'GOLD COPD Guidelines 2024 (FEV1 <60% = GOLD 3+)' },
+      { name: 'predictHipoksia', sub: 'hipoksia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'ATS/ERS Pulse oximetry (SpO₂ <92% = hypoxia)' },
+      { name: 'predictHeatstroke', sub: 'heatstroke', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Buller EKF + Casa NATA 2015 — PMID 23780514, 26381473' },
+      { name: 'predictKelelahanPanas', sub: 'kelelahan-panas', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Casa et al. 2015 Br J Sports Med' },
+      { name: 'predictDehidrasi', sub: 'dehidrasi', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Cheuvront & Kenefick 2014 Compreh Physiol' },
+      { name: 'predictAFib', sub: 'afib', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'DeepBeat (Torres-Soto 2020) + 15 HRV features visible' },
+      { name: 'predictSunburn', sub: 'sunburn', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'WHO Global Solar UV Index 2002' },
+      { name: 'predictPneumonia', sub: 'pneumonia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'CURB-65 criteria (RR≥30, temp≥38.5)' },
+      { name: 'predictBronchitis', sub: 'bronchitis', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'ATS Acute Bronchitis Statement 2020' },
+      { name: 'predictAsmaExacerbation', sub: 'asma-exacerbation', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Tinschert 2020 J Asthma Allergy (DOI 10.2147/JAA.S278155)' },
+      { name: 'predictCOPDExacerbation', sub: 'copd-exacerbation', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'GOLD Exacerbation criteria + ACCEPT (Adibi 2020 Lancet Respir Med)' },
+      { name: 'predictSleepApnea', sub: 'sleep-apnea', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Fabius 2019 ODI validation (AUC 0.996, PMID 29564732)' },
+      { name: 'predictBradikardia', sub: 'bradikardia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'ESC Bradycardia Guidelines 2021' },
+      { name: 'predictTakikardia', sub: 'takikardia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'AHA Tachycardia Algorithm 2020' },
+      { name: 'predictEktopikBeat', sub: 'ektopik-beat', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'MIT-BIH Arrhythmia + ESC PVC management' },
+      { name: 'predictHipertensi', sub: 'hipertensi', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'JNC 8 + Mukkamala 2015 IEEE TBME (PWV)' },
+      { name: 'predictVasovagal', sub: 'vasovagal', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'ESC Syncope Guidelines 2018' },
+      { name: 'predictCVFitness', sub: 'cv-fitness', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Uth VO₂max (PMID 14624296) + Cole HRR (PMID 10536127)' },
+      { name: 'predictHeatCramps', sub: 'heat-cramps', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Schwellnus 1997 J Sports Sci' },
+      { name: 'predictHyponatremia', sub: 'hyponatremia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Almond 2005 NEJM + Hew-Butler 2015 BJSM Consensus' },
+      { name: 'predictPhotokeratitis', sub: 'photokeratitis', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'AAO Cornea Society 2019' },
+      { name: 'predictVitaminD', sub: 'vitamin-d', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Setiati 2008 Asia Pac J Clin Nutr (Indonesia cohort)' },
+      { name: 'predictSkinCancer', sub: 'skin-cancer', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Whiteman 2016 Br J Dermatol (Australian Melanoma)' },
+      { name: 'predictDemam', sub: 'demam', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'NICE NG143 Fever criteria (>37.5°C)' },
+      { name: 'predictHipotermia', sub: 'hipotermia', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Zafren 2014 Wilderness Environ Med' },
+      { name: 'predictStressKronik', sub: 'stress-kronik', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Schmidt 2018 WESAD + Koldijk 2014 SWELL-KW' },
+      { name: 'predictBurnout', sub: 'burnout', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Maslach & Leiter 2016 World Psychiatry MBI' },
+      { name: 'predictAnxietyPanic', sub: 'anxiety-panic', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'DSM-5 panic + Schmidt 2019 J Anxiety Disord' },
+      { name: 'predictSleepDeprivation', sub: 'sleep-deprivation', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Hirshkowitz 2015 Sleep Health NSF guidelines' },
+      { name: 'predictOvertraining', sub: 'overtraining', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Plews 2013 Sports Med (lognormal RMSSD)' },
+      { name: 'predictSedentary', sub: 'sedentary', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Doherty 2017 UK Biobank accelerometer mortality' },
+      { name: 'predictMigraineTrigger', sub: 'migraine-trigger', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Pellegrino 2018 Headache (multi-trigger ≥3)' },
+      { name: 'predictCardiacEvent', sub: 'cardiac-event', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'AHA Cardiac Arrest/MI + Apple Heart Study' },
+    ];
+
+    const BASELINE_AUDIT = [
+      { name: 'TEPRS', sub: 'Total Environmental Pollution-Related Risk Score', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'XGBoost ensemble, WHO PM2.5 + BMKG ISPU + heat index weights visible' },
+      { name: 'AIRI', sub: 'Air Quality Index Mode', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'PM2.5/PM10/NO₂/O₃ composite with Orellano 2020 Environ Int weights' },
+      { name: 'APRB', sub: 'Adaptive Pace Resilience Boost (runner)', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'Formula visible, butuh citation paper untuk algoritma adjustment' },
+      { name: 'RRSS', sub: 'Readiness Recovery Sleep Score', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'HRV-based per Plews 2013, weights breakdown di health-engine.js' },
+      { name: 'MCD', sub: 'Multi-Condition Detector', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'Cross-disease correlation, butuh paper citation untuk method' },
+      { name: 'EPO', sub: 'Environmental Performance Optimizer', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'Adjustment formula heat-aware, butuh validation paper' },
+    ];
+
+    const VITALS_AUDIT = [
+      { name: 'Heart Rate (HR) display', sub: 'PPG-derived BPM', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'MAX30102 sensor (firmware), formula peak-detection visible' },
+      { name: 'SpO₂ measurement', sub: 'Pulse oximetry', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Red/IR ratio (Severinghaus 1979), MAX30102 onboard' },
+      { name: 'HRV metrics (RMSSD/SDNN/LF/HF)', sub: 'Heart Rate Variability', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Task Force 1996 + Plews 2013 lognormal baseline' },
+      { name: 'PM2.5 reading', sub: 'Particulate matter', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'SDS011 onboard + BMKG ISPU cross-check (Orellano 2020)' },
+      { name: 'UV Index', sub: 'GUVA-S12SD analog sensor', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'WHO Solar UV Index 2002 thresholds, calibration documented' },
+      { name: 'Heat Index', sub: 'Ambient temp + humidity', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'BME280 sensor + Stull 2011 Twb approximation' },
+      { name: 'Body temperature', sub: 'DS18B20 (optional)', level: 2, fi: 1, cite: 1, form: 1, src: 0, note: 'NICE NG143 fever criteria, sensor source disclosed but raw calibration not user-visible' },
+      { name: 'Sleep score', sub: 'Composite from HRV + motion', level: 2, fi: 1, cite: 1, form: 0, src: 1, note: 'Hirshkowitz NSF reference, butuh expose formula untuk Level 3' },
+      { name: 'Activity tracking', sub: 'Step count + active minutes', level: 1, fi: 0, cite: 1, form: 0, src: 1, note: 'WHO 150 min/week guideline cited, butuh feature breakdown & formula' },
+      { name: 'Battery telemetry', sub: 'ESP32 voltage divider', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'ADC1_CH7 mapping + linear formula' },
+    ];
+
+    const UX_AUDIT = [
+      { name: 'Dashboard summary', sub: 'Aggregate health snapshot', level: 2, fi: 1, cite: 0, form: 0, src: 1, note: 'Feature aggregation visible (per-card), butuh formula composite' },
+      { name: 'Risk-detail XAI panel', sub: 'Per-disease explanation', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Full breakdown: factors + weights + threshold + accuracy badge' },
+      { name: 'Onboarding personalization', sub: 'Wizard 7-step', level: 2, fi: 1, cite: 0, form: 0, src: 1, note: 'Persona-driven goals visible, butuh ekspose ML personalization formula' },
+      { name: 'Real-time alerts (AARC)', sub: '3-level adaptive chain', level: 3, fi: 1, cite: 1, form: 1, src: 1, note: 'Threshold tier + escalation logic exposed di alerts.html' },
+      { name: 'Smart recommendations', sub: 'Rule-based cards', level: 3, fi: 1, cite: 0, form: 1, src: 1, note: 'Rule conditions exposed (7 templates di smart-recs.js)' },
+      { name: 'Achievement badges', sub: 'Gamification', level: 1, fi: 0, cite: 0, form: 0, src: 1, note: 'Hanya source disclosure, butuh rule transparency' },
+      { name: 'Engagement streak', sub: 'Daily login tracker', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'Counter algorithm visible, butuh citation behavioral science' },
+      { name: 'AI Chat (Aervi)', sub: 'Gemini-powered chatbot', level: 2, fi: 0, cite: 1, form: 0, src: 1, note: 'Powered by Gemini 1.5 disclosed, butuh confidence indicator + source citations' },
+      { name: 'Onboarding funnel analytics', sub: 'Internal metrics', level: 1, fi: 0, cite: 0, form: 0, src: 1, note: 'Internal-only, low priority XAI' },
+      { name: 'Push notification opt-in', sub: 'FCM permission', level: 1, fi: 0, cite: 0, form: 0, src: 1, note: 'UX flow saja, no ML' },
+      { name: 'Pricing A/B test', sub: 'Variant assignment', level: 2, fi: 1, cite: 0, form: 1, src: 1, note: 'Algorithm sticky-hash visible, internal tool' },
+      { name: 'Web Vitals reporter', sub: 'Performance telemetry', level: 2, fi: 1, cite: 1, form: 1, src: 1, note: 'Standard LCP/FCP/CLS/FID/INP/TTFB (Google Core Web Vitals)' },
+    ];
+
+    function levelClass(l) { return 'g' + l; }
+    function lvlBadge(l) {
+      const txt = ['🔴 L0','🟠 L1','🟡 L2','🟢 L3'][l];
+      return `<span class="lvl-badge ${levelClass(l)}">${txt}</span>`;
+    }
+    function chk(v) { return v ? '<span class="check ok">✓</span>' : '<span class="check no">✗</span>'; }
+
+    function renderTable(tbody, data) {
+      tbody.innerHTML = data.map(f => `
+        <tr data-lvl="${f.level}">
+          <td><div class="name">${f.name}</div><div class="sub">${f.sub}</div></td>
+          <td>${lvlBadge(f.level)}</td>
+          <td>${chk(f.fi)}</td>
+          <td>${chk(f.cite)}</td>
+          <td>${chk(f.form)}</td>
+          <td>${chk(f.src)}</td>
+          <td style="font-size:11px;opacity:0.78;line-height:1.5">${f.note}</td>
+        </tr>`).join('');
+    }
+
+    function countByLevel(data) {
+      const c = [0,0,0,0];
+      data.forEach(f => c[f.level]++);
+      return c;
+    }
+    function summaryStr(data) {
+      const c = countByLevel(data);
+      return `L3:${c[3]} · L2:${c[2]} · L1:${c[1]} · L0:${c[0]}`;
+    }
+
+    function init() {
+      const all = [...ML_AUDIT, ...BASELINE_AUDIT, ...VITALS_AUDIT, ...UX_AUDIT];
+      renderTable(document.querySelector('#mlTable tbody'), ML_AUDIT);
+      renderTable(document.querySelector('#baseTable tbody'), BASELINE_AUDIT);
+      renderTable(document.querySelector('#vitTable tbody'), VITALS_AUDIT);
+      renderTable(document.querySelector('#uxTable tbody'), UX_AUDIT);
+
+      document.getElementById('mlSum').textContent = summaryStr(ML_AUDIT);
+      document.getElementById('baseSum').textContent = summaryStr(BASELINE_AUDIT);
+      document.getElementById('vitSum').textContent = summaryStr(VITALS_AUDIT);
+      document.getElementById('uxSum').textContent = summaryStr(UX_AUDIT);
+
+      const cnt = countByLevel(all);
+      document.getElementById('cnt0').textContent = cnt[0];
+      document.getElementById('cnt1').textContent = cnt[1];
+      document.getElementById('cnt2').textContent = cnt[2];
+      document.getElementById('cnt3').textContent = cnt[3];
+      document.getElementById('cntAll').textContent = all.length;
+
+      // Recommendations untuk fitur < L3
+      const recos = all.filter(f => f.level < 3).map(f => {
+        const missing = [];
+        if (!f.fi)   missing.push('Feature Importance');
+        if (!f.cite) missing.push('Citation');
+        if (!f.form) missing.push('Formula');
+        if (!f.src)  missing.push('Data Source');
+        return `<div class="reco-card"><strong>${f.name}</strong> (${lvlBadge(f.level)}) — Butuh tambah: ${missing.join(', ')}<br><small style="opacity:0.7">${f.note}</small></div>`;
+      });
+      document.getElementById('recoList').innerHTML = recos.length
+        ? recos.join('')
+        : '<p style="opacity:0.75">🎉 Semua fitur sudah Level 3! No improvement needed.</p>';
+    }
+
+    // Filter
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const lvl = btn.dataset.lvl;
+        document.querySelectorAll('.feat-table tbody tr').forEach(tr => {
+          tr.style.display = lvl === 'all' || tr.dataset.lvl === lvl ? '' : 'none';
+        });
+      });
+    });
+
+    init();
+  </script>
+</body>
+</html>
