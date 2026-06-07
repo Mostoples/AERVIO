@@ -758,6 +758,58 @@ input { font-family: inherit; }
   z-index: 0;
   animation: aura-breathe 7s ease-in-out infinite alternate;
 }
+/* ─────────────────────────────────────────────────────────────
+   Medical-themed pattern overlay (subtle, GPU-accelerated)
+   Layer 2: ECG/pulse waveform + medical cross grid
+   Inline SVG data-URI — no extra HTTP, instantly themed via currentColor
+   Opacity very low (samar-samar) so existing aura gradient stays dominant
+   ───────────────────────────────────────────────────────────── */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image:
+    /* ECG/pulse waveform (horizontal jagged line) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%2300e5d4' stroke-width='1.2'/></svg>"),
+    /* Medical cross dots (scattered plus signs) */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%2300e5d4'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>");
+  background-position: 0 0, 30px 30px;
+  background-size: 180px 52px, 60px 60px;
+  background-repeat: repeat, repeat;
+}
+/* Per-aura: pattern color follows --aura tone for visual cohesion */
+.aura-coral::after  { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%23ff5c7c' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%23ff5c7c'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+.aura-violet::after { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%23a78bfa' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%23a78bfa'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+.aura-amber::after  { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%23ffb547' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%23ffb547'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+.aura-green::after  { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%234ade80' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%234ade80'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+.aura-blue::after   { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%2364a5ff' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%2364a5ff'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+.aura-pink::after   { background-image:
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='52' viewBox='0 0 180 52'><path d='M0 26 L28 26 L33 10 L38 42 L43 26 L88 26 L93 18 L98 34 L103 26 L180 26' fill='none' stroke='%23f472b6' stroke-width='1.2'/></svg>"),
+  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='%23f472b6'><path d='M14 9 H17 V13 H21 V16 H17 V20 H14 V16 H10 V13 H14 Z'/><path d='M44 38 H47 V42 H51 V45 H47 V49 H44 V45 H40 V42 H44 Z'/></g></svg>"); }
+
+/* Light theme: pattern lebih samar di latar terang */
+body.theme-light .card::after { opacity: 0.04; mix-blend-mode: multiply; }
+/* Glass theme: pattern tetap visible via screen blend */
+body.theme-glass .card::after { opacity: 0.08; mix-blend-mode: screen; }
+
+/* Opt-out: tambah class .no-pattern di card untuk disable */
+.card.no-pattern::after { display: none; }
+
 .card > * { position: relative; z-index: 1; }
 .card:hover {
   box-shadow:
