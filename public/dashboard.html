@@ -64,7 +64,7 @@
     <!-- Smart Recommendations (rule-based) -->
     <section id="smartRecs"></section>
 
-    <a class="card hero-card aura-cyan" href="/risk-detail.html?id=teprs" style="text-decoration:none;color:inherit">
+    <a class="card hero-card aura-cyan" href="/risk-detail.html?id=teprs" data-pattern="air" style="text-decoration:none;color:inherit">
       <div class="hero-left">
         <p class="hero-label">Environment Health Risk · klik untuk detail</p>
         <div class="hero-value">
@@ -86,7 +86,7 @@
 
     <h3 class="section-title">Vital Signs</h3>
     <section class="grid-2">
-      <a class="card metric-card aura-coral" href="/metric-detail.html?id=hr" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=hr" data-pattern="heart" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M20.84 4.6a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.07a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.79 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
           <span class="metric-trend up" id="hrTrend">+4</span>
@@ -95,7 +95,7 @@
         <div class="metric-value"><span id="hrValue">78</span><span class="metric-unit">bpm</span></div>
         <div class="spark"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="0,20 10,18 20,22 30,12 40,16 50,10 60,14 70,8 80,16 90,12 100,18"/></svg></div>
       </a>
-      <a class="card metric-card aura-blue" href="/metric-detail.html?id=spo2" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-blue" href="/metric-detail.html?id=spo2" data-pattern="lung" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></div>
           <span class="metric-trend">SpO₂</span>
@@ -104,7 +104,7 @@
         <div class="metric-value"><span id="spo2Value">97</span><span class="metric-unit">%</span></div>
         <div class="progress-bar small"><div class="progress-fill" id="spo2Bar" style="width:97%"></div></div>
       </a>
-      <a class="card metric-card aura-green" href="/metric-detail.html?id=rr" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-green" href="/metric-detail.html?id=rr" data-pattern="lung" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2v6M6 8c0 4 6 6 6 6s6-2 6-6M3 18c3 0 4-2 4-2s1 2 5 2 5-2 5-2 1 2 4 2"/></svg></div>
           <span class="metric-trend">RR</span>
@@ -113,7 +113,7 @@
         <div class="metric-value"><span id="rrValue">16</span><span class="metric-unit">brpm</span></div>
         <div class="progress-bar small"><div class="progress-fill" id="rrBar" style="width:55%"></div></div>
       </a>
-      <a class="card metric-card aura-cyan" href="/metric-detail.html?id=hyd" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-cyan" href="/metric-detail.html?id=hyd" data-pattern="droplet" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2.5s-7 8-7 13a7 7 0 0014 0c0-5-7-13-7-13z"/></svg></div>
           <span class="metric-trend up" id="hydTrend">OK</span>
@@ -126,7 +126,7 @@
 
     <h3 class="section-title">Lingkungan</h3>
     <section class="grid-2">
-      <a class="card metric-card aura-amber" href="/metric-detail.html?id=uv" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-amber" href="/metric-detail.html?id=uv" data-pattern="uv" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
           <span class="metric-trend" id="uvLabel">SEDANG</span>
@@ -135,7 +135,7 @@
         <div class="metric-value"><span id="uvValue">5</span><span class="metric-unit">/11</span></div>
         <div class="progress-bar small"><div class="progress-fill" id="uvBar" style="width:45%"></div></div>
       </a>
-      <a class="card metric-card aura-violet" href="/metric-detail.html?id=pm" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-violet" href="/metric-detail.html?id=pm" data-pattern="air" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="6" cy="14" r="2"/><circle cx="14" cy="8" r="3"/><circle cx="18" cy="17" r="2"/><circle cx="9" cy="6" r="1.5"/></svg></div>
           <span class="metric-trend" id="pmLabel">SEDANG</span>
@@ -144,7 +144,7 @@
         <div class="metric-value"><span id="pmValue">38</span><span class="metric-unit">μg/m³</span></div>
         <div class="progress-bar small"><div class="progress-fill" id="pmBar" style="width:42%"></div></div>
       </a>
-      <a class="card metric-card aura-coral" href="/metric-detail.html?id=heat" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-coral" href="/metric-detail.html?id=heat" data-pattern="temp" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8M14 14a2 2 0 11-4 0c0-1 1-2 2-4 1 2 2 3 2 4z"/></svg></div>
           <span class="metric-trend">HEAT</span>
