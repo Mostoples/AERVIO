@@ -370,6 +370,172 @@
       .lp-h1 { font-size: clamp(48px, 5vw, 72px); }
     }
 
+    /* ════════ HERO CAROUSEL ════════ */
+    .hero-carousel {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-track {
+      display: flex;
+      width: 100%;
+      transition: transform 0.7s cubic-bezier(0.7, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .hero-track > section.lp-hero {
+      flex: 0 0 100%;
+      min-width: 0;
+      padding-bottom: 70px;
+    }
+    .hero-dots {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+      padding: 6px 12px;
+      background: rgba(15,25,35,0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      border: 0; padding: 0; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .hero-dot.active {
+      width: 28px; border-radius: 999px;
+      background: linear-gradient(90deg, #00e5d4, #a78bfa);
+    }
+    .hero-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px; height: 48px;
+      background: rgba(15,25,35,0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: none;
+      align-items: center; justify-content: center;
+      color: var(--text);
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s;
+    }
+    .hero-arrow:hover { background: rgba(0,229,212,0.2); border-color: rgba(0,229,212,0.4); }
+    .hero-arrow.prev { left: 16px; }
+    .hero-arrow.next { right: 16px; }
+    .hero-arrow svg { width: 22px; height: 22px; }
+    @media (min-width: 768px) { .hero-arrow { display: flex; } }
+
+    /* Slide-specific styles */
+    .slide-2 .slide-visual,
+    .slide-3 .slide-visual,
+    .slide-4 .slide-visual,
+    .slide-5 .slide-visual {
+      position: relative;
+      min-height: 360px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide-2 .city-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .city-card {
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      transition: transform 0.3s;
+    }
+    .city-card:hover { transform: translateY(-2px); }
+    .city-card .city-name { font-size: 11px; font-weight: 600; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.05em; }
+    .city-card .pm-value { font-size: 26px; font-weight: 800; margin: 4px 0 2px; font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; }
+    .city-card .pm-unit { font-size: 11px; opacity: 0.6; }
+    .city-card .status-badge { display: inline-block; margin-top: 6px; font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+    .status-good   { background: rgba(74,222,128,0.18); color: #4ade80; }
+    .status-mod    { background: rgba(252,211,77,0.18); color: #fcd34d; }
+    .status-bad    { background: rgba(251,146,60,0.18); color: #fb923c; }
+    .status-vbad   { background: rgba(255,84,112,0.18); color: #ff5470; }
+
+    .slide-3 .stat-circle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .stat-circle {
+      padding: 18px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      text-align: center;
+    }
+    .stat-circle .big {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 38px; font-weight: 700;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1.5px;
+    }
+    .stat-circle .lbl { font-size: 11px; opacity: 0.75; margin-top: 4px; font-weight: 500; }
+
+    .slide-4 .chat-mockup {
+      width: 100%; max-width: 380px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(167,139,250,0.25);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 18px 50px rgba(167,139,250,0.18);
+    }
+    .chat-line { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-end; }
+    .chat-line.right { flex-direction: row-reverse; }
+    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .chat-avatar.bot { background: linear-gradient(135deg, #a78bfa, #00e5d4); }
+    .chat-avatar.user { background: rgba(255,255,255,0.08); }
+    .chat-bubble {
+      max-width: 78%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12.5px; line-height: 1.45;
+      background: rgba(255,255,255,0.06);
+    }
+    .chat-bubble.bot { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2); }
+
+    .slide-5 .channel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .ch-mini {
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      transition: transform 0.2s;
+    }
+    .ch-mini:hover { transform: translateY(-2px); border-color: rgba(0,229,212,0.3); }
+    .ch-mini .ch-emoji { font-size: 22px; line-height: 1; }
+    .ch-mini .ch-name { font-size: 13px; font-weight: 700; margin: 6px 0 2px; }
+    .ch-mini .ch-count { font-size: 10px; opacity: 0.6; font-family: 'JetBrains Mono', monospace; }
+
     /* Hero */
     .lp-hero {
       position: relative;

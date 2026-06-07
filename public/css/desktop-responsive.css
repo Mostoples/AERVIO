@@ -1,480 +1,250 @@
 /* ════════════════════════════════════════════════════════════════
    AERVINEX Desktop Responsive Layer
-   ────────────────────────────────────────────────────────────────
-   Mobile-first base styles dipertahankan. Layer ini hanya menambahkan
-   media queries di atas 768px, 1024px, 1280px, 1440px, 1600px.
-
-   Strategy:
-   - ≥768px (tablet): widen app-shell, dual-column grids
-   - ≥1024px (small desktop): bottom-nav → sidebar nav, multi-col layouts
-   - ≥1280px (desktop): wider shell, 3-4 col grids
-   - ≥1440px (large desktop): maximize content area
-   - ≥1600px (ultra-wide): more breathing room
-
-   Loaded last via @import dari aervinex-ui.css → auto-apply ke semua halaman.
+   Penuhi viewport — tidak ada space kosong di samping desktop.
+   Mobile-first base tetap (≤767px).
    ════════════════════════════════════════════════════════════════ */
 
-/* ────────── 768px TABLET ────────── */
+/* ───────────── TABLET 768px ───────────── */
 @media (min-width: 768px) {
   .app-shell {
-    max-width: 680px;
-    padding: 36px 32px 110px;
+    max-width: 720px !important;
+    padding: 36px 32px 110px !important;
   }
-
-  /* Topbar dengan logo dan back tetap full-width inside shell */
-  .topbar {
+  .top-bar, .topbar {
     max-width: 720px;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
   }
-
-  /* Metric / stat grids: 2-col → 3-col */
-  .stat-grid,
-  .metric-grid,
-  .quick-stats,
-  .summary-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  /* Action grids: 2 → 3 col */
-  .action-grid,
-  .quick-actions .action-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-
-  /* Form inputs side-by-side */
-  .form-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  /* Risk list: 2-col card grid */
-  .risk-list,
-  .disease-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-
-  /* Bottom nav lebih lebar */
-  .bottom-nav {
-    max-width: 540px;
-  }
+  /* 2-col → 3-col grids */
+  .grid-2 { grid-template-columns: repeat(3, 1fr) !important; }
+  .action-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
-/* ────────── 1024px SMALL DESKTOP ────────── */
-/* Bottom nav becomes SIDEBAR — vertical orientation on left */
+/* ───────────── DESKTOP 1024px — SIDEBAR LAYOUT ───────────── */
 @media (min-width: 1024px) {
-  /* App shell: shift content right to make room for sidebar */
-  body[data-page]:not([data-page="home"]):not([data-page="404"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="evidence"]):not([data-page="ml-results-report"]):not([data-page="ml-improvement-plan"]):not([data-page="aervinex-roadmap"]):not([data-page="datasets"]):not([data-page="xai-audit"]):not([data-page="community-channel"]):not([data-page="ai-chat"]) {
-    padding-left: 110px;
-  }
-
+  /* Widen seluruh app shell hampir full viewport */
   .app-shell {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 40px 36px 60px;
+    max-width: 1100px !important;
+    margin: 0 auto !important;
+    padding: 40px 40px 60px 140px !important;
+  }
+  .top-bar, .topbar {
+    max-width: 1100px;
+    padding-left: 100px;
   }
 
-  /* Topbar shifts right to match shell offset */
-  .topbar {
-    max-width: 980px;
-  }
-
-  /* Convert bottom-nav to vertical sidebar */
+  /* Convert bottom-nav → vertical sidebar fixed left */
   .bottom-nav {
-    position: fixed;
-    top: 50%;
-    left: 16px;
-    bottom: auto;
-    transform: translateY(-50%);
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    width: auto;
-    max-width: none;
-    padding: 14px 10px;
-    border-radius: 22px;
-    gap: 6px;
+    position: fixed !important;
+    top: 50% !important;
+    left: 20px !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    flex-direction: column !important;
+    width: 96px !important;
+    max-width: 96px !important;
+    padding: 16px 8px !important;
+    border-radius: 28px !important;
+    gap: 6px !important;
+    height: auto !important;
   }
   .bottom-nav .nav-item {
-    flex-direction: row;
-    justify-content: flex-start;
-    width: 64px;
-    padding: 12px 8px;
-    gap: 0;
-    text-align: center;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 12px 4px !important;
+    text-align: center !important;
   }
   .bottom-nav .nav-item span {
-    font-size: 9px;
-    margin-top: 2px;
-    display: block;
+    display: block !important;
+    font-size: 10px !important;
+    margin-top: 4px !important;
   }
   .bottom-nav .nav-item .ico {
-    margin: 0 auto;
+    margin: 0 auto !important;
   }
   .bottom-nav .nav-item.fab {
-    margin: 6px auto;
-    width: 50px;
-    height: 50px;
-    flex-direction: column;
+    margin: 8px auto !important;
+    flex-direction: column !important;
   }
-  .bottom-nav .nav-item.fab .ico { margin: 0 auto; }
+  .bottom-nav .nav-item.fab span { display: none !important; }
 
-  /* .bottomnav (alt class) — same treatment */
+  /* .bottomnav (newer pages) */
   .bottomnav {
-    position: fixed;
-    top: 50%;
-    left: 16px;
-    bottom: auto;
-    transform: translateY(-50%);
-    flex-direction: column;
-    width: 88px;
-    max-width: 88px;
-    padding: 16px 12px;
-    border-radius: 22px;
-    gap: 4px;
-    height: auto;
+    position: fixed !important;
+    top: 50% !important;
+    left: 20px !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    flex-direction: column !important;
+    width: 96px !important;
+    max-width: 96px !important;
+    padding: 16px 8px !important;
+    border-radius: 28px !important;
+    gap: 4px !important;
+    height: auto !important;
     background: rgba(20, 30, 44, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .bottomnav .bn-item {
-    flex-direction: column;
-    padding: 10px 4px;
-    width: 100%;
+    flex-direction: column !important;
+    padding: 10px 4px !important;
+    width: 100% !important;
   }
   .bottomnav .bn-item span {
-    font-size: 10px;
-    margin-top: 4px;
+    font-size: 10px !important;
+    margin-top: 4px !important;
   }
 
-  /* Multi-column dashboards */
-  .stat-grid,
-  .metric-grid,
-  .quick-stats {
+  /* Dashboard multi-column: greeting full-width, recs+hero+grid in 2-col layout */
+  body[data-page="dashboard"] .app-shell > .greeting {
+    grid-column: 1 / -1;
+  }
+
+  /* 4-col untuk vital signs + lingkungan grids */
+  .grid-2 {
     grid-template-columns: repeat(4, 1fr) !important;
+    gap: 14px !important;
   }
-
   .action-grid {
     grid-template-columns: repeat(4, 1fr) !important;
   }
 
-  /* Risk grid 3-col */
-  .risk-list,
-  .disease-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  /* Hero card lebih spacious */
+  /* Hero card bigger */
   .hero-card {
-    padding: 28px 32px;
+    padding: 28px 32px !important;
   }
   .hero-num {
     font-size: 56px !important;
   }
-
-  /* Risk-detail XAI: 2-col layout (score + factors side-by-side) */
-  .risk-detail-layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 24px;
-  }
-  .risk-detail-layout .left-stack {
-    position: sticky;
-    top: 24px;
-    align-self: start;
+  .hero-card .ring {
+    width: 140px;
+    height: 140px;
   }
 
-  /* Form: 2-col side-by-side for auth/edit-profile */
-  .auth-shell {
-    max-width: 800px !important;
-  }
-  .auth-shell .card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    padding: 36px !important;
-  }
-  .auth-shell .card > form { grid-column: 1; }
-  .auth-shell .card > .auth-divider,
-  .auth-shell .card > button.btn-block:not(form button),
-  .auth-shell .card > .auth-foot {
-    grid-column: 2;
-  }
-  /* Fallback: if auth content isn't structured for split, fall back to single col */
-  .auth-shell .card.simple {
-    display: flex;
-    flex-direction: column;
-  }
+  /* Card list section: side-by-side */
+  .list-card { padding: 24px !important; }
 
-  /* Profile sections 2-col */
-  .profile-row {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  /* Onboarding: lebih besar dengan padding lebih */
-  .ob-shell {
-    max-width: 720px !important;
-    padding: 40px 36px 110px !important;
-  }
-  .ob-form {
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-  .ob-cards {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
-  .ob-actions {
-    max-width: 720px !important;
-    padding: 16px 36px calc(16px + env(safe-area-inset-bottom)) !important;
-  }
-
-  /* Theme toggle FAB sedikit lebih jauh dari edge */
+  /* Theme toggle FAB pushed deeper into corner */
   .theme-toggle-fab {
     top: 24px !important;
     right: 24px !important;
   }
 
-  /* Community channel chat — wider message area */
-  .ch-messages { padding: 20px 36px 110px !important; }
-  .ch-input-bar { max-width: 980px; left: auto !important; right: auto !important; margin: 0 auto; padding: 16px 36px calc(16px + env(safe-area-inset-bottom)) !important; }
-
-  /* AI chat — wider chat area */
-  .ai-messages { padding: 20px 36px 110px !important; }
-  .ai-input-bar { max-width: 980px; left: auto !important; right: auto !important; margin: 0 auto; padding: 16px 36px calc(16px + env(safe-area-inset-bottom)) !important; }
-  .ai-suggestions { padding: 10px 36px !important; }
-
-  /* Big hero pages: lebih lebar */
-  .hero-test,
-  .hero,
-  .ev-hero { padding: 36px 32px !important; }
-
-  .section { padding: 24px !important; }
-}
-
-/* ────────── 1280px STANDARD DESKTOP ────────── */
-@media (min-width: 1280px) {
-  body[data-page]:not([data-page="home"]):not([data-page="404"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]) {
-    padding-left: 120px;
+  /* Form pages 2-col */
+  .auth-shell {
+    max-width: 920px !important;
+    padding: 40px !important;
   }
 
-  .app-shell {
-    max-width: 1180px;
-    padding: 44px 40px 60px;
+  /* Onboarding wider */
+  .ob-shell {
+    max-width: 760px !important;
+    padding: 40px 36px 110px !important;
+  }
+  .ob-cards {
+    grid-template-columns: repeat(3, 1fr) !important;
   }
 
-  .topbar {
-    max-width: 1180px;
+  /* Risk-list 3-col */
+  .risk-list, .disease-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 14px !important;
   }
 
-  /* 5-col stat grid */
-  .stat-grid,
-  .metric-grid {
-    grid-template-columns: repeat(5, 1fr) !important;
+  /* Profile page split */
+  body[data-page="profile"] .app-shell {
+    max-width: 1100px !important;
+  }
+  body[data-page="profile"] .profile-grid {
+    grid-template-columns: 320px 1fr !important;
+    gap: 24px;
   }
 
-  /* Risk grid 4-col */
-  .risk-list,
-  .disease-grid {
-    grid-template-columns: repeat(4, 1fr);
+  /* Wider hero/section pages (full evidence ML reports) */
+  body[data-page="evidence"] .ev-shell,
+  body[data-page="ml-results-report"] .section,
+  body[data-page="ml-improvement-plan"] .section,
+  body[data-page="aervinex-roadmap"] .section,
+  body[data-page="datasets"] .section,
+  body[data-page="xai-audit"] .section {
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
-
-  /* Lebih banyak padding ke action grid */
-  .action-grid {
-    gap: 16px;
-  }
-
-  /* Settings page: 2-col layout */
-  .settings-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  /* Risk detail: lebih lebar XAI panel */
-  .risk-detail-layout {
-    grid-template-columns: 420px 1fr;
-    gap: 32px;
-  }
-}
-
-/* ────────── 1440px LARGE DESKTOP ────────── */
-@media (min-width: 1440px) {
-  body[data-page]:not([data-page="home"]):not([data-page="404"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]) {
-    padding-left: 130px;
-  }
-
-  .app-shell {
-    max-width: 1320px;
-    padding: 48px 44px 60px;
-  }
-
-  .topbar {
-    max-width: 1320px;
-  }
-
-  /* 6-col stat grid pada layar besar */
-  .stat-grid {
-    grid-template-columns: repeat(6, 1fr) !important;
-  }
-
-  /* Risk grid 4-5 col */
-  .risk-list,
-  .disease-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-/* ────────── 1600px ULTRA-WIDE ────────── */
-@media (min-width: 1600px) {
-  .app-shell {
-    max-width: 1440px;
-  }
-  .topbar {
-    max-width: 1440px;
-  }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   PAGE-SPECIFIC DESKTOP OPTIMIZATIONS
-   ════════════════════════════════════════════════════════════════ */
-
-/* Evidence page — wider mermaid diagrams */
-@media (min-width: 1024px) {
-  body[data-page="evidence"] .ev-shell {
-    max-width: 1280px !important;
-    padding: 40px 36px 100px;
-  }
-}
-@media (min-width: 1440px) {
-  body[data-page="evidence"] .ev-shell {
-    max-width: 1400px !important;
-  }
-}
-
-/* ML report / improvement / roadmap / datasets / XAI audit:
-   pages with .hero + .section pattern */
-@media (min-width: 1024px) {
   body[data-page="ml-results-report"] .hero-test,
   body[data-page="ml-improvement-plan"] .hero,
   body[data-page="aervinex-roadmap"] .hero,
   body[data-page="datasets"] .hero,
   body[data-page="xai-audit"] .hero {
-    max-width: 1200px;
-    margin: 14px auto !important;
+    max-width: 1200px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
-  body[data-page="ml-results-report"] .section,
-  body[data-page="ml-improvement-plan"] .section,
-  body[data-page="aervinex-roadmap"] .section,
-  body[data-page="datasets"] .section,
-  body[data-page="xai-audit"] .section {
-    max-width: 1200px;
-    margin: 14px auto !important;
+
+  /* Community + AI chat lebih lebar */
+  .ch-messages, .ai-messages {
+    padding-left: 36px !important;
+    padding-right: 36px !important;
   }
-  body[data-page="ml-results-report"] .summary-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  body[data-page="ml-results-report"] .actions-bar {
-    max-width: 1200px;
+  .ch-input-bar, .ai-input-bar {
+    max-width: 1100px;
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%);
   }
 }
-@media (min-width: 1440px) {
-  body[data-page="ml-results-report"] .hero-test,
-  body[data-page="ml-improvement-plan"] .hero,
-  body[data-page="aervinex-roadmap"] .hero,
-  body[data-page="datasets"] .hero,
-  body[data-page="xai-audit"] .hero,
-  body[data-page="ml-results-report"] .section,
-  body[data-page="ml-improvement-plan"] .section,
-  body[data-page="aervinex-roadmap"] .section,
-  body[data-page="datasets"] .section,
-  body[data-page="xai-audit"] .section {
-    max-width: 1360px;
-  }
-}
 
-/* Login/Register: split-screen pada desktop dengan illustration di kiri */
-@media (min-width: 1024px) {
-  body[data-page="login"] .auth-shell,
-  body[data-page="register"] .auth-shell {
-    max-width: 920px !important;
+/* ───────────── LARGE DESKTOP 1280px ───────────── */
+@media (min-width: 1280px) {
+  .app-shell {
+    max-width: 1260px !important;
+    padding-left: 160px !important;
+    padding-right: 50px !important;
+  }
+  .top-bar, .topbar { max-width: 1260px; }
+  .grid-2 { grid-template-columns: repeat(5, 1fr) !important; }
+  .action-grid { grid-template-columns: repeat(5, 1fr) !important; }
+  .risk-list, .disease-grid { grid-template-columns: repeat(4, 1fr) !important; }
+
+  /* Dashboard 2-column layout: vitals left, environment right */
+  body[data-page="dashboard"] .app-shell {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    align-items: center;
-    padding: 40px;
-  }
-  body[data-page="login"] .auth-brand,
-  body[data-page="register"] .auth-brand {
-    text-align: left;
-    padding: 24px;
-    position: relative;
-  }
-  body[data-page="login"] .auth-brand::after,
-  body[data-page="register"] .auth-brand::after {
-    content: '';
-    display: block;
-    margin-top: 32px;
-    height: 280px;
-    background:
-      radial-gradient(circle at 30% 30%, rgba(0,229,212,0.18), transparent 60%),
-      radial-gradient(circle at 70% 70%, rgba(167,139,250,0.15), transparent 60%);
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.06);
-    background-image:
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'><g fill='none' stroke='%2300e5d4' stroke-width='1.5' opacity='0.4'><path d='M20 110 Q40 100 60 110 T100 110 T140 110 T180 110 T220 110'/><path d='M20 130 Q40 120 60 130 T100 130 T140 130 T180 130 T220 130' opacity='0.5'/><circle cx='110' cy='100' r='40' opacity='0.6'/><circle cx='110' cy='100' r='25'/><path d='M85 100 L95 100 L100 85 L110 115 L115 100 L135 100' stroke-width='2'/></g></svg>"),
-      radial-gradient(circle at 30% 30%, rgba(0,229,212,0.18), transparent 60%);
-    background-position: center;
-    background-size: 60% auto, cover;
-    background-repeat: no-repeat;
-  }
-}
-
-/* Profile — sidebar avatar + content split */
-@media (min-width: 1280px) {
-  body[data-page="profile"] .app-shell {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 32px;
+    column-gap: 24px;
     align-items: start;
-    max-width: 1180px;
   }
-  body[data-page="profile"] .profile-header,
-  body[data-page="profile"] .profile-card {
-    grid-column: 1;
-    position: sticky;
-    top: 24px;
+  body[data-page="dashboard"] .app-shell > header,
+  body[data-page="dashboard"] .app-shell > .greeting,
+  body[data-page="dashboard"] .app-shell > #smartRecs,
+  body[data-page="dashboard"] .app-shell > .hero-card {
+    grid-column: 1 / -1;
   }
 }
 
-/* Hide sidebar nav on pages that don't need it */
-body[data-page="onboarding"] .bottom-nav,
-body[data-page="login"] .bottom-nav,
-body[data-page="register"] .bottom-nav { display: none !important; }
-
-/* ════════════════════════════════════════════════════════════════
-   UTILITY: prefer-reduced-motion respect for any layout shifts
-   ════════════════════════════════════════════════════════════════ */
-@media (prefers-reduced-motion: reduce) {
-  .app-shell,
-  .bottom-nav,
-  .bottomnav { transition: none !important; }
+/* ───────────── XL 1440px ───────────── */
+@media (min-width: 1440px) {
+  .app-shell {
+    max-width: 1400px !important;
+    padding-left: 170px !important;
+  }
+  .top-bar, .topbar { max-width: 1400px; }
+  .grid-2 { grid-template-columns: repeat(6, 1fr) !important; }
+  .risk-list, .disease-grid { grid-template-columns: repeat(5, 1fr) !important; }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   PRINT — basic clean layout
-   ════════════════════════════════════════════════════════════════ */
+/* ───────────── ULTRA-WIDE 1700px ───────────── */
+@media (min-width: 1700px) {
+  .app-shell {
+    max-width: 1560px !important;
+  }
+  .top-bar, .topbar { max-width: 1560px; }
+}
+
+/* ───────────── PRINT ───────────── */
 @media print {
-  .bottom-nav, .bottomnav, .theme-toggle-fab, .topbar { display: none !important; }
+  .bottom-nav, .bottomnav, .theme-toggle-fab, .topbar, .top-bar { display: none !important; }
   .app-shell { max-width: 100% !important; padding: 0 !important; }
   body { background: white !important; color: black !important; }
 }

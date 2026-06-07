@@ -3,6 +3,7 @@
    Reusable across all SPA pages. Loaded alongside style.css.
    ========================================================= */
 @import url('./a11y-tokens.css');
+@import url('./desktop-responsive.css');
 
 :root {
   --bg:            #1a2433;
@@ -981,9 +982,6 @@ body.theme-light .smart-rec-card[data-tone="coral"]  { --tone-mix: rgba(255, 84,
 body.theme-light .smart-rec-card[data-tone="amber"]  { --tone-mix: rgba(252, 211, 77, 0.28); }
 body.theme-light .smart-rec-card[data-tone="violet"] { --tone-mix: rgba(167, 139, 250, 0.22); }
 body.theme-light .smart-rec-card[data-tone="green"]  { --tone-mix: rgba(74, 222, 128, 0.22); }
-
-/* Import desktop responsive layer (auto-apply ke semua halaman) */
-@import url('./desktop-responsive.css');
 
 .card > * { position: relative; z-index: 1; }
 .card:hover {
@@ -2157,3 +2155,5 @@ body.theme-glass .skel { background: linear-gradient(90deg, rgba(255,255,255,0.0
   font-size: 13px; color: var(--text-muted);
   max-width: 280px; line-height: 1.5;
 }
+
+/* Desktop responsive layer di-import di TOP file (CSS @import spec). */
