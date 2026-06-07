@@ -907,6 +907,120 @@ body.theme-light .card:hover::after { opacity: 0.18; }
 /* Opt-out */
 .card.no-pattern::after { display: none; }
 
+/* ════════════════════════════════════════════════════════════════
+   Smart Recommendations Cards — theme-aware
+   ════════════════════════════════════════════════════════════════ */
+.smart-recs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 10px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.smart-recs-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--text-muted);
+}
+.smart-recs-sub {
+  font-size: 11px;
+  color: var(--text-dim, rgba(150,165,175,1));
+}
+
+.smart-rec-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  background:
+    linear-gradient(135deg, var(--tone, rgba(0, 229, 212, 0.18)), var(--card-bg-tint, rgba(255,255,255,0.04)));
+  border: 1px solid var(--card-border, rgba(255,255,255,0.08));
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.smart-rec-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+}
+.smart-rec-card .sr-icon {
+  font-size: 24px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.smart-rec-card .sr-body { flex: 1; min-width: 0; }
+.smart-rec-card .sr-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 3px;
+  color: var(--text, #e6f1f4);
+}
+.smart-rec-card .sr-sub {
+  font-size: 12px;
+  margin: 0;
+  line-height: 1.5;
+  color: var(--text-muted, #b6c4cb);
+}
+.smart-rec-card .sr-cta {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent, #00e5d4);
+}
+
+/* DARK THEME (default) — already correct via :root */
+body.theme-dark {
+  --card-bg-tint: rgba(15, 25, 35, 0.6);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+/* LIGHT THEME — flip text colors + tinted background */
+body.theme-light {
+  --card-bg-tint: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.08);
+}
+body.theme-light .smart-rec-card {
+  background: linear-gradient(135deg, var(--tone), rgba(255, 255, 255, 0.92));
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 30, 60, 0.06);
+}
+body.theme-light .smart-rec-card .sr-title { color: #0c1828; }
+body.theme-light .smart-rec-card .sr-sub   { color: #4a5a68; }
+body.theme-light .smart-rec-card .sr-cta   { color: #007a72; }
+body.theme-light .smart-recs-title { color: #4a5a68; }
+body.theme-light .smart-recs-sub   { color: #6a7a88; }
+
+/* GLASS THEME — frosted background + sharper border */
+body.theme-glass {
+  --card-bg-tint: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.18);
+}
+body.theme-glass .smart-rec-card {
+  background: linear-gradient(135deg, var(--tone), rgba(255, 255, 255, 0.06));
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+body.theme-glass .smart-rec-card .sr-title { color: #ffffff; text-shadow: 0 1px 6px rgba(0,0,0,0.35); }
+body.theme-glass .smart-rec-card .sr-sub   { color: rgba(255, 255, 255, 0.92); text-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+body.theme-glass .smart-rec-card .sr-cta   { color: #00fff0; text-shadow: 0 0 8px rgba(0, 229, 212, 0.5); }
+body.theme-glass .smart-recs-title { color: rgba(255, 255, 255, 0.85); }
+body.theme-glass .smart-recs-sub   { color: rgba(255, 255, 255, 0.7); }
+
+/* Tone-color intensity per theme: lighter di light, deeper di glass */
+body.theme-light .smart-rec-card[data-tone="cyan"]   { --tone-mix: rgba(0, 229, 212, 0.22); }
+body.theme-light .smart-rec-card[data-tone="coral"]  { --tone-mix: rgba(255, 84, 112, 0.22); }
+body.theme-light .smart-rec-card[data-tone="amber"]  { --tone-mix: rgba(252, 211, 77, 0.28); }
+body.theme-light .smart-rec-card[data-tone="violet"] { --tone-mix: rgba(167, 139, 250, 0.22); }
+body.theme-light .smart-rec-card[data-tone="green"]  { --tone-mix: rgba(74, 222, 128, 0.22); }
+
 /* Import desktop responsive layer (auto-apply ke semua halaman) */
 @import url('./desktop-responsive.css');
 

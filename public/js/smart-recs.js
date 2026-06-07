@@ -159,21 +159,17 @@
     }
 
     target.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px">
-        <h3 style="font-size:14px;font-weight:700;letter-spacing:0.5px;color:#9aabb2;text-transform:uppercase;margin:0">Smart Recommendations</h3>
-        <span style="font-size:11px;color:#7d8d94">Berdasarkan goal & risiko Anda</span>
+      <div class="smart-recs-head">
+        <h3 class="smart-recs-title">Smart Recommendations</h3>
+        <span class="smart-recs-sub">Berdasarkan goal & risiko Anda</span>
       </div>
       ${cards.slice(0, 4).map(c => `
-        <a href="${c.href}" style="text-decoration:none;color:inherit;display:flex;align-items:flex-start;gap:12px;
-          padding:14px 16px;margin-bottom:10px;border-radius:14px;
-          background:linear-gradient(135deg, ${toneColor(c.tone)}, rgba(15,25,35,0.6));
-          border:1px solid rgba(255,255,255,0.06);
-          transition:transform 0.15s">
-          <div style="font-size:24px;line-height:1.2">${c.icon}</div>
-          <div style="flex:1">
-            <p style="font-size:14px;font-weight:700;color:#e6f1f4;margin:0 0 3px">${c.title}</p>
-            <p style="font-size:12px;color:#b6c4cb;margin:0;line-height:1.45">${c.sub}</p>
-            <span style="display:inline-block;margin-top:6px;font-size:11px;font-weight:600;color:#00e5d4">${c.cta} →</span>
+        <a href="${c.href}" class="smart-rec-card" data-tone="${c.tone}" style="--tone:${toneColor(c.tone)}">
+          <div class="sr-icon">${c.icon}</div>
+          <div class="sr-body">
+            <p class="sr-title">${c.title}</p>
+            <p class="sr-sub">${c.sub}</p>
+            <span class="sr-cta">${c.cta} →</span>
           </div>
         </a>
       `).join('')}
