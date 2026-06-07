@@ -130,7 +130,7 @@
     }
     .theme-light .lp-nav { background: rgba(255,255,255,0.75); border-color: rgba(0,0,0,0.06); }
     .lp-nav-inner {
-      max-width: 1180px; margin: 0 auto;
+      max-width: 1440px; margin: 0 auto;
       display: flex; align-items: center; justify-content: space-between;
       gap: 24px;
     }
@@ -234,7 +234,141 @@
     .lp-drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
     /* Container */
-    .lp-container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .lp-container { max-width: 1440px; margin: 0 auto; padding: 0 32px; position: relative; }
+    @media (min-width: 1600px) { .lp-container { max-width: 1520px; } }
+
+    /* ════════════════════════════════════════════════════════════
+       IMMERSIVE BACKGROUND LAYER — Three.js + CSS decorations
+       ════════════════════════════════════════════════════════════ */
+
+    /* Three.js canvas — fixed bg, GPU-only, behind everything */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.5;
+      mix-blend-mode: screen;
+    }
+    @media (max-width: 768px) { #bgCanvas { opacity: 0.3; } }
+
+    /* Animated grid overlay */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,229,212,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,212,0.04) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+      animation: gridDrift 60s linear infinite;
+    }
+    @keyframes gridDrift {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 64px 64px, 64px 64px; }
+    }
+
+    /* Floating glow orbs (CSS, GPU-accelerated) */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+      filter: blur(80px);
+      opacity: 0.4;
+      will-change: transform;
+    }
+    .bg-orb.o1 { top: 10%; left: -5%; width: 500px; height: 500px; background: radial-gradient(circle, #00e5d4 0%, transparent 70%); animation: orbFloat 22s ease-in-out infinite; }
+    .bg-orb.o2 { bottom: 5%; right: -5%; width: 600px; height: 600px; background: radial-gradient(circle, #a78bfa 0%, transparent 70%); animation: orbFloat 28s ease-in-out infinite reverse; animation-delay: -7s; }
+    .bg-orb.o3 { top: 50%; left: 50%; width: 400px; height: 400px; background: radial-gradient(circle, #ff5470 0%, transparent 70%); animation: orbFloat 25s ease-in-out infinite; animation-delay: -14s; opacity: 0.25; }
+    @keyframes orbFloat {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(80px,-60px) scale(1.1); }
+      66% { transform: translate(-60px,80px) scale(0.9); }
+    }
+    @media (max-width: 768px) {
+      .bg-orb { filter: blur(50px); opacity: 0.25; }
+      .bg-orb.o1, .bg-orb.o2, .bg-orb.o3 { width: 280px; height: 280px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orb, .bg-grid { animation: none; }
+    }
+
+    /* Side decorations (only visible on wide desktops) */
+    .side-deco {
+      position: absolute;
+      pointer-events: none;
+      display: none;
+      z-index: 1;
+    }
+    @media (min-width: 1440px) {
+      .side-deco { display: block; }
+    }
+    .side-deco.left { left: -180px; top: 0; }
+    .side-deco.right { right: -180px; top: 0; }
+
+    .deco-card {
+      position: absolute;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      animation: decoFloat 8s ease-in-out infinite;
+    }
+    .deco-card .lbl { font-size: 9px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+    .deco-card .val { font-size: 14px; font-weight: 800; margin-top: 2px; }
+    .deco-card .ico { font-size: 16px; margin-right: 4px; vertical-align: -2px; }
+    @keyframes decoFloat {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* Animated dot pulse around section */
+    .pulse-ring {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #00e5d4;
+      box-shadow: 0 0 12px #00e5d4;
+    }
+    .pulse-ring::before, .pulse-ring::after {
+      content: ''; position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,229,212,0.5);
+      animation: pulseRing 2.5s ease-out infinite;
+    }
+    .pulse-ring::after { animation-delay: 1.25s; }
+    @keyframes pulseRing {
+      0% { transform: scale(0.5); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+
+    /* Section accent backgrounds */
+    .lp-section { position: relative; overflow: visible; }
+    .section-aura {
+      position: absolute;
+      pointer-events: none;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      opacity: 0.18;
+      filter: blur(100px);
+      z-index: 0;
+    }
+
+    /* Animated counter style */
+    .counter-up { display: inline-block; }
+
+    /* Hero phone wider */
+    @media (min-width: 1440px) {
+      .lp-hero-grid { gap: 80px; }
+      .lp-phone { max-width: 360px; }
+      .lp-h1 { font-size: clamp(48px, 5vw, 72px); }
+    }
 
     /* Hero */
     .lp-hero {
@@ -567,7 +701,16 @@
       border: 1px solid var(--persona-border);
       border-radius: 24px;
       position: relative; overflow: hidden;
+      min-height: 320px;
     }
+    .lp-persona::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(15,25,35,0.92) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .lp-persona > * { position: relative; z-index: 1; }
     .lp-persona-icon { font-size: 50px; margin-bottom: 14px; }
     .lp-persona h3 { font-size: 24px; font-weight: 800; margin: 0 0 10px; }
     .lp-persona p { font-size: 14px; line-height: 1.65; opacity: 0.85; margin-bottom: 18px; }
@@ -928,6 +1071,13 @@
 </head>
 <body class="theme-dark" data-page="home">
 
+  <!-- ════════ IMMERSIVE BACKGROUND LAYER ════════ -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-orb o1" aria-hidden="true"></div>
+  <div class="bg-orb o2" aria-hidden="true"></div>
+  <div class="bg-orb o3" aria-hidden="true"></div>
+
   <!-- Skip-to-content (a11y) -->
   <a href="#main" class="sr-only-focusable">Lewati ke konten utama</a>
 
@@ -987,6 +1137,25 @@
   <!-- ============ HERO ============ -->
   <section class="lp-hero" id="top">
     <div class="lp-container">
+
+      <!-- Side decorations — visible only on ultra-wide desktops -->
+      <div class="side-deco left" aria-hidden="true">
+        <div class="deco-card" style="top:80px;left:0;animation-delay:0s"><span class="ico">🌬️</span><span class="lbl">PM2.5 Sudirman</span><div class="val" style="color:#fcd34d">68 µg/m³</div></div>
+        <div class="deco-card" style="top:220px;left:30px;animation-delay:-2s"><span class="ico">❤️</span><span class="lbl">HR Zone 2</span><div class="val" style="color:#00e5d4">142 bpm</div></div>
+        <div class="deco-card" style="top:360px;left:10px;animation-delay:-4s"><span class="ico">🌡️</span><span class="lbl">Heat Index</span><div class="val" style="color:#ff5470">34°C</div></div>
+        <div class="deco-card" style="top:520px;left:40px;animation-delay:-1s"><span class="ico">🫁</span><span class="lbl">SpO₂</span><div class="val" style="color:#a78bfa">98%</div></div>
+        <span class="pulse-ring" style="top:140px;left:120px"></span>
+        <span class="pulse-ring" style="top:480px;left:80px"></span>
+      </div>
+      <div class="side-deco right" aria-hidden="true">
+        <div class="deco-card" style="top:60px;right:0;animation-delay:-3s"><span class="ico">☀️</span><span class="lbl">UV Index</span><div class="val" style="color:#fcd34d">7 High</div></div>
+        <div class="deco-card" style="top:200px;right:30px;animation-delay:-5s"><span class="ico">🛡️</span><span class="lbl">TEPRS Risk</span><div class="val" style="color:#00e5d4">42</div></div>
+        <div class="deco-card" style="top:340px;right:10px;animation-delay:-2s"><span class="ico">🫀</span><span class="lbl">HRV RMSSD</span><div class="val" style="color:#a78bfa">52 ms</div></div>
+        <div class="deco-card" style="top:500px;right:50px;animation-delay:-6s"><span class="ico">🏃</span><span class="lbl">Pace Target</span><div class="val" style="color:#00e5d4">5:30/km</div></div>
+        <span class="pulse-ring" style="top:160px;right:100px"></span>
+        <span class="pulse-ring" style="top:420px;right:60px"></span>
+      </div>
+
       <div class="lp-hero-grid">
         <div>
           <div class="lp-pill-launch">
@@ -1181,7 +1350,7 @@
         <p class="lp-section-sub">Awalnya dirancang untuk warga kota yang setiap hari terpapar polusi. Sekarang juga dipakai ribuan pelari urban yang butuh data lingkungan saat outdoor.</p>
       </div>
       <div class="lp-personas">
-        <div class="lp-persona" style="--persona-grad-1:rgba(255,84,112,0.08);--persona-grad-2:rgba(167,139,250,0.08);--persona-border:rgba(255,84,112,0.25)">
+        <div class="lp-persona" style="--persona-grad-1:rgba(255,84,112,0.08);--persona-grad-2:rgba(167,139,250,0.08);--persona-border:rgba(255,84,112,0.25);background-image:linear-gradient(135deg,rgba(255,84,112,0.12),rgba(167,139,250,0.12)),url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=70&auto=format&fit=crop');background-size:cover;background-position:right center;background-blend-mode:overlay">
           <div class="lp-persona-icon">🏃</div>
           <h3>Pelari & Atlet Urban</h3>
           <p>Latihan di jalan kota Indonesia berarti hadapi PM2.5 tinggi, panas tropis, dan UV ekstrem. AERVINEX memberi data lingkungan kontekstual saat lari, bukan hanya HR.</p>
@@ -1194,7 +1363,7 @@
           </ul>
           <a href="/register.html" class="lp-persona-cta">Mulai untuk pelari →</a>
         </div>
-        <div class="lp-persona" style="--persona-grad-1:rgba(0,229,212,0.08);--persona-grad-2:rgba(6,182,212,0.08);--persona-border:rgba(0,229,212,0.3)">
+        <div class="lp-persona" style="--persona-grad-1:rgba(0,229,212,0.08);--persona-grad-2:rgba(6,182,212,0.08);--persona-border:rgba(0,229,212,0.3);background-image:linear-gradient(135deg,rgba(0,229,212,0.12),rgba(6,182,212,0.12)),url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&q=70&auto=format&fit=crop');background-size:cover;background-position:right center;background-blend-mode:overlay">
           <div class="lp-persona-icon">🏙️</div>
           <h3>Warga Urban & Komuter</h3>
           <p>Naik motor, jalan kaki, transportasi umum — paparan polusi & cuaca ekstrem bisa berdampak jangka panjang. AERVINEX bikin Anda <strong>tahu lebih dulu</strong> sebelum gejala muncul.</p>
@@ -1572,6 +1741,130 @@
   <script src="/js/firebase-config.js"></script>
   <script src="/js/app-check.js"></script>
   <script src="/js/aervinex-app.js"></script>
+
+  <!-- ════════ Three.js immersive particle background ════════
+       Lazy-loaded only on desktop (≥1024px) + respects prefers-reduced-motion.
+       Lightweight: 800 particles, GPU-accelerated PointsMaterial, no meshes.
+  -->
+  <script>
+    (function () {
+      // Skip on mobile + reduced motion
+      const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mql.matches || window.innerWidth < 1024) {
+        document.getElementById('bgCanvas').style.display = 'none';
+        return;
+      }
+      // Lazy-load Three.js from CDN
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
+      script.defer = true;
+      script.onload = initThreeScene;
+      script.onerror = () => { document.getElementById('bgCanvas').style.display = 'none'; };
+      document.head.appendChild(script);
+
+      function initThreeScene() {
+        const canvas = document.getElementById('bgCanvas');
+        if (!canvas || !window.THREE) return;
+        const THREE = window.THREE;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+        camera.position.z = 800;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Particle field — 800 points, 3 color tiers
+        const N = 800;
+        const positions = new Float32Array(N * 3);
+        const colors = new Float32Array(N * 3);
+        const sizes = new Float32Array(N);
+
+        const palette = [
+          new THREE.Color(0x00e5d4), // cyan
+          new THREE.Color(0xa78bfa), // violet
+          new THREE.Color(0xff5470), // coral
+        ];
+
+        for (let i = 0; i < N; i++) {
+          positions[i * 3]     = (Math.random() - 0.5) * 1800;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 1200;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 800;
+          const c = palette[Math.floor(Math.random() * palette.length)];
+          colors[i * 3]     = c.r;
+          colors[i * 3 + 1] = c.g;
+          colors[i * 3 + 2] = c.b;
+          sizes[i] = Math.random() * 4 + 1;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+          size: 3,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.8,
+          sizeAttenuation: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        // Mouse parallax (subtle)
+        let mx = 0, my = 0, tx = 0, ty = 0;
+        window.addEventListener('mousemove', (e) => {
+          tx = (e.clientX / window.innerWidth - 0.5) * 60;
+          ty = (e.clientY / window.innerHeight - 0.5) * 40;
+        }, { passive: true });
+
+        // Resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+          }, 150);
+        });
+
+        // Animation loop (capped to 30fps for power efficiency)
+        let lastFrame = 0;
+        const targetFPS = 30;
+        const frameInterval = 1000 / targetFPS;
+
+        function animate(now) {
+          requestAnimationFrame(animate);
+          if (now - lastFrame < frameInterval) return;
+          lastFrame = now;
+
+          // Smooth mouse follow
+          mx += (tx - mx) * 0.05;
+          my += (ty - my) * 0.05;
+
+          // Rotate slowly
+          particles.rotation.y += 0.0005;
+          particles.rotation.x = my * 0.001;
+          camera.position.x = mx;
+          camera.position.y = -my;
+          camera.lookAt(0, 0, 0);
+
+          renderer.render(scene, camera);
+        }
+        animate(0);
+
+        // Pause when tab not visible
+        document.addEventListener('visibilitychange', () => {
+          renderer.setAnimationLoop(document.hidden ? null : null); // noop, RAF auto-pauses
+        });
+      }
+    })();
+  </script>
   <!-- Core Web Vitals reporter — sampled to Firestore (10%) -->
   <script src="/js/web-vitals-reporter.js" defer></script>
   <!-- Pricing A/B test — assign variant + track conversions -->
