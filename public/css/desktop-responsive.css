@@ -1,250 +1,328 @@
 /* ════════════════════════════════════════════════════════════════
-   AERVINEX Desktop Responsive Layer
-   Penuhi viewport — tidak ada space kosong di samping desktop.
-   Mobile-first base tetap (≤767px).
+   AERVINEX Desktop Responsive — Bento Grid Strategy
+   ────────────────────────────────────────────────────────────────
+   Strategy:
+   - Mobile-first base (≤767px): UNCHANGED, sudah optimal
+   - Tablet (768-1023px): widen + 3-col grids
+   - Desktop (≥1024px): CSS Grid 12-column BENTO layout
+     - Konten lebih DENSE (more widgets visible at once)
+     - Bottom-nav tetap di bawah, floating wider
+     - No sidebar nav conversion
+   - Wide (≥1440px): more padding + bigger bento
    ════════════════════════════════════════════════════════════════ */
 
 /* ───────────── TABLET 768px ───────────── */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
   .app-shell {
     max-width: 720px !important;
-    padding: 36px 32px 110px !important;
+    padding: 36px 28px 110px !important;
   }
   .top-bar, .topbar {
     max-width: 720px;
     margin-left: auto;
     margin-right: auto;
   }
-  /* 2-col → 3-col grids */
-  .grid-2 { grid-template-columns: repeat(3, 1fr) !important; }
+  .grid-2 { grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
   .action-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .risk-list, .disease-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
+  .bottom-nav { max-width: 560px !important; }
 }
 
-/* ───────────── DESKTOP 1024px — SIDEBAR LAYOUT ───────────── */
+/* ════════════════════════════════════════════════════════════════
+   DESKTOP ≥1024px — BENTO GRID LAYOUT
+   ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1024px) {
-  /* Widen seluruh app shell hampir full viewport */
+
+  /* App shell jadi grid container 12-col bento */
   .app-shell {
-    max-width: 1100px !important;
+    max-width: 1280px !important;
+    padding: 30px 32px 100px !important;
     margin: 0 auto !important;
-    padding: 40px 40px 60px 140px !important;
+    display: grid !important;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 18px;
+    row-gap: 18px;
+    align-items: start;
   }
+
+  /* Top bar tetap full-width inside shell */
   .top-bar, .topbar {
-    max-width: 1100px;
-    padding-left: 100px;
+    grid-column: 1 / -1 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 18px 24px !important;
+    background: rgba(20, 30, 44, 0.55);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+  }
+  body.theme-light .top-bar,
+  body.theme-light .topbar {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.08);
   }
 
-  /* Convert bottom-nav → vertical sidebar fixed left */
+  /* Bottom nav stays bottom-center, lebih lebar + glassmorphic */
   .bottom-nav {
-    position: fixed !important;
-    top: 50% !important;
-    left: 20px !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;
-    flex-direction: column !important;
-    width: 96px !important;
-    max-width: 96px !important;
-    padding: 16px 8px !important;
-    border-radius: 28px !important;
-    gap: 6px !important;
-    height: auto !important;
+    max-width: 540px !important;
+    padding: 12px 20px !important;
+    bottom: 24px !important;
+    background: rgba(20, 30, 44, 0.75) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
-  .bottom-nav .nav-item {
-    flex-direction: column !important;
-    width: 100% !important;
-    padding: 12px 4px !important;
-    text-align: center !important;
+  body.theme-light .bottom-nav {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
   }
-  .bottom-nav .nav-item span {
-    display: block !important;
-    font-size: 10px !important;
-    margin-top: 4px !important;
-  }
-  .bottom-nav .nav-item .ico {
-    margin: 0 auto !important;
-  }
+  .bottom-nav .nav-item span { font-size: 11px !important; }
   .bottom-nav .nav-item.fab {
-    margin: 8px auto !important;
-    flex-direction: column !important;
-  }
-  .bottom-nav .nav-item.fab span { display: none !important; }
-
-  /* .bottomnav (newer pages) */
-  .bottomnav {
-    position: fixed !important;
-    top: 50% !important;
-    left: 20px !important;
-    bottom: auto !important;
-    transform: translateY(-50%) !important;
-    flex-direction: column !important;
-    width: 96px !important;
-    max-width: 96px !important;
-    padding: 16px 8px !important;
-    border-radius: 28px !important;
-    gap: 4px !important;
-    height: auto !important;
-    background: rgba(20, 30, 44, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .bottomnav .bn-item {
-    flex-direction: column !important;
-    padding: 10px 4px !important;
-    width: 100% !important;
-  }
-  .bottomnav .bn-item span {
-    font-size: 10px !important;
-    margin-top: 4px !important;
+    width: 56px !important;
+    height: 56px !important;
+    margin-top: -22px !important;
   }
 
-  /* Dashboard multi-column: greeting full-width, recs+hero+grid in 2-col layout */
+  /* ───── DASHBOARD bento layout ───── */
   body[data-page="dashboard"] .app-shell > .greeting {
+    grid-column: 1 / 9;
+    padding: 14px 0;
+  }
+  body[data-page="dashboard"] .app-shell > .status-pill,
+  body[data-page="dashboard"] .app-shell > #streakBadge {
+    grid-column: 9 / -1;
+  }
+  body[data-page="dashboard"] .app-shell > #smartRecs {
     grid-column: 1 / -1;
+    margin: 0;
   }
-
-  /* 4-col untuk vital signs + lingkungan grids */
-  .grid-2 {
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 14px !important;
-  }
-  .action-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-
-  /* Hero card bigger */
-  .hero-card {
+  body[data-page="dashboard"] .app-shell > .hero-card {
+    grid-column: 1 / 8;
     padding: 28px 32px !important;
+    min-height: 200px;
+    display: flex; align-items: center;
   }
-  .hero-num {
-    font-size: 56px !important;
+  body[data-page="dashboard"] .hero-num { font-size: 64px !important; }
+  body[data-page="dashboard"] .hero-card .ring { width: 150px; height: 150px; }
+
+  /* Vital + Lingkungan grid spans full + 4-col */
+  body[data-page="dashboard"] .app-shell > .section-title {
+    grid-column: 1 / -1;
+    margin: 12px 0 6px;
   }
-  .hero-card .ring {
-    width: 140px;
-    height: 140px;
+  body[data-page="dashboard"] .app-shell > .grid-2 {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+  /* Hero TEPRS + sidebar widget */
+  body[data-page="dashboard"] .app-shell > .list-card {
+    grid-column: 1 / -1;
+    padding: 22px 26px !important;
   }
 
-  /* Card list section: side-by-side */
-  .list-card { padding: 24px !important; }
-
-  /* Theme toggle FAB pushed deeper into corner */
-  .theme-toggle-fab {
-    top: 24px !important;
-    right: 24px !important;
+  /* metric cards punya min-height supaya konten ngerasa balanced */
+  .metric-card {
+    min-height: 150px;
   }
 
-  /* Form pages 2-col */
-  .auth-shell {
+  /* ───── PAGES NON-BENTO (still wide + centered) ───── */
+  body[data-page="profile"] .app-shell,
+  body[data-page="history"] .app-shell,
+  body[data-page="risk-list"] .app-shell,
+  body[data-page="alerts"] .app-shell,
+  body[data-page="achievements"] .app-shell,
+  body[data-page="device"] .app-shell,
+  body[data-page="recovery"] .app-shell,
+  body[data-page="running"] .app-shell,
+  body[data-page="metric-detail"] .app-shell,
+  body[data-page="risk-detail"] .app-shell,
+  body[data-page="session-detail"] .app-shell,
+  body[data-page="edit-profile"] .app-shell,
+  body[data-page="encyclopedia"] .app-shell,
+  body[data-page="assessment"] .app-shell,
+  body[data-page="assessment-history"] .app-shell,
+  body[data-page="help"] .app-shell,
+  body[data-page="privacy"] .app-shell {
+    display: block !important;
+    max-width: 960px !important;
+    padding: 40px 36px 110px !important;
+  }
+
+  /* Risk-list multi-col on desktop */
+  body[data-page="risk-list"] .risk-list,
+  body[data-page="risk-list"] .disease-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  body[data-page="metric-detail"] .app-shell,
+  body[data-page="risk-detail"] .app-shell {
+    max-width: 1100px !important;
+  }
+
+  /* Profile pakai 2-col layout: avatar/info left, sections right */
+  body[data-page="profile"] .app-shell {
+    max-width: 1100px !important;
+    display: grid !important;
+    grid-template-columns: 320px 1fr;
+    column-gap: 28px;
+    row-gap: 18px;
+    align-items: start;
+  }
+
+  /* ───── AUTH pages ───── */
+  body[data-page="login"] .auth-shell,
+  body[data-page="register"] .auth-shell {
     max-width: 920px !important;
     padding: 40px !important;
   }
 
-  /* Onboarding wider */
-  .ob-shell {
-    max-width: 760px !important;
-    padding: 40px 36px 110px !important;
+  /* ───── Onboarding tetap centered narrow tapi padding besar ───── */
+  body[data-page="onboarding"] .ob-shell {
+    max-width: 720px !important;
+    padding: 50px 40px 110px !important;
   }
-  .ob-cards {
+  body[data-page="onboarding"] .ob-cards {
     grid-template-columns: repeat(3, 1fr) !important;
   }
-
-  /* Risk-list 3-col */
-  .risk-list, .disease-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 14px !important;
+  body[data-page="onboarding"] .ob-actions {
+    max-width: 720px !important;
   }
 
-  /* Profile page split */
-  body[data-page="profile"] .app-shell {
-    max-width: 1100px !important;
+  /* ───── DOC pages (evidence, ml reports, datasets, xai) ───── */
+  body[data-page="evidence"] .ev-shell {
+    max-width: 1280px !important;
+    padding: 40px 36px 100px !important;
   }
-  body[data-page="profile"] .profile-grid {
-    grid-template-columns: 320px 1fr !important;
-    gap: 24px;
-  }
-
-  /* Wider hero/section pages (full evidence ML reports) */
-  body[data-page="evidence"] .ev-shell,
+  body[data-page="ml-results-report"] .hero-test,
+  body[data-page="ml-improvement-plan"] .hero,
+  body[data-page="aervinex-roadmap"] .hero,
+  body[data-page="datasets"] .hero,
+  body[data-page="xai-audit"] .hero,
   body[data-page="ml-results-report"] .section,
   body[data-page="ml-improvement-plan"] .section,
   body[data-page="aervinex-roadmap"] .section,
   body[data-page="datasets"] .section,
   body[data-page="xai-audit"] .section {
     max-width: 1200px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  body[data-page="ml-results-report"] .hero-test,
-  body[data-page="ml-improvement-plan"] .hero,
-  body[data-page="aervinex-roadmap"] .hero,
-  body[data-page="datasets"] .hero,
-  body[data-page="xai-audit"] .hero {
-    max-width: 1200px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin: 14px auto !important;
   }
 
-  /* Community + AI chat lebih lebar */
+  /* ───── Community + AI chat ───── */
+  body[data-page="community"] .cm-list,
+  body[data-page="community"] main {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  body[data-page="community"] .cm-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 14px !important;
+  }
   .ch-messages, .ai-messages {
     padding-left: 36px !important;
     padding-right: 36px !important;
+    max-width: 880px;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
   .ch-input-bar, .ai-input-bar {
-    max-width: 1100px;
+    max-width: 880px !important;
     left: 50% !important;
     right: auto !important;
-    transform: translateX(-50%);
+    transform: translateX(-50%) !important;
+  }
+  .ai-suggestions {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* Theme FAB pushed to right corner */
+  .theme-toggle-fab {
+    top: 24px !important;
+    right: 32px !important;
   }
 }
 
-/* ───────────── LARGE DESKTOP 1280px ───────────── */
+/* ════════════════════════════════════════════════════════════════
+   LARGE DESKTOP ≥1280px
+   ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1280px) {
   .app-shell {
-    max-width: 1260px !important;
-    padding-left: 160px !important;
-    padding-right: 50px !important;
+    max-width: 1360px !important;
+    padding: 36px 40px 100px !important;
+    column-gap: 22px;
   }
-  .top-bar, .topbar { max-width: 1260px; }
-  .grid-2 { grid-template-columns: repeat(5, 1fr) !important; }
-  .action-grid { grid-template-columns: repeat(5, 1fr) !important; }
-  .risk-list, .disease-grid { grid-template-columns: repeat(4, 1fr) !important; }
 
-  /* Dashboard 2-column layout: vitals left, environment right */
-  body[data-page="dashboard"] .app-shell {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 24px;
-    align-items: start;
-  }
-  body[data-page="dashboard"] .app-shell > header,
-  body[data-page="dashboard"] .app-shell > .greeting,
-  body[data-page="dashboard"] .app-shell > #smartRecs,
+  /* Dashboard bento jadi lebih spacious */
   body[data-page="dashboard"] .app-shell > .hero-card {
-    grid-column: 1 / -1;
+    grid-column: 1 / 7;
+    min-height: 240px;
   }
+  body[data-page="dashboard"] .hero-num { font-size: 72px !important; }
+  body[data-page="dashboard"] .app-shell > .grid-2 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  body[data-page="dashboard"] .app-shell > #smartRecs {
+    grid-column: 1 / 9;
+  }
+
+  /* Risk-list 4-col */
+  body[data-page="risk-list"] .risk-list,
+  body[data-page="risk-list"] .disease-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  body[data-page="evidence"] .ev-shell { max-width: 1360px !important; }
+  body[data-page="profile"] .app-shell { max-width: 1200px !important; }
 }
 
-/* ───────────── XL 1440px ───────────── */
+/* ════════════════════════════════════════════════════════════════
+   XL DESKTOP ≥1440px
+   ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1440px) {
   .app-shell {
-    max-width: 1400px !important;
-    padding-left: 170px !important;
+    max-width: 1440px !important;
+    padding: 40px 48px 100px !important;
   }
-  .top-bar, .topbar { max-width: 1400px; }
-  .grid-2 { grid-template-columns: repeat(6, 1fr) !important; }
-  .risk-list, .disease-grid { grid-template-columns: repeat(5, 1fr) !important; }
+
+  /* Dashboard: bigger bento, lebih banyak konten visible */
+  body[data-page="dashboard"] .app-shell > .grid-2 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  body[data-page="risk-list"] .risk-list,
+  body[data-page="risk-list"] .disease-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+
+  body[data-page="evidence"] .ev-shell { max-width: 1440px !important; }
 }
 
-/* ───────────── ULTRA-WIDE 1700px ───────────── */
+/* ════════════════════════════════════════════════════════════════
+   ULTRA-WIDE ≥1700px
+   ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1700px) {
   .app-shell {
     max-width: 1560px !important;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
   }
-  .top-bar, .topbar { max-width: 1560px; }
+  body[data-page="risk-list"] .risk-list,
+  body[data-page="risk-list"] .disease-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
 }
 
-/* ───────────── PRINT ───────────── */
+/* ════════════════════════════════════════════════════════════════
+   PRINT
+   ════════════════════════════════════════════════════════════════ */
 @media print {
   .bottom-nav, .bottomnav, .theme-toggle-fab, .topbar, .top-bar { display: none !important; }
-  .app-shell { max-width: 100% !important; padding: 0 !important; }
+  .app-shell {
+    max-width: 100% !important;
+    padding: 0 !important;
+    display: block !important;
+  }
   body { background: white !important; color: black !important; }
 }
