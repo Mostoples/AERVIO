@@ -1,41 +1,12 @@
 /* ════════════════════════════════════════════════════════════════
-   AERVINEX Desktop Responsive — v4 FILL-VIEWPORT
+   AERVINEX Desktop Responsive — v5 SIMPLIFIED
    ────────────────────────────────────────────────────────────────
-   Strategy:
-   - Mobile-first base (≤767px): UNCHANGED
-   - Tablet (768-1023px): widen
-   - Desktop ≥1024px: FILL viewport (no narrow caps)
-     - Content section caps removed
-     - Grids auto-fit untuk fill space
-     - Long-form pages dapat decorative aside panel
+   Strategy (cleaner):
+   - Sidebar shift handled at BODY level via padding-left (desktop-sidepanel.js)
+   - This file: only content max-width caps + grid layouts
+   - NO margin-left rules (was double-shifting)
+   - NO 3-col fake-aside layouts (was overengineered)
    ════════════════════════════════════════════════════════════════ */
-
-/* Decorative aside panel for long-form pages */
-.deco-aside {
-  position: relative;
-  border-radius: 22px;
-  min-height: 400px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(0,229,212,0.14), transparent 55%),
-    radial-gradient(circle at 70% 70%, rgba(167,139,250,0.12), transparent 55%);
-  border: 1px solid rgba(255,255,255,0.06);
-  overflow: hidden;
-}
-body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
-.deco-aside::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 320'><g fill='none' stroke='%2300e5d4' stroke-width='1.5' opacity='0.35'><path d='M20 160 L60 160 L70 130 L80 190 L90 110 L100 210 L110 160 L160 160 L170 140 L180 180 L190 160 L320 160'/><circle cx='160' cy='160' r='70'/><circle cx='160' cy='160' r='52' opacity='0.5'/><circle cx='160' cy='160' r='32' opacity='0.7'/><path d='M130 160 L150 160 L160 130 L170 190 L180 160 L195 160' stroke='%23a78bfa' stroke-width='2'/></g></svg>");
-  background-position: center;
-  background-size: 70% auto;
-  background-repeat: no-repeat;
-}
-
-/* ──────────── Utilities ──────────── */
-.legal-content { max-width: 760px; line-height: 1.75; }
-.constrained-md { max-width: 800px; margin: 0 auto; }
-.table-scroll { position: relative; overflow-x: auto; }
 
 /* ═════════════════ TABLET 768-1023px ═════════════════ */
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -51,17 +22,19 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   .summary-grid { grid-template-columns: repeat(4, 1fr) !important; }
 }
 
-/* ═════════════════ DESKTOP ≥1024px (FILL VIEWPORT) ═════════════════ */
+/* ═════════════════ DESKTOP ≥1024px ═════════════════ */
+/* Note: body padding-left 260px is handled by desktop-sidepanel.js CSS,
+   so all content here automatically fills the remaining viewport width. */
 @media (min-width: 1024px) {
 
-  /* ALL pages: fill viewport remainder after sidebar */
+  /* App-shell fills available width */
   .app-shell {
-    max-width: none !important;
-    width: auto !important;
-    padding: 30px 48px 60px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 30px 36px 60px !important;
   }
 
-  /* Hide redundant top-bar brand (sidebar punya) */
+  /* Hide redundant top-bar brand di desktop (sidebar punya brand) */
   body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .top-bar .brand,
   body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .topbar .brand {
     display: none !important;
@@ -69,15 +42,15 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .top-bar,
   body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .topbar {
     justify-content: flex-end !important;
-    padding: 18px 0 8px !important;
+    padding: 16px 0 8px !important;
     background: transparent !important;
     border: 0 !important;
     backdrop-filter: none !important;
   }
 
-  /* Grids auto-fit untuk fill width */
+  /* Generic grid expand */
   .grid-2 {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
     gap: 18px !important;
   }
   .action-grid {
@@ -85,12 +58,8 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     gap: 14px !important;
   }
 
-  /* ───── DASHBOARD bento fill ───── */
-  body[data-page="dashboard"] .app-shell {
-    display: flex !important;
-    flex-direction: column;
-    gap: 18px;
-  }
+  /* ─── DASHBOARD ─── */
+  body[data-page="dashboard"] .app-shell { max-width: 1400px !important; }
   body[data-page="dashboard"] .greeting {
     display: flex !important;
     align-items: flex-end !important;
@@ -100,46 +69,34 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   }
   body[data-page="dashboard"] .greeting > div:first-child { flex: 1; }
   body[data-page="dashboard"] .greeting .status-pill { align-self: center; }
-  body[data-page="dashboard"] #streakBadge { opacity: 1 !important; }
   body[data-page="dashboard"] #streakBadge > * {
     opacity: 1 !important; color: var(--text) !important; font-weight: 600;
   }
   body[data-page="dashboard"] .hero-card {
-    padding: 36px 44px !important;
-    min-height: 240px;
+    padding: 32px 40px !important;
+    min-height: 220px;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     gap: 32px;
   }
-  body[data-page="dashboard"] .hero-num { font-size: 72px !important; }
-  body[data-page="dashboard"] .hero-card .ring { width: 180px !important; height: 180px !important; flex-shrink: 0; }
-  body[data-page="dashboard"] .grid-2 {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-    gap: 18px !important;
+  body[data-page="dashboard"] .hero-num { font-size: 64px !important; }
+  body[data-page="dashboard"] .hero-card .ring {
+    width: 170px !important; height: 170px !important; flex-shrink: 0;
   }
-  body[data-page="dashboard"] .metric-card { min-height: 170px; }
-  body[data-page="dashboard"] .list-card { padding: 22px 26px !important; }
+  body[data-page="dashboard"] .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  }
+  body[data-page="dashboard"] .metric-card { min-height: 160px; }
   body[data-page="dashboard"] .section-title { margin: 18px 0 8px !important; font-size: 16px !important; }
 
-  /* ───── PROFILE 2-col split fills ───── */
+  /* ─── PROFILE: simple stack, max-width 900px ─── */
   body[data-page="profile"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 360px 1fr;
-    column-gap: 32px;
-    row-gap: 18px;
-    align-items: start;
+    max-width: 900px !important;
   }
-  body[data-page="profile"] .app-shell > .profile-header,
-  body[data-page="profile"] .app-shell > #profileHeader {
-    grid-column: 1 / 2;
-    position: sticky;
-    top: 24px;
-  }
-  body[data-page="profile"] .app-shell > section,
-  body[data-page="profile"] .app-shell > .card { grid-column: 2 / 3; }
 
-  /* ───── RISK-LIST: fill grid ───── */
+  /* ─── RISK-LIST grid ─── */
+  body[data-page="risk-list"] .app-shell { max-width: 1400px !important; }
   body[data-page="risk-list"] #rlGrid,
   body[data-page="risk-list"] .risk-list,
   body[data-page="risk-list"] .disease-grid {
@@ -148,7 +105,8 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     gap: 18px !important;
   }
 
-  /* ───── ENCYCLOPEDIA fill ───── */
+  /* ─── ENCYCLOPEDIA grid ─── */
+  body[data-page="encyclopedia"] .app-shell { max-width: 1400px !important; }
   body[data-page="encyclopedia"] #articles,
   body[data-page="encyclopedia"] .disease-grid {
     display: grid !important;
@@ -156,10 +114,11 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     gap: 18px !important;
   }
 
-  /* ───── RISK-DETAIL: 2-col fills ───── */
+  /* ─── RISK-DETAIL: 2-col ─── */
   body[data-page="risk-detail"] .app-shell {
+    max-width: 1300px !important;
     display: grid !important;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1.3fr 1fr;
     column-gap: 32px;
     row-gap: 18px;
     align-items: start;
@@ -167,11 +126,12 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   body[data-page="risk-detail"] .app-shell > .top-bar,
   body[data-page="risk-detail"] .app-shell > #riskHeader { grid-column: 1 / -1; }
 
-  /* ───── METRIC-DETAIL: 2-col chart + stats ───── */
+  /* ─── METRIC-DETAIL: 2-col chart + stats ─── */
   body[data-page="metric-detail"] .app-shell {
+    max-width: 1200px !important;
     display: grid !important;
-    grid-template-columns: 1.5fr 1fr;
-    column-gap: 32px;
+    grid-template-columns: 1.4fr 1fr;
+    column-gap: 28px;
     row-gap: 18px;
     align-items: start;
   }
@@ -180,105 +140,72 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   body[data-page="metric-detail"] .app-shell > .hero-card,
   body[data-page="metric-detail"] .app-shell > h3.section-title { grid-column: 1 / -1; }
 
-  /* ───── ASSESSMENT wizard + side aside ───── */
+  /* ─── ASSESSMENT: centered wizard, simple ─── */
   body[data-page="assessment"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr minmax(0, 720px) 1fr;
-    column-gap: 24px;
-    row-gap: 18px;
+    max-width: 800px !important;
+    padding: 40px 36px 110px !important;
   }
-  body[data-page="assessment"] .app-shell > .top-bar,
-  body[data-page="assessment"] .app-shell > * { grid-column: 2; }
-  body[data-page="assessment"] .app-shell > .top-bar { grid-column: 1 / -1; }
-  /* Decorative left + right column visible only on ≥1280 */
-  @media (min-width: 1280px) {
-    body[data-page="assessment"] .app-shell::before,
-    body[data-page="assessment"] .app-shell::after {
-      content: '';
-      align-self: center;
-      min-height: 400px;
-      margin-top: 100px;
-      border-radius: 22px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(0,229,212,0.12), transparent 60%),
-        radial-gradient(circle at 70% 70%, rgba(167,139,250,0.10), transparent 60%);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    body[data-page="assessment"] .app-shell::before { grid-column: 1; }
-    body[data-page="assessment"] .app-shell::after { grid-column: 3; }
-  }
+  body[data-page="assessment-history"] .app-shell { max-width: 1100px !important; }
 
-  /* ───── HISTORY fill ───── */
-  body[data-page="history"] .app-shell { padding: 30px 48px !important; }
+  /* ─── HISTORY ─── */
+  body[data-page="history"] .app-shell { max-width: 1200px !important; }
 
-  /* ───── RUNNING fill + bigger map ───── */
+  /* ─── RUNNING ─── */
+  body[data-page="running"] .app-shell { max-width: 1100px !important; }
   body[data-page="running"] #map,
-  body[data-page="running"] .map-container { height: 440px !important; }
-  body[data-page="running"] .hero-card { padding: 32px 40px !important; }
+  body[data-page="running"] .map-container { height: 380px !important; }
+  body[data-page="running"] .hero-card { padding: 28px 32px !important; }
 
-  /* ───── ALERTS: 2-col list + filter sidebar ───── */
-  body[data-page="alerts"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr 320px;
-    column-gap: 28px;
-    row-gap: 18px;
-    align-items: start;
-  }
-  body[data-page="alerts"] .app-shell > .top-bar,
-  body[data-page="alerts"] .app-shell > .greeting,
-  body[data-page="alerts"] .app-shell > .section-title { grid-column: 1 / -1; }
+  /* ─── ALERTS: simple list, capped width ─── */
+  body[data-page="alerts"] .app-shell { max-width: 900px !important; }
 
-  /* ───── ACHIEVEMENTS fill ───── */
+  /* ─── ACHIEVEMENTS ─── */
+  body[data-page="achievements"] .app-shell { max-width: 1200px !important; }
   body[data-page="achievements"] .achievements-grid,
   body[data-page="achievements"] .grid-2 {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
-    gap: 18px !important;
   }
 
-  /* ───── EDIT-PROFILE form 2-col ───── */
+  /* ─── EDIT-PROFILE form ─── */
   body[data-page="edit-profile"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr minmax(0, 760px) 1fr;
-    column-gap: 24px;
+    max-width: 760px !important;
+    padding: 40px 36px 110px !important;
   }
-  body[data-page="edit-profile"] .app-shell > * { grid-column: 2; }
-  body[data-page="edit-profile"] .app-shell > .top-bar { grid-column: 1 / -1; }
   body[data-page="edit-profile"] .form-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
   }
 
-  /* ───── RECOVERY: 2-col score + chart ───── */
-  body[data-page="recovery"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1.3fr 1fr;
-    column-gap: 32px;
-    row-gap: 18px;
-    align-items: start;
-  }
-  body[data-page="recovery"] .app-shell > .top-bar,
-  body[data-page="recovery"] .app-shell > .recovery-header { grid-column: 1 / -1; }
+  /* ─── RECOVERY ─── */
+  body[data-page="recovery"] .app-shell { max-width: 1000px !important; }
 
-  /* ───── SESSION-DETAIL fill ───── */
+  /* ─── SESSION-DETAIL ─── */
+  body[data-page="session-detail"] .app-shell { max-width: 1100px !important; }
   body[data-page="session-detail"] .grid-2 {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
   }
 
-  /* ───── DEVICE / CALIBRATE: center + side deco ───── */
+  /* ─── DEVICE / CALIBRATE ─── */
   body[data-page="device"] .app-shell,
   body[data-page="device-pair"] .app-shell,
   body[data-page="calibrate"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr minmax(0, 760px) 1fr;
-    column-gap: 24px;
+    max-width: 800px !important;
+    padding: 40px 36px 110px !important;
   }
-  body[data-page="device"] .app-shell > *,
-  body[data-page="device-pair"] .app-shell > *,
-  body[data-page="calibrate"] .app-shell > * { grid-column: 2; }
-  body[data-page="device"] .app-shell > .top-bar,
-  body[data-page="device-pair"] .app-shell > .top-bar,
-  body[data-page="calibrate"] .app-shell > .top-bar { grid-column: 1 / -1; }
 
-  /* ───── LEGAL pages — text 800px center + side deco panels ───── */
+  /* ─── LIVE-DATA ─── */
+  body[data-page="live-data"] .app-shell { max-width: 1200px !important; }
+  body[data-page="live-data"] .live-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  }
+
+  /* ─── AE-REPORT / HEALTH-BRIDGE ─── */
+  body[data-page="ae-report"] .app-shell,
+  body[data-page="health-bridge"] .app-shell {
+    max-width: 850px !important;
+    padding: 40px 36px 110px !important;
+  }
+
+  /* ─── LEGAL: max-width 800px centered ─── */
   body[data-page="terms"] .app-shell,
   body[data-page="privacy"] .app-shell,
   body[data-page="privacy-policy"] .app-shell,
@@ -286,85 +213,20 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   body[data-page="consent"] .app-shell,
   body[data-page="about"] .app-shell,
   body[data-page="help"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr minmax(0, 800px) 1fr;
-    column-gap: 32px;
-    padding: 50px 48px 110px !important;
+    max-width: 800px !important;
+    padding: 50px 40px 110px !important;
     line-height: 1.75;
   }
-  body[data-page="terms"] .app-shell > *,
-  body[data-page="privacy"] .app-shell > *,
-  body[data-page="privacy-policy"] .app-shell > *,
-  body[data-page="security"] .app-shell > *,
-  body[data-page="consent"] .app-shell > *,
-  body[data-page="about"] .app-shell > *,
-  body[data-page="help"] .app-shell > * { grid-column: 2; }
-  body[data-page="terms"] .app-shell > .top-bar,
-  body[data-page="privacy"] .app-shell > .top-bar,
-  body[data-page="privacy-policy"] .app-shell > .top-bar,
-  body[data-page="security"] .app-shell > .top-bar,
-  body[data-page="consent"] .app-shell > .top-bar,
-  body[data-page="about"] .app-shell > .top-bar,
-  body[data-page="help"] .app-shell > .top-bar { grid-column: 1 / -1; }
 
-  /* Decorative side panels on ultra-wide ≥1440 */
-  @media (min-width: 1440px) {
-    body[data-page="terms"] .app-shell::before,
-    body[data-page="privacy"] .app-shell::before,
-    body[data-page="privacy-policy"] .app-shell::before,
-    body[data-page="security"] .app-shell::before,
-    body[data-page="consent"] .app-shell::before,
-    body[data-page="about"] .app-shell::before,
-    body[data-page="help"] .app-shell::before,
-    body[data-page="terms"] .app-shell::after,
-    body[data-page="privacy"] .app-shell::after,
-    body[data-page="privacy-policy"] .app-shell::after,
-    body[data-page="security"] .app-shell::after,
-    body[data-page="consent"] .app-shell::after,
-    body[data-page="about"] .app-shell::after,
-    body[data-page="help"] .app-shell::after {
-      content: '';
-      align-self: start;
-      margin-top: 80px;
-      min-height: 500px;
-      border-radius: 22px;
-      position: sticky;
-      top: 80px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(0,229,212,0.12), transparent 55%),
-        radial-gradient(circle at 70% 70%, rgba(167,139,250,0.10), transparent 55%);
-      border: 1px solid rgba(255,255,255,0.05);
-      background-image:
-        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'><g fill='none' stroke='%2300e5d4' stroke-width='1.2' opacity='0.3'><circle cx='120' cy='100' r='50'/><circle cx='120' cy='100' r='35' opacity='0.6'/><path d='M90 100 L100 100 L108 80 L118 130 L128 60 L138 140 L148 100 L240 100'/><path d='M70 200 H170 M70 220 H140 M70 240 H160 M70 260 H100'/></g></svg>");
-      background-position: center 60px;
-      background-size: 80% auto;
-      background-repeat: no-repeat;
-    }
-    body[data-page="terms"] .app-shell::before,
-    body[data-page="privacy"] .app-shell::before,
-    body[data-page="privacy-policy"] .app-shell::before,
-    body[data-page="security"] .app-shell::before,
-    body[data-page="consent"] .app-shell::before,
-    body[data-page="about"] .app-shell::before,
-    body[data-page="help"] .app-shell::before { grid-column: 1; }
-    body[data-page="terms"] .app-shell::after,
-    body[data-page="privacy"] .app-shell::after,
-    body[data-page="privacy-policy"] .app-shell::after,
-    body[data-page="security"] .app-shell::after,
-    body[data-page="consent"] .app-shell::after,
-    body[data-page="about"] .app-shell::after,
-    body[data-page="help"] .app-shell::after { grid-column: 3; }
-  }
-
-  /* ───── AUTH split-screen 50/50 fill ───── */
+  /* ─── AUTH split-screen ─── */
   body[data-page="login"] .auth-shell,
   body[data-page="register"] .auth-shell {
-    max-width: 1200px !important;
+    max-width: 1100px !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 48px !important;
     align-items: center;
-    padding: 60px 48px !important;
+    padding: 50px 40px !important;
     margin: 40px auto !important;
   }
   body[data-page="login"] .auth-brand,
@@ -376,23 +238,22 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     content: '';
     display: block;
     margin-top: 32px;
-    height: 360px;
+    height: 340px;
     border-radius: 24px;
     background:
       radial-gradient(circle at 30% 30%, rgba(0,229,212,0.22), transparent 60%),
       radial-gradient(circle at 70% 70%, rgba(167,139,250,0.18), transparent 60%);
     border: 1px solid rgba(255,255,255,0.06);
     background-image:
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 280'><g fill='none' stroke='%2300e5d4' stroke-width='1.5' opacity='0.45'><path d='M20 140 L60 140 L70 100 L80 180 L90 80 L100 200 L110 140 L160 140 L170 110 L180 170 L190 140 L280 140'/><circle cx='140' cy='140' r='70'/><circle cx='140' cy='140' r='52' opacity='0.6'/><circle cx='140' cy='140' r='32' opacity='0.7'/><path d='M110 140 L130 140 L140 100 L150 180 L160 140 L180 140' stroke='%23a78bfa' stroke-width='2'/></g></svg>");
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 280'><g fill='none' stroke='%2300e5d4' stroke-width='1.5' opacity='0.45'><path d='M20 140 L60 140 L70 100 L80 180 L90 80 L100 200 L110 140 L160 140 L170 110 L180 170 L190 140 L280 140'/><circle cx='140' cy='140' r='70'/><circle cx='140' cy='140' r='52' opacity='0.6'/><circle cx='140' cy='140' r='32' opacity='0.7'/></g></svg>");
     background-position: center;
     background-size: 75% auto;
     background-repeat: no-repeat;
   }
 
-  /* ───── ONBOARDING wider + side deco ───── */
+  /* ─── ONBOARDING ─── */
   body[data-page="onboarding"] .ob-shell {
-    max-width: 840px !important;
-    margin: 0 auto !important;
+    max-width: 820px !important;
     padding: 50px 40px 110px !important;
   }
   body[data-page="onboarding"] .ob-cards {
@@ -403,14 +264,13 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     gap: 18px;
   }
   body[data-page="onboarding"] .ob-actions {
-    max-width: 840px !important;
-    margin: 0 auto !important;
+    max-width: 820px !important;
   }
 
-  /* ───── DOC pages fill width ───── */
+  /* ─── DOC pages ─── */
   body[data-page="evidence"] .ev-shell {
-    max-width: none !important;
-    padding: 40px 48px 100px !important;
+    max-width: 1300px !important;
+    padding: 40px 36px 100px !important;
   }
   body[data-page="ml-results-report"] .hero-test,
   body[data-page="ml-improvement-plan"] .hero,
@@ -422,15 +282,14 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   body[data-page="aervinex-roadmap"] .section,
   body[data-page="datasets"] .section,
   body[data-page="xai-audit"] .section {
-    max-width: none !important;
-    margin-left: 48px !important;
-    margin-right: 48px !important;
+    max-width: 1200px !important;
+    margin: 14px auto !important;
   }
   body[data-page="ml-results-report"] .actions-bar {
-    max-width: none !important;
-    left: 280px !important;
-    right: 48px !important;
+    left: 274px !important;
+    right: 14px !important;
     transform: none !important;
+    max-width: none !important;
   }
   body[data-page="ml-results-report"] body { padding-bottom: 160px !important; }
   body[data-page="ml-results-report"] .summary-grid {
@@ -444,15 +303,23 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
     -webkit-backdrop-filter: blur(14px);
   }
 
-  /* ───── COMMUNITY fill grid ───── */
+  /* ─── COMMUNITY ─── */
+  body[data-page="community"] main {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 24px 36px 100px;
+  }
   body[data-page="community"] .cm-list,
   body[data-page="community"] #channelList {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
     gap: 18px !important;
   }
-  body[data-page="community"] main { max-width: none; margin: 0 auto; padding: 0 48px; }
+  body[data-page="community"] .cm-hero {
+    max-width: none !important;
+    margin: 0 !important;
+  }
 
-  /* ───── CHAT pages center 880px + side deco ───── */
+  /* ─── CHAT pages (centered narrow chat area) ─── */
   body[data-page="community-channel"] .ch-messages,
   body[data-page="ai-chat"] .ai-messages {
     max-width: 880px !important;
@@ -462,61 +329,57 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   }
   body[data-page="community-channel"] .ch-input-bar,
   body[data-page="ai-chat"] .ai-input-bar {
-    max-width: 880px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
+    /* width auto, left adjusted by sidepanel JS CSS to clear sidebar */
+    right: 0 !important;
+    transform: none !important;
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+  body[data-page="community-channel"] .ch-input-bar > *,
+  body[data-page="ai-chat"] .ai-input-bar > * {
+    max-width: 880px;
+    margin: 0 auto;
   }
   body[data-page="ai-chat"] .ai-suggestions {
     max-width: 880px;
     margin: 0 auto;
   }
 
-  /* ───── SUBSCRIPTION fill 3-col ───── */
+  /* Community channel + AI chat: top bar fixed sticky-ish */
+  body[data-page="community-channel"] .ch-topbar,
+  body[data-page="ai-chat"] .ai-topbar {
+    max-width: none !important;
+  }
+
+  /* ─── SUBSCRIPTION ─── */
+  body[data-page="subscription"] .app-shell { max-width: 1100px !important; }
   body[data-page="subscription"] .lp-pricing,
   body[data-page="subscription"] .plans-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
     gap: 20px !important;
   }
 
-  /* ───── CHALLENGES fill ───── */
+  /* ─── CHALLENGES ─── */
+  body[data-page="challenges"] .app-shell { max-width: 1200px !important; }
   body[data-page="challenges"] .challenges-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
     gap: 18px !important;
   }
 
-  /* ───── LIVE-DATA fill ───── */
-  body[data-page="live-data"] .live-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-  }
-
-  /* ───── AE-REPORT / HEALTH-BRIDGE centered + side deco ───── */
-  body[data-page="ae-report"] .app-shell,
-  body[data-page="health-bridge"] .app-shell {
-    display: grid !important;
-    grid-template-columns: 1fr minmax(0, 800px) 1fr;
-    column-gap: 32px;
-  }
-  body[data-page="ae-report"] .app-shell > *,
-  body[data-page="health-bridge"] .app-shell > * { grid-column: 2; }
-  body[data-page="ae-report"] .app-shell > .top-bar,
-  body[data-page="health-bridge"] .app-shell > .top-bar { grid-column: 1 / -1; }
-
-  /* ───── SAMPLE ───── */
+  /* ─── SAMPLE / 404 ─── */
   body[data-page="sample"] .app-shell { max-width: 600px !important; margin: 0 auto !important; }
-
-  /* ───── 404 centered ───── */
   body[data-page="404"] .app-shell { max-width: 600px !important; margin: 100px auto !important; }
 
-  /* ───── ADMIN fill ───── */
+  /* ─── ADMIN ─── */
   body[data-page^="admin"] .app-shell {
-    padding: 30px 48px !important;
+    max-width: 1400px !important;
+    padding: 30px 36px !important;
   }
   body[data-page^="admin"] .admin-table { width: 100% !important; min-width: 700px; }
   body[data-page^="admin"] .table-wrap,
   body[data-page^="admin"] .admin-table-wrap { overflow-x: auto; }
 
-  /* Carousel landing */
+  /* ─── LANDING carousel arrows ─── */
   body[data-page="home"] .hero-arrow.prev { left: 24px !important; }
   body[data-page="home"] .hero-arrow.next { right: 24px !important; }
 
@@ -527,12 +390,12 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   }
 }
 
-/* ═════════════════ ULTRA-WIDE ≥1700px (cap absolute max) ═════════════════ */
+/* ═════════════════ ULTRA-WIDE ≥1700px ═════════════════ */
 @media (min-width: 1700px) {
-  .app-shell {
-    max-width: 1800px !important;
-    margin: 0 auto !important;
-  }
+  .app-shell { max-width: 1500px !important; }
+  body[data-page="dashboard"] .app-shell { max-width: 1500px !important; }
+  body[data-page="risk-list"] .app-shell,
+  body[data-page="encyclopedia"] .app-shell { max-width: 1500px !important; }
 }
 
 /* ═════════════════ MOBILE ≤600px ═════════════════ */
@@ -557,12 +420,12 @@ body.theme-light .deco-aside { border-color: rgba(0,0,0,0.05); }
   .aerv-sidepanel, .aerv-hamburger, .aerv-sp-backdrop,
   .bottom-nav, .bottomnav, .theme-toggle-fab, .topbar, .top-bar,
   .hero-arrow, .hero-dots, .actions-bar { display: none !important; }
+  body { padding-left: 0 !important; background: white !important; color: black !important; }
   .app-shell {
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
     display: block !important;
   }
-  body { background: white !important; color: black !important; }
   .card { box-shadow: none !important; border: 1px solid #ccc !important; }
 }

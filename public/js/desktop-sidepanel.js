@@ -302,7 +302,7 @@
 
       /* ───── DESKTOP ≥1024px: PERSISTENT SIDEBAR ───── */
       @media (min-width: 1024px) {
-        /* Sidebar always visible, no toggle */
+        /* Sidebar always visible */
         .aerv-sidepanel {
           transform: none !important;
           width: 260px;
@@ -316,48 +316,36 @@
           box-shadow: 4px 0 40px rgba(0, 30, 60, 0.06);
         }
 
-        /* Hide hamburger + backdrop + close button — persistent */
         .aerv-hamburger,
         .aerv-sp-backdrop,
         .aerv-sp-close { display: none !important; }
-
-        /* Hide bottom nav */
         .bottom-nav, .bottomnav { display: none !important; }
 
-        /* Push semua content ke kanan sidebar */
-        .app-shell,
-        .top-bar,
-        .topbar,
-        .ev-shell,
-        .auth-shell,
-        .ob-shell,
-        section.hero,
-        section.hero-test,
-        section.section {
-          margin-left: 260px !important;
+        /* Body padding-left → SEMUA content auto-shift ke kanan sidebar.
+           Skip pages yang tidak install sidepanel (landing/auth/onboarding/404/sample) */
+        body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) {
+          padding-left: 260px !important;
         }
 
-        /* Theme toggle FAB pushed right */
+        /* Fixed-positioned chat input bars: shift right to clear sidebar */
+        .ai-input-bar, .ch-input-bar {
+          left: 260px !important;
+        }
+
+        /* Theme toggle FAB */
         .theme-toggle-fab {
           left: auto !important;
           right: 24px !important;
         }
       }
 
-      /* ≥1280px: sedikit lebih lebar sidebar */
+      /* ≥1280px: sidebar 280px */
       @media (min-width: 1280px) {
         .aerv-sidepanel { width: 280px; }
-        .app-shell,
-        .top-bar,
-        .topbar,
-        .ev-shell,
-        .auth-shell,
-        .ob-shell,
-        section.hero,
-        section.hero-test,
-        section.section {
-          margin-left: 280px !important;
+        body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) {
+          padding-left: 280px !important;
         }
+        .ai-input-bar, .ch-input-bar { left: 280px !important; }
       }
     `;
     const style = document.createElement('style');
