@@ -32,63 +32,100 @@
    ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1024px) {
 
-  /* App shell fills remaining space (sidebar di kiri ditangani sidepanel JS CSS) */
+  /* App shell: cap max-width supaya cards tidak terlalu lebar */
   .app-shell {
-    max-width: none !important;
+    max-width: 1100px !important;
     padding: 30px 36px 60px !important;
-    /* margin-left auto via sidepanel CSS @media query */
   }
 
-  .top-bar, .topbar {
-    max-width: none !important;
-    padding: 18px 36px !important;
+  /* Hide redundant top-bar brand + greeting heading (sidebar sudah ada brand)
+     Keep top-bar action buttons (theme/lang/notif/profile) */
+  body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .top-bar .brand {
+    display: none !important;
+  }
+  body[data-page]:not([data-page="home"]):not([data-page="login"]):not([data-page="register"]):not([data-page="onboarding"]):not([data-page="sample"]):not([data-page="404"]) .top-bar {
+    justify-content: flex-end !important;
+    padding: 18px 0 8px !important;
+    background: transparent !important;
+    border: 0 !important;
+    backdrop-filter: none !important;
   }
 
-  /* Standard 2-col grid → 4-col */
+  /* Standard 2-col grid → auto-fit dengan min 220px, max 1fr */
   .grid-2 {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
     gap: 16px !important;
   }
   .action-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+    gap: 14px !important;
   }
 
   /* ───── DASHBOARD bento layout ───── */
   body[data-page="dashboard"] .app-shell {
-    display: grid !important;
-    grid-template-columns: repeat(12, 1fr);
-    column-gap: 18px;
-    row-gap: 18px;
-    align-items: start;
+    max-width: 1100px !important;
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
   }
-  body[data-page="dashboard"] .app-shell > * { min-width: 0; }
-  body[data-page="dashboard"] .app-shell > .top-bar { grid-column: 1 / -1; }
-  body[data-page="dashboard"] .app-shell > .greeting { grid-column: 1 / 9; }
-  body[data-page="dashboard"] .app-shell > .status-pill,
-  body[data-page="dashboard"] .app-shell > #streakBadge { grid-column: 9 / -1; align-self: center; }
-  body[data-page="dashboard"] .app-shell > #smartRecs { grid-column: 1 / -1; }
-  body[data-page="dashboard"] .app-shell > .hero-card {
-    grid-column: 1 / 8;
-    padding: 28px 32px !important;
-    min-height: 220px;
-    display: flex; align-items: center;
+
+  /* Greeting: name + meta left, status right */
+  body[data-page="dashboard"] .greeting {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    gap: 16px;
+    padding: 8px 0 14px;
+  }
+  body[data-page="dashboard"] .greeting > div:first-child { flex: 1; }
+  body[data-page="dashboard"] .greeting .status-pill {
+    align-self: center;
+  }
+
+  /* Streak badge readable */
+  body[data-page="dashboard"] #streakBadge {
+    opacity: 1 !important;
+  }
+  body[data-page="dashboard"] #streakBadge .streak-badge,
+  body[data-page="dashboard"] #streakBadge > * {
+    opacity: 1 !important;
+    color: var(--text) !important;
+    font-weight: 600;
+  }
+
+  /* TEPRS hero card balanced */
+  body[data-page="dashboard"] .hero-card {
+    padding: 32px 40px !important;
+    min-height: 240px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 32px;
   }
   body[data-page="dashboard"] .hero-num { font-size: 64px !important; }
-  body[data-page="dashboard"] .app-shell > .section-title {
-    grid-column: 1 / -1;
-    margin: 8px 0 4px;
+  body[data-page="dashboard"] .hero-card .ring {
+    width: 160px !important;
+    height: 160px !important;
+    flex-shrink: 0;
   }
-  body[data-page="dashboard"] .app-shell > .grid-2 {
-    grid-column: 1 / -1;
-    grid-template-columns: repeat(4, 1fr) !important;
+
+  /* Vital signs cards: cap each card max-width supaya tidak melar */
+  body[data-page="dashboard"] .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 280px)) !important;
     gap: 16px !important;
+    justify-content: start;
   }
-  body[data-page="dashboard"] .app-shell > .list-card {
-    grid-column: 1 / -1;
+  body[data-page="dashboard"] .metric-card {
+    min-height: 160px;
+  }
+  body[data-page="dashboard"] .list-card {
     padding: 22px 26px !important;
   }
-  body[data-page="dashboard"] .app-shell > #recPanel {
-    grid-column: 1 / -1;
+
+  /* Section title margin */
+  body[data-page="dashboard"] .section-title {
+    margin: 16px 0 8px !important;
+    font-size: 16px !important;
   }
 
   /* ───── PAGES NON-DASHBOARD ───── */

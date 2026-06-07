@@ -221,11 +221,14 @@
       .aerv-sp-nav {
         flex: 1;
         overflow-y: auto;
-        margin: 0; padding: 0; list-style: none;
+        overflow-x: hidden;
+        margin: 0; padding: 0 0 16px; list-style: none;
         display: flex; flex-direction: column; gap: 2px;
+        min-height: 0; /* allow flex shrink */
       }
       .aerv-sp-nav::-webkit-scrollbar { width: 6px; }
       .aerv-sp-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 6px; }
+      .aerv-sp-nav::-webkit-scrollbar-thumb:hover { background: rgba(0,229,212,0.3); }
 
       .aerv-sp-item {
         display: flex; align-items: center; gap: 12px;
