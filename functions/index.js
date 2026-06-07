@@ -43,6 +43,9 @@ exports.exportToBQ        = require('./exportToBQ')(regional, admin);
 exports.webhookDispatcher = require('./webhookDispatcher')(regional, admin);
 exports.mlDriftDetector   = require('./mlDriftDetector')(regional, admin);
 
+// ── Aervi AI chatbot (Gemini-powered) ──
+exports.aiChat            = require('./aiChat').aiChat;
+
 // ── Midtrans payments (subscription, webhook, dunning) ──
 const midtransModule         = require('./midtrans')(regional, admin);
 exports.createSubscription   = midtransModule.createSubscription;

@@ -181,6 +181,74 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // -------- community_channels/{ch}/messages/{msgId} --------
+    // Public chat per channel. Authenticated users can read + create
+    // their own messages. Edit/delete: own messages only. Reports → separate
+    // collection. Admins can moderate (delete) any message.
+    match /community_channels/{ch} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+
+      match /messages/{msgId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500
+          && request.resource.data.name is string
+          && request.resource.data.name.size() <= 60;
+        // Allow own-delete + admin-delete (moderation)
+        allow delete: if isSignedIn()
+          && (resource.data.uid == request.auth.uid || isAdmin());
+        // Edits not allowed (immutable chat history per audit pattern)
+        allow update: if isAdmin();
+      }
+    }
+
+    // -------- community_reports/{reportId} --------
+    // Anyone signed in can create a report; only admin can read/process.
+    match /community_reports/{reportId} {
+      allow create: if isSignedIn()
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.msgId is string
+        && request.resource.data.channel is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // -------- community_stats/{statKey} --------
+    // Aggregate counters (online users, total messages). Read public,
+    // write only via Cloud Function (admin claim).
+    match /community_stats/{statKey} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // -------- ai_conversations/{convoId} --------
+    // Aervi AI chat history. Per-user, read+create own only.
+    match /ai_conversations/{convoId} {
+      allow read: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+
+      match /messages/{msgId} {
+        // Both client and server (Cloud Function) write via Admin SDK or auth.
+        allow read: if isSignedIn()
+          && get(/databases/$(database)/documents/ai_conversations/$(convoId)).data.uid == request.auth.uid;
+        // Writes only via Cloud Function (Admin SDK bypasses rules) or by owner
+        allow create: if isSignedIn()
+          && get(/databases/$(database)/documents/ai_conversations/$(convoId)).data.uid == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // -------- ai_rate_limits/{uid} --------
+    // Sliding-window rate limit counter. Written by Cloud Function only.
+    match /ai_rate_limits/{uid} {
+      allow read: if isSelf(uid);
+      allow write: if false; // server-only
+    }
+
     // -------- DEFAULT DENY --------
     // Anything not explicitly matched above is denied.
     match /{document=**} {

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Komunitas — AERVINEX</title>
+  <link rel="canonical" href="https://aervinex.web.app/community.html" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    body { padding-bottom: 100px; }
+    .cm-hero {
+      margin: 14px; padding: 24px 22px;
+      background: linear-gradient(135deg, rgba(0,229,212,0.14), rgba(167,139,250,0.14));
+      border: 1px solid rgba(0,229,212,0.3);
+      border-radius: 22px;
+      position: relative; overflow: hidden;
+    }
+    .cm-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 0%, rgba(167,139,250,0.2), transparent 60%);
+      pointer-events: none;
+    }
+    .cm-hero h1 { font-size: 22px; font-weight: 800; margin: 0 0 4px; position: relative; }
+    .cm-hero p { font-size: 13px; opacity: 0.85; margin: 0; position: relative; line-height: 1.55; }
+    .cm-stats { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; font-size: 11px; opacity: 0.8; position: relative; }
+    .cm-stats span strong { color: #00e5d4; font-weight: 800; }
+
+    .cm-tabs {
+      display: flex; gap: 6px; padding: 0 14px; margin-bottom: 8px;
+      overflow-x: auto;
+    }
+    .cm-tab {
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .cm-tab.active {
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923; border-color: transparent;
+    }
+
+    .cm-list {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin: 14px;
+    }
+    @media (max-width: 600px) { .cm-list { grid-template-columns: 1fr; } }
+
+    .cm-card {
+      position: relative;
+      padding: 16px 16px 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    .cm-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0,229,212,0.3);
+      box-shadow: 0 14px 30px rgba(0,229,212,0.1);
+    }
+    .cm-card::before {
+      content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+      width: 4px;
+      background: var(--cm-clr, #00e5d4);
+    }
+    .cm-card-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: var(--cm-bg, rgba(0,229,212,0.15));
+      color: var(--cm-clr, #00e5d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .cm-card-name {
+      font-size: 14.5px; font-weight: 700;
+      margin: 0 0 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cm-card-desc {
+      font-size: 12px; opacity: 0.75; line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .cm-card-meta {
+      display: flex; gap: 12px; align-items: center;
+      font-size: 11px; opacity: 0.7;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .cm-card-meta .dot { width: 7px; height: 7px; border-radius: 50%; background: #00e5d4; box-shadow: 0 0 8px #00e5d4; animation: cmPulse 1.4s infinite; }
+    @keyframes cmPulse { 0%,100% { opacity: 1 } 50% { opacity: 0.3 } }
+    .cm-card-badge {
+      font-size: 9px; font-weight: 800; letter-spacing: 0.04em;
+      padding: 2px 8px; border-radius: 999px;
+      background: rgba(252,211,77,0.15); color: #fcd34d;
+      margin-left: auto;
+    }
+    .cm-card-badge.new { background: rgba(0,229,212,0.18); color: #00e5d4; }
+    .cm-card-badge.featured { background: rgba(167,139,250,0.18); color: #a78bfa; }
+
+    .cm-ai-cta {
+      margin: 14px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(167,139,250,0.12), rgba(255,84,112,0.10));
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 18px;
+      display: flex; align-items: center; gap: 14px;
+      text-decoration: none; color: var(--text);
+      transition: all 0.2s;
+    }
+    .cm-ai-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(167,139,250,0.15); }
+    .cm-ai-cta .ai-icon {
+      width: 54px; height: 54px; border-radius: 16px;
+      background: linear-gradient(135deg, #a78bfa, #00e5d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(167,139,250,0.3);
+    }
+    .cm-ai-cta .ai-body { flex: 1; min-width: 0; }
+    .cm-ai-cta .ai-title { font-size: 15px; font-weight: 800; margin: 0 0 2px; }
+    .cm-ai-cta .ai-sub { font-size: 12px; opacity: 0.75; margin: 0; }
+    .cm-ai-cta .ai-arrow { font-size: 20px; opacity: 0.5; }
+
+    .cm-guide {
+      margin: 18px 14px 14px;
+      padding: 14px 16px;
+      background: rgba(252,211,77,0.06);
+      border-left: 3px solid #fcd34d;
+      border-radius: 8px;
+      font-size: 12px; line-height: 1.55;
+    }
+    .cm-guide strong { color: #fcd34d; }
+  </style>
+</head>
+<body class="theme-dark" data-page="community">
+
+  <button class="btn-icon theme-toggle theme-toggle-fab" aria-label="Tema">
+    <svg viewBox="0 0 24 24" class="ico ico-moon"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    <svg viewBox="0 0 24 24" class="ico ico-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+  </button>
+
+  <header class="topbar">
+    <a href="/dashboard.html" class="btn-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+    <div class="topbar-title"><span>Komunitas</span></div>
+  </header>
+
+  <main id="main">
+  <section class="cm-hero">
+    <h1>Komunitas AERVINEX 🌿</h1>
+    <p>Ruang aman untuk pelari & warga urban Indonesia berbagi pengalaman, tips, dan saling dukung — termasuk asisten <strong>Aervi AI</strong> untuk tanya jawab cepat.</p>
+    <div class="cm-stats">
+      <span><strong id="statUsers">—</strong> anggota</span>
+      <span><strong id="statMsgs">—</strong> pesan minggu ini</span>
+      <span><strong id="statChannels">8</strong> channel aktif</span>
+    </div>
+  </section>
+
+  <!-- AI Chat CTA -->
+  <a href="/ai-chat.html" class="cm-ai-cta">
+    <div class="ai-icon">🤖</div>
+    <div class="ai-body">
+      <h3 class="ai-title">Aervi AI Assistant</h3>
+      <p class="ai-sub">Tanya jawab kesehatan, polusi, training plan — instant 24/7</p>
+    </div>
+    <div class="ai-arrow">→</div>
+  </a>
+
+  <div class="cm-tabs" role="tablist">
+    <button class="cm-tab active" data-tab="all">Semua</button>
+    <button class="cm-tab" data-tab="runner">🏃 Pelari</button>
+    <button class="cm-tab" data-tab="urban">🏙️ Urban</button>
+    <button class="cm-tab" data-tab="health">🩺 Kesehatan</button>
+    <button class="cm-tab" data-tab="city">📍 Per Kota</button>
+  </div>
+
+  <div class="cm-list" id="channelList"></div>
+
+  <div class="cm-guide">
+    💡 <strong>Aturan komunitas</strong>: Tidak boleh self-promotion, spam, ujaran kebencian, atau klaim medis. Konsultasi dokter untuk masalah kesehatan serius. Lapor pelanggaran via tombol 🚩 di tiap pesan. Pelanggaran berulang → ban permanen.
+  </div>
+
+  <nav class="bottomnav">
+    <a href="/dashboard.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg><span>Home</span></a>
+    <a href="/risk-list.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg><span>Risiko</span></a>
+    <a href="/community.html" class="bn-item active"><svg viewBox="0 0 24 24" class="ico"><circle cx="9" cy="7" r="4"/><circle cx="17" cy="9" r="3"/><path d="M2 21a7 7 0 0114 0M14 21a5 5 0 0110 0"/></svg><span>Komunitas</span></a>
+    <a href="/profile.html" class="bn-item"><svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg><span>Profil</span></a>
+  </nav>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+  <script>
+    const CHANNELS = [
+      { id: 'pelari-jakarta',    cat: 'runner', icon: '🏃', name: 'Pelari Jakarta',         desc: 'Komunitas pelari Sudirman, GBK, Senayan. Share rute aman + AQI alert.', clr: '#ff5470', bg: 'rgba(255,84,112,0.15)', badge: 'featured' },
+      { id: 'pelari-bandung',    cat: 'runner', icon: '🏔️', name: 'Pelari Bandung',         desc: 'Lari Dago, Babakan Siliwangi. Tips heat acclimatization untuk pegunungan.', clr: '#fcd34d', bg: 'rgba(252,211,77,0.15)' },
+      { id: 'pelari-surabaya',   cat: 'runner', icon: '🌊', name: 'Pelari Surabaya',        desc: 'Komunitas lari Suroboyo, House of Sampoerna route. Heat humidity tips.', clr: '#06b6d4', bg: 'rgba(6,182,212,0.15)' },
+      { id: 'komuter-motor',     cat: 'urban',  icon: '🛵', name: 'Komuter Motor',          desc: 'Tips masker N95, ganti filter, rute hindari polusi. Komuter 1-2 jam.',     clr: '#00e5d4', bg: 'rgba(0,229,212,0.15)', badge: 'new' },
+      { id: 'urban-jakarta',     cat: 'urban',  icon: '🏙️', name: 'Warga Urban Jakarta',     desc: 'Diskusi PM2.5, ISPU, rekomendasi air purifier rumah. Kondisi udara harian.', clr: '#a78bfa', bg: 'rgba(167,139,250,0.15)' },
+      { id: 'asma-support',      cat: 'health', icon: '🌬️', name: 'Asma Support Group',     desc: 'Pelaku & caregiver asma. Trigger management, peak flow, action plan.',     clr: '#ff5470', bg: 'rgba(255,84,112,0.15)' },
+      { id: 'cardiac-support',   cat: 'health', icon: '❤️', name: 'Cardiac Support',        desc: 'AFib, hipertensi support. Konsultasi peer (BUKAN dokter), share success.', clr: '#ff5470', bg: 'rgba(255,84,112,0.15)' },
+      { id: 'stress-mgmt',       cat: 'health', icon: '🧘', name: 'Stress & Sleep',         desc: 'HRV training, mindfulness, sleep hygiene tips. Mental health peer support.', clr: '#a78bfa', bg: 'rgba(167,139,250,0.15)' },
+    ];
+
+    function renderChannels(filter) {
+      const list = document.getElementById('channelList');
+      const filtered = filter === 'all' ? CHANNELS
+                     : filter === 'city' ? CHANNELS.filter(c => c.id.includes('jakarta') || c.id.includes('bandung') || c.id.includes('surabaya'))
+                     : CHANNELS.filter(c => c.cat === filter);
+      list.innerHTML = filtered.map(c => `
+        <a href="/community-channel.html?ch=${c.id}" class="cm-card" style="--cm-clr:${c.clr};--cm-bg:${c.bg}">
+          <div class="cm-card-icon">${c.icon}</div>
+          <h3 class="cm-card-name">${c.name}${c.badge ? `<span class="cm-card-badge ${c.badge}">${c.badge === 'new' ? 'BARU' : 'POPULER'}</span>` : ''}</h3>
+          <p class="cm-card-desc">${c.desc}</p>
+          <div class="cm-card-meta">
+            <span class="dot"></span>
+            <span data-count="${c.id}">— online</span>
+            <span style="margin-left:auto" data-msg="${c.id}">— pesan</span>
+          </div>
+        </a>
+      `).join('');
+      hydrateMeta();
+    }
+
+    async function hydrateMeta() {
+      if (!window.db) return;
+      try {
+        const proms = CHANNELS.map(async c => {
+          const snap = await db.collection('community_channels').doc(c.id).get();
+          const data = snap.exists ? snap.data() : { online: 0, message_count: 0 };
+          const onlineEl = document.querySelector(`[data-count="${c.id}"]`);
+          const msgEl = document.querySelector(`[data-msg="${c.id}"]`);
+          if (onlineEl) onlineEl.textContent = (data.online || 0) + ' online';
+          if (msgEl) msgEl.textContent = (data.message_count || 0).toLocaleString() + ' pesan';
+        });
+        await Promise.all(proms);
+        // Global stats
+        const totalSnap = await db.collection('community_stats').doc('global').get();
+        if (totalSnap.exists) {
+          const d = totalSnap.data();
+          if (d.users) document.getElementById('statUsers').textContent = d.users.toLocaleString();
+          if (d.messages_week) document.getElementById('statMsgs').textContent = d.messages_week.toLocaleString();
+        }
+      } catch (e) {
+        console.warn('[community] hydrate failed:', e.message);
+      }
+    }
+
+    document.querySelectorAll('.cm-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.cm-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderChannels(tab.dataset.tab);
+      });
+    });
+
+    AERVINEXAuth.init(
+      () => renderChannels('all'),
+      () => location.replace('/login.html?next=/community.html')
+    );
+  </script>
+</body>
+</html>

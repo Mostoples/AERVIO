@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1923" />
+  <title>Aervi AI — AERVINEX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/aervinex-ui.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    body { display: flex; flex-direction: column; }
+    .ai-topbar {
+      flex-shrink: 0;
+      padding: 14px;
+      background: linear-gradient(135deg, rgba(167,139,250,0.10), rgba(0,229,212,0.08));
+      border-bottom: 1px solid rgba(167,139,250,0.2);
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .ai-back {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.06);
+      border: none; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text);
+    }
+    .ai-back svg { width: 18px; height: 18px; }
+    .ai-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, #a78bfa, #00e5d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(167,139,250,0.4);
+      animation: aiPulse 3s ease-in-out infinite;
+    }
+    @keyframes aiPulse { 0%,100% { box-shadow: 0 4px 12px rgba(167,139,250,0.4); } 50% { box-shadow: 0 4px 20px rgba(167,139,250,0.7); } }
+    .ai-meta h1 {
+      font-size: 15px; font-weight: 800; margin: 0;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ai-meta h1::after {
+      content: '•';
+      color: #00e5d4; font-size: 18px; margin-left: 2px;
+      animation: aiPulse 1.5s infinite;
+    }
+    .ai-meta .sub {
+      font-size: 11.5px; opacity: 0.75;
+    }
+    .ai-reset {
+      margin-left: auto;
+      background: transparent; border: none;
+      color: var(--text-muted); font-size: 11px; font-weight: 600;
+      cursor: pointer; padding: 6px 10px;
+      border-radius: 10px;
+    }
+    .ai-reset:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    .ai-disclaimer {
+      flex-shrink: 0;
+      margin: 0;
+      padding: 10px 14px;
+      background: rgba(252,211,77,0.1);
+      border-bottom: 1px solid rgba(252,211,77,0.2);
+      font-size: 11px; line-height: 1.5;
+    }
+    .ai-disclaimer strong { color: #fcd34d; }
+
+    .ai-messages {
+      flex: 1; overflow-y: auto;
+      padding: 14px 14px 100px;
+      display: flex; flex-direction: column; gap: 12px;
+      scroll-behavior: smooth;
+    }
+    .ai-msg {
+      display: flex; gap: 10px;
+      max-width: 92%;
+      animation: aiFadeIn 0.3s ease-out;
+    }
+    @keyframes aiFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .ai-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .ai-msg-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800;
+    }
+    .ai-msg.bot .ai-msg-avatar {
+      background: linear-gradient(135deg, #a78bfa, #00e5d4);
+      color: #0f1923;
+    }
+    .ai-msg.user .ai-msg-avatar {
+      background: linear-gradient(135deg, #ff5470, #a78bfa);
+      color: #0f1923;
+      font-size: 11px;
+    }
+    .ai-bubble {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 10px 14px 12px;
+      min-width: 0;
+    }
+    .ai-msg.user .ai-bubble {
+      background: rgba(0,229,212,0.12);
+      border-color: rgba(0,229,212,0.25);
+    }
+    .ai-bubble .text {
+      font-size: 14px; line-height: 1.55;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .ai-bubble .time {
+      font-size: 10px; opacity: 0.5;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .ai-bubble .sources {
+      margin-top: 8px; padding-top: 8px;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      font-size: 11px; opacity: 0.7;
+    }
+    .ai-bubble .sources a { color: #00e5d4; text-decoration: none; }
+
+    .ai-typing {
+      display: flex; gap: 4px; padding: 8px 0;
+    }
+    .ai-typing span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #a78bfa;
+      animation: aiTyping 1.4s infinite;
+    }
+    .ai-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .ai-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes aiTyping {
+      0%,60%,100% { transform: scale(0.7); opacity: 0.5; }
+      30% { transform: scale(1); opacity: 1; }
+    }
+
+    .ai-suggestions {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      display: flex; gap: 6px;
+      overflow-x: auto;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .ai-suggestion {
+      padding: 7px 12px;
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.25);
+      border-radius: 999px;
+      font-size: 11.5px; font-weight: 600;
+      color: #a78bfa;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ai-suggestion:hover {
+      background: rgba(167,139,250,0.2);
+      transform: translateY(-1px);
+    }
+
+    .ai-input-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, transparent, rgba(15,25,35,0.95) 30%);
+      display: flex; gap: 8px; align-items: flex-end;
+      z-index: 40;
+    }
+    .ai-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 18px;
+      color: var(--text); font-size: 14px;
+      resize: none; min-height: 44px; max-height: 120px;
+      font-family: inherit;
+    }
+    .ai-input:focus {
+      outline: none;
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+    }
+    .ai-send {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: linear-gradient(135deg, #a78bfa, #00e5d4);
+      color: #0f1923; border: none; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(167,139,250,0.3);
+    }
+    .ai-send:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+    .ai-send:not(:disabled):hover { transform: scale(1.05); }
+    .ai-send svg { width: 18px; height: 18px; }
+
+    .ai-welcome {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .ai-welcome .big-icon {
+      font-size: 64px; margin-bottom: 12px;
+      animation: aiFloat 3s ease-in-out infinite;
+    }
+    @keyframes aiFloat {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .ai-welcome h2 {
+      font-size: 22px; font-weight: 800; margin: 0 0 8px;
+      background: linear-gradient(135deg, #a78bfa, #00e5d4);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .ai-welcome p {
+      font-size: 13px; line-height: 1.55;
+      max-width: 340px; margin: 0 auto;
+      opacity: 0.78;
+    }
+    .ai-capabilities {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      max-width: 480px; margin: 22px auto 0;
+    }
+    @media (max-width: 420px) { .ai-capabilities { grid-template-columns: 1fr; } }
+    .ai-cap {
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      text-align: left;
+      font-size: 12px; line-height: 1.5;
+    }
+    .ai-cap .ico { font-size: 18px; display: block; margin-bottom: 4px; }
+    .ai-cap strong { color: #00e5d4; }
+  </style>
+</head>
+<body class="theme-dark" data-page="ai-chat">
+
+  <header class="ai-topbar">
+    <button class="ai-back" onclick="location.href='/dashboard.html'" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="ai-avatar">🤖</div>
+    <div class="ai-meta">
+      <h1>Aervi AI</h1>
+      <div class="sub">Asisten kesehatan personal · Powered by Gemini</div>
+    </div>
+    <button class="ai-reset" id="btnReset" title="Reset percakapan">🔄 Reset</button>
+  </header>
+
+  <div class="ai-disclaimer">
+    ⚠️ <strong>Bukan saran medis profesional.</strong> Aervi AI memberikan informasi edukatif dan rekomendasi gaya hidup berbasis data Anda. Untuk diagnosis, treatment, atau kondisi darurat, konsultasi dokter / hubungi <strong>119 (PSC Kemenkes)</strong>.
+  </div>
+
+  <main id="main" class="ai-messages" id="messages">
+    <div class="ai-welcome" id="welcomeScreen">
+      <div class="big-icon">🤖</div>
+      <h2>Hai, saya Aervi!</h2>
+      <p>Asisten kesehatan AERVINEX yang siap bantu jawab pertanyaan Anda tentang polusi udara, training lari, sleep, kondisi penyakit, dan tips wellness.</p>
+      <div class="ai-capabilities">
+        <div class="ai-cap"><span class="ico">💨</span><strong>Polusi Udara</strong><br>Cara baca AQI, kapan pakai masker</div>
+        <div class="ai-cap"><span class="ico">🏃</span><strong>Training</strong><br>Heart rate zone, recovery, EPO</div>
+        <div class="ai-cap"><span class="ico">😴</span><strong>Sleep & Stres</strong><br>HRV, sleep hygiene, mindfulness</div>
+        <div class="ai-cap"><span class="ico">🩺</span><strong>Penyakit</strong><br>Asma, hipertensi, AFib management</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="ai-suggestions" id="suggestions">
+    <button class="ai-suggestion" data-prompt="PM2.5 hari ini di Jakarta seperti apa? Aman lari pagi?">PM2.5 Jakarta hari ini</button>
+    <button class="ai-suggestion" data-prompt="Bagaimana cara menurunkan resting heart rate?">Turunkan resting HR</button>
+    <button class="ai-suggestion" data-prompt="Apa itu HRV dan kenapa penting?">Apa itu HRV?</button>
+    <button class="ai-suggestion" data-prompt="Tips lari aman saat heat index tinggi">Lari saat panas</button>
+    <button class="ai-suggestion" data-prompt="Tanda-tanda awal asma flare-up">Tanda asma flare</button>
+    <button class="ai-suggestion" data-prompt="Berapa lama tidur ideal per malam?">Durasi tidur ideal</button>
+  </div>
+
+  <div class="ai-input-bar">
+    <textarea class="ai-input" id="msgInput" placeholder="Tanya Aervi… (Enter kirim, Shift+Enter baris baru)" rows="1"></textarea>
+    <button class="ai-send" id="btnSend" disabled aria-label="Kirim">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+    </button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/aervinex-app.js"></script>
+  <script>
+    const msgsEl = document.getElementById('messages');
+    const inputEl = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('btnSend');
+    const welcomeEl = document.getElementById('welcomeScreen');
+    const suggestionsEl = document.getElementById('suggestions');
+    let currentUser = null;
+    let conversationId = null;
+    const history = [];
+    const MAX_HISTORY = 10;
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function nowTime() {
+      return new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    }
+
+    function appendMessage(role, text, sources) {
+      if (welcomeEl && welcomeEl.parentNode) welcomeEl.remove();
+      const div = document.createElement('div');
+      div.className = 'ai-msg ' + (role === 'user' ? 'user' : 'bot');
+      div.innerHTML = `
+        <div class="ai-msg-avatar">${role === 'user' ? (window.AERVINEXAuth?.userProfile?.name?.slice(0,1)?.toUpperCase() || '?') : '🤖'}</div>
+        <div class="ai-bubble">
+          <div class="text">${escapeHTML(text)}</div>
+          <div class="time">${nowTime()}</div>
+          ${sources && sources.length ? `<div class="sources">📚 ${sources.map(s => `<a href="${s.url}" target="_blank">${escapeHTML(s.title)}</a>`).join(' · ')}</div>` : ''}
+        </div>`;
+      msgsEl.appendChild(div);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    function showTyping() {
+      const div = document.createElement('div');
+      div.className = 'ai-msg bot';
+      div.id = 'typingIndicator';
+      div.innerHTML = `<div class="ai-msg-avatar">🤖</div><div class="ai-bubble"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+      msgsEl.appendChild(div);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+    function hideTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    async function sendMessage(text) {
+      if (!text || !currentUser) return;
+      if (text.length > 1000) {
+        AervinexToast && AervinexToast('Maks 1000 karakter', 'warn');
+        return;
+      }
+      suggestionsEl.style.display = 'none';
+      appendMessage('user', text);
+      history.push({ role: 'user', content: text });
+      if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
+
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+      sendBtn.disabled = true;
+      showTyping();
+
+      try {
+        const functions = firebase.app().functions('asia-southeast2');
+        const callable = functions.httpsCallable('aiChat');
+        const res = await callable({
+          message: text,
+          conversationId,
+          history: history.slice(-MAX_HISTORY * 2),
+        });
+        const data = res.data || {};
+        conversationId = data.conversationId || conversationId;
+        hideTyping();
+        appendMessage('bot', data.reply || 'Maaf, saya tidak bisa menjawab sekarang.', data.sources);
+        history.push({ role: 'assistant', content: data.reply || '' });
+      } catch (e) {
+        hideTyping();
+        console.error('[ai-chat] error:', e);
+        // Fallback ke local rule-based response untuk graceful degrade
+        const fallback = generateLocalFallback(text);
+        appendMessage('bot', fallback);
+      } finally {
+        sendBtn.disabled = !inputEl.value.trim() || !currentUser;
+        inputEl.focus();
+      }
+    }
+
+    // Local fallback ketika Cloud Function belum deployed / API key belum set
+    function generateLocalFallback(text) {
+      const t = text.toLowerCase();
+      const responses = {
+        'pm2.5|pm25|polusi|aqi|udara':
+          'PM2.5 adalah partikel halus berdiameter <2.5µm yang bisa masuk ke paru-paru. Threshold WHO 2021: <15 µg/m³ aman, 25-55 sedang, >75 berbahaya. Di Jakarta, peak biasanya 7-9 pagi dan 5-8 sore. Saran: cek ISPU di ispu.menlhk.go.id atau dashboard AERVINEX, hindari outdoor exercise saat AQI >150, pakai masker N95 jika harus keluar.',
+        'hrv|heart rate variability':
+          'HRV (Heart Rate Variability) adalah variasi interval antar detak jantung. HRV tinggi = sistem saraf otonom seimbang = recovery baik. HRV rendah = stres/kelelahan. Cara naikkan HRV: tidur 7-9 jam, aerobic training zone 2, breathwork 4-7-8, kurangi alkohol/kafein, manajemen stres. Pantau trend 7-day rolling, bukan absolute.',
+        'resting hr|rhr|denyut istirahat':
+          'Resting HR ideal: pria 60-80 bpm, wanita 60-85 bpm. Atlet bisa 40-60. Cara turunkan: aerobic training 150 min/minggu, tidur cukup, hidrasi, kurangi kafein, manajemen stres. RHR tiba-tiba naik >5 bpm dari baseline = warning sign (overtraining, infeksi, dehidrasi).',
+        'asma|asthma|sesak':
+          'Tanda awal asma flare-up: batuk malam meningkat, sesak napas saat ringan, dada berat, peak flow drop >20% dari personal best, butuh inhaler reliever lebih sering. Trigger umum: polusi PM2.5, alergen, infeksi, exercise, stres. Action: ikuti asthma action plan, hindari trigger, konsultasi dokter jika peak flow <80%.',
+        'lari|running|heart rate zone':
+          'Heart rate zones (% HRmax): Z1 50-60% recovery, Z2 60-70% aerobic base, Z3 70-80% tempo, Z4 80-90% threshold, Z5 90-100% VO2max. 80% latihan harus Z2 untuk endurance base. HRmax = 208 − 0.7×umur (Tanaka). Saat heat index >32°C, kurangi pace 30 detik/km dan sering minum.',
+        'tidur|sleep|insomnia':
+          'Durasi tidur ideal dewasa: 7-9 jam (NSF guidelines). Tips sleep hygiene: konsisten jam tidur/bangun, gelap+sejuk 18-20°C, no screen 1 jam sebelum tidur, kafein cut-off pukul 14:00, magnesium glycinate bisa bantu. Sleep debt akumulatif — tidak bisa "balas" weekend.',
+        'heat|panas|heatstroke':
+          'Saat heat index >32°C: kurangi intensity, pre-hydrate 500ml 2 jam sebelum, minum 200ml/15 menit saat lari, pakai topi+sunglasses, hindari 11:00-15:00. Tanda heatstroke: confusion, stop sweat, suhu >40°C, HR >130 — emergency!',
+      };
+      for (const [pattern, response] of Object.entries(responses)) {
+        if (new RegExp(pattern, 'i').test(t)) return response;
+      }
+      return 'Saya sedang dalam mode offline (Cloud Function belum dikonfigurasi). Untuk pertanyaan spesifik, silakan cek:\n• Dashboard untuk kondisi udara real-time\n• Risk-list untuk 35 kondisi yang dipantau\n• Encyclopedia untuk edukasi kesehatan\n• Untuk medical advice, konsultasi dokter.\n\nKalau admin sudah enable Gemini API, saya akan online lagi.';
+    }
+
+    document.querySelectorAll('.ai-suggestion').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sendMessage(btn.dataset.prompt);
+      });
+    });
+
+    inputEl.addEventListener('input', () => {
+      sendBtn.disabled = !inputEl.value.trim() || !currentUser;
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + 'px';
+    });
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(inputEl.value.trim());
+      }
+    });
+    sendBtn.addEventListener('click', () => sendMessage(inputEl.value.trim()));
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      if (!confirm('Reset percakapan? History akan hilang.')) return;
+      history.length = 0;
+      conversationId = null;
+      msgsEl.innerHTML = '';
+      msgsEl.appendChild(welcomeEl);
+      suggestionsEl.style.display = 'flex';
+    });
+
+    AERVINEXAuth.init(
+      (user) => {
+        currentUser = user;
+        sendBtn.disabled = !inputEl.value.trim();
+      },
+      () => location.replace('/login.html?next=/ai-chat.html')
+    );
+  </script>
+</body>
+</html>
