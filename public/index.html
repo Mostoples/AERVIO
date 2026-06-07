@@ -862,21 +862,126 @@
     }
     @media (max-width: 800px) { .lp-personas { grid-template-columns: 1fr; } }
     .lp-persona {
-      padding: 34px 30px;
-      background: linear-gradient(135deg, var(--persona-grad-1), var(--persona-grad-2));
+      padding: 38px 32px;
+      background:
+        radial-gradient(circle at 100% 0%, var(--persona-grad-1) 0%, transparent 55%),
+        radial-gradient(circle at 0% 100%, var(--persona-grad-2) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(20,28,42,0.72), rgba(15,22,32,0.92));
       border: 1px solid var(--persona-border);
-      border-radius: 24px;
+      border-radius: 28px;
       position: relative; overflow: hidden;
-      min-height: 320px;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.5);
     }
+    body.theme-light .lp-persona {
+      background:
+        radial-gradient(circle at 100% 0%, var(--persona-grad-1) 0%, transparent 55%),
+        radial-gradient(circle at 0% 100%, var(--persona-grad-2) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,248,252,0.95));
+      box-shadow: 0 20px 50px -20px rgba(0, 30, 60, 0.12);
+    }
+    /* Mesh decoration top-right */
     .lp-persona::before {
       content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, transparent 0%, rgba(15,25,35,0.92) 70%);
+      position: absolute; top: -40%; right: -20%;
+      width: 70%; aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--persona-glow, rgba(0, 229, 212, 0.18));
+      filter: blur(60px);
       pointer-events: none;
       z-index: 0;
+      opacity: 0.6;
+    }
+    /* Grid lines decoration bottom-left */
+    .lp-persona::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 60%; height: 50%;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse at bottom left, black, transparent 60%);
+      -webkit-mask-image: radial-gradient(ellipse at bottom left, black, transparent 60%);
+      pointer-events: none;
+    }
+    body.theme-light .lp-persona::after {
+      background-image:
+        linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
     }
     .lp-persona > * { position: relative; z-index: 1; }
+
+    .lp-persona-icon {
+      width: 64px; height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--persona-icon-bg-1), var(--persona-icon-bg-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 12px 30px -8px var(--persona-icon-glow);
+      margin-bottom: 4px;
+    }
+    .lp-persona h3 {
+      font-size: 24px; font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+      color: #ffffff;
+    }
+    body.theme-light .lp-persona h3 { color: #0c1828; }
+    .lp-persona p {
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    body.theme-light .lp-persona p { color: #4a5a68; }
+    .lp-persona ul {
+      list-style: none;
+      padding: 0; margin: 8px 0 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .lp-persona ul li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13.5px; line-height: 1.5;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    body.theme-light .lp-persona ul li { color: #2d3e52; }
+    .lp-persona ul li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      margin-top: 1px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      box-shadow: 0 0 12px rgba(0, 229, 212, 0.4);
+      -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/14px no-repeat,
+        radial-gradient(circle, black 9px, transparent 9px);
+              mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/14px no-repeat,
+        radial-gradient(circle, black 9px, transparent 9px);
+    }
+    .lp-persona-cta {
+      margin-top: auto;
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      background: linear-gradient(135deg, #00e5d4, #a78bfa);
+      color: #0f1923 !important;
+      border-radius: 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(0, 229, 212, 0.25);
+    }
+    .lp-persona-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 229, 212, 0.4);
+    }
     .lp-persona-icon { font-size: 50px; margin-bottom: 14px; }
     .lp-persona h3 { font-size: 24px; font-weight: 800; margin: 0 0 10px; }
     .lp-persona p { font-size: 14px; line-height: 1.65; opacity: 0.85; margin-bottom: 18px; }
@@ -1300,8 +1405,12 @@
   </aside>
 
   <main id="main">
-  <!-- ============ HERO ============ -->
-  <section class="lp-hero" id="top">
+  <!-- ============ HERO CAROUSEL ============ -->
+  <div class="hero-carousel" id="heroCarousel" aria-roledescription="carousel">
+    <div class="hero-track" id="heroTrack">
+
+    <!-- ─────────── SLIDE 1 — PROTECTION (default hero) ─────────── -->
+    <section class="lp-hero slide-1" id="top">
     <div class="lp-container">
 
       <!-- Side decorations — visible only on ultra-wide desktops -->
@@ -1383,7 +1492,185 @@
         </div>
       </div>
     </div>
-  </section>
+    </section>
+    <!-- ───── END SLIDE 1 ───── -->
+
+    <!-- ─────────── SLIDE 2 — REAL-TIME AQI ─────────── -->
+    <section class="lp-hero slide-2">
+      <div class="lp-container">
+        <div class="lp-hero-grid">
+          <div>
+            <div class="lp-pill-launch"><span>🌬️ Real-time AQI</span><span class="pill-tag">LIVE</span></div>
+            <h2 class="lp-h1">
+              Pantau polusi udara<br>
+              <span class="grad">kotamu real-time</span>
+            </h2>
+            <p class="lp-lead">
+              AERVINEX cross-check PM2.5 onboard dengan stasiun BMKG terdekat via GPS. Akurasi titik-pengguna, bukan rata-rata kota. Tahu kapan harus pakai masker N95, kapan ganti rute, kapan latihan indoor.
+            </p>
+            <div class="lp-hero-cta">
+              <a href="/register.html" class="lp-btn primary">
+                <span>Cek AQI Kotamu</span>
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </a>
+              <a href="/evidence.html" class="lp-btn ghost"><span>Lihat Standar WHO</span></a>
+            </div>
+            <div class="lp-hero-trust">
+              <span>🔄 Update <strong>setiap 5 menit</strong></span>
+              <span>📡 <strong>2,400+</strong> stasiun BMKG</span>
+              <span>🎯 ±5% akurasi</span>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <div class="city-grid">
+              <div class="city-card"><div class="city-name">Jakarta</div><div><span class="pm-value" style="color:#fb923c">68</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-bad">TIDAK SEHAT</span></div>
+              <div class="city-card"><div class="city-name">Bandung</div><div><span class="pm-value" style="color:#fcd34d">42</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-mod">SEDANG</span></div>
+              <div class="city-card"><div class="city-name">Surabaya</div><div><span class="pm-value" style="color:#fb923c">71</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-bad">TIDAK SEHAT</span></div>
+              <div class="city-card"><div class="city-name">Yogyakarta</div><div><span class="pm-value" style="color:#4ade80">23</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-good">BAIK</span></div>
+              <div class="city-card"><div class="city-name">Denpasar</div><div><span class="pm-value" style="color:#4ade80">18</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-good">BAIK</span></div>
+              <div class="city-card"><div class="city-name">Medan</div><div><span class="pm-value" style="color:#fcd34d">45</span><span class="pm-unit">µg/m³</span></div><span class="status-badge status-mod">SEDANG</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── SLIDE 3 — ML STATS ─────────── -->
+    <section class="lp-hero slide-3">
+      <div class="lp-container">
+        <div class="lp-hero-grid">
+          <div>
+            <div class="lp-pill-launch"><span>🧠 AI Verified</span><span class="pill-tag">SCIENCE</span></div>
+            <h2 class="lp-h1">
+              35 model AI<br>
+              <span class="grad">deteksi dini kondisi</span><br>
+              kesehatan
+            </h2>
+            <p class="lp-lead">
+              Dari asma sampai AFib, dari heatstroke sampai burnout — 35 calibrated ML proxy memantau risiko kondisi spesifik berdasar paper peer-reviewed. <strong>Avg accuracy 86%</strong> verified via reproducible test.
+            </p>
+            <div class="lp-hero-cta">
+              <a href="/ml-results-report.html" class="lp-btn primary">
+                <span>Lihat Hasil Tes</span>
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </a>
+              <a href="/datasets.html" class="lp-btn ghost"><span>33 Paper + 24 Repo</span></a>
+            </div>
+            <div class="lp-hero-trust">
+              <span>📚 <strong>33</strong> peer-reviewed papers</span>
+              <span>💻 <strong>24</strong> GitHub repos</span>
+              <span>✓ 100% open-audit</span>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <div class="stat-circle-grid">
+              <div class="stat-circle"><div class="big">86%</div><div class="lbl">Avg Accuracy</div></div>
+              <div class="stat-circle"><div class="big">35</div><div class="lbl">Models</div></div>
+              <div class="stat-circle"><div class="big">0.92</div><div class="lbl">Avg AUC</div></div>
+              <div class="stat-circle"><div class="big">100%</div><div class="lbl">Reproducible</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── SLIDE 4 — AERVI AI ─────────── -->
+    <section class="lp-hero slide-4">
+      <div class="lp-container">
+        <div class="lp-hero-grid">
+          <div>
+            <div class="lp-pill-launch"><span>🤖 Aervi AI</span><span class="pill-tag">24/7</span></div>
+            <h2 class="lp-h1">
+              Asisten kesehatan<br>
+              <span class="grad">personal AI</span><br>
+              kapan saja
+            </h2>
+            <p class="lp-lead">
+              Aervi AI powered by Gemini bantu jawab pertanyaan kesehatan, baca data sensor Anda, dan kasih rekomendasi kontekstual. Personal · 24/7 · gratis. Bukan medical advice, tapi kawan ngobrol soal wellness.
+            </p>
+            <div class="lp-hero-cta">
+              <a href="/ai-chat.html" class="lp-btn primary">
+                <span>Coba Aervi AI</span>
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </a>
+              <a href="/community.html" class="lp-btn ghost"><span>+ Komunitas Real</span></a>
+            </div>
+            <div class="lp-hero-trust">
+              <span>⚡ Powered by Gemini 1.5</span>
+              <span>🛡️ Context-aware</span>
+              <span>💬 Bahasa Indonesia</span>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <div class="chat-mockup">
+              <div class="chat-line"><div class="chat-avatar bot">🤖</div><div class="chat-bubble bot">Halo! PM2.5 Jakarta sekarang 68 µg/m³ — kategori "Tidak Sehat". Aman lari pagi?</div></div>
+              <div class="chat-line right"><div class="chat-avatar user">U</div><div class="chat-bubble">Lari rute Sudirman aman gak?</div></div>
+              <div class="chat-line"><div class="chat-avatar bot">🤖</div><div class="chat-bubble bot">Saran: pindah ke Senayan (PM2.5 ~35), atau pakai N95 + perpendek durasi ke 30 menit. Heat index masih 31°C, hidrasi penting.</div></div>
+              <div class="chat-line right"><div class="chat-avatar user">U</div><div class="chat-bubble">Thanks!</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── SLIDE 5 — COMMUNITY ─────────── -->
+    <section class="lp-hero slide-5">
+      <div class="lp-container">
+        <div class="lp-hero-grid">
+          <div>
+            <div class="lp-pill-launch"><span>👥 Komunitas</span><span class="pill-tag">1,200+</span></div>
+            <h2 class="lp-h1">
+              Bergabung dengan<br>
+              <span class="grad">1,200+ pelari & komuter</span><br>
+              urban Indonesia
+            </h2>
+            <p class="lp-lead">
+              8 channel terkurasi untuk Pelari Jakarta/Bandung/Surabaya, Komuter Motor, Warga Urban, Asma Support, Cardiac Support, dan Stress & Sleep. Share tips, route, dan saling dukung — bukan claim medis.
+            </p>
+            <div class="lp-hero-cta">
+              <a href="/register.html" class="lp-btn primary">
+                <span>Gabung Komunitas</span>
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </a>
+              <a href="/community.html" class="lp-btn ghost"><span>Lihat Channel</span></a>
+            </div>
+            <div class="lp-hero-trust">
+              <span>💬 <strong>8</strong> active channels</span>
+              <span>🛡️ Moderated</span>
+              <span>🇮🇩 Indonesia-first</span>
+            </div>
+          </div>
+          <div class="slide-visual">
+            <div class="channel-grid">
+              <div class="ch-mini"><div class="ch-emoji">🏃</div><div class="ch-name">Pelari Jakarta</div><div class="ch-count">320 online</div></div>
+              <div class="ch-mini"><div class="ch-emoji">🛵</div><div class="ch-name">Komuter Motor</div><div class="ch-count">180 online</div></div>
+              <div class="ch-mini"><div class="ch-emoji">🌬️</div><div class="ch-name">Asma Support</div><div class="ch-count">95 online</div></div>
+              <div class="ch-mini"><div class="ch-emoji">❤️</div><div class="ch-name">Cardiac Support</div><div class="ch-count">120 online</div></div>
+              <div class="ch-mini"><div class="ch-emoji">🧘</div><div class="ch-name">Stress & Sleep</div><div class="ch-count">240 online</div></div>
+              <div class="ch-mini"><div class="ch-emoji">🏙️</div><div class="ch-name">Urban Jakarta</div><div class="ch-count">410 online</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </div><!-- /.hero-track -->
+
+    <!-- Carousel controls -->
+    <button type="button" class="hero-arrow prev" id="heroPrev" aria-label="Slide sebelumnya">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button type="button" class="hero-arrow next" id="heroNext" aria-label="Slide berikutnya">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="hero-dots" id="heroDots" role="tablist" aria-label="Pilih slide">
+      <button class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
+      <button class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
+      <button class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
+      <button class="hero-dot" data-slide="3" aria-label="Slide 4"></button>
+      <button class="hero-dot" data-slide="4" aria-label="Slide 5"></button>
+    </div>
+  </div><!-- /.hero-carousel -->
 
   <!-- ============ TRUST STRIP ============ -->
   <section class="lp-trust-strip">
@@ -1516,7 +1803,7 @@
         <p class="lp-section-sub">Awalnya dirancang untuk warga kota yang setiap hari terpapar polusi. Sekarang juga dipakai ribuan pelari urban yang butuh data lingkungan saat outdoor.</p>
       </div>
       <div class="lp-personas">
-        <div class="lp-persona" style="--persona-grad-1:rgba(255,84,112,0.08);--persona-grad-2:rgba(167,139,250,0.08);--persona-border:rgba(255,84,112,0.25);background-image:linear-gradient(135deg,rgba(255,84,112,0.12),rgba(167,139,250,0.12)),url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=70&auto=format&fit=crop');background-size:cover;background-position:right center;background-blend-mode:overlay">
+        <div class="lp-persona" style="--persona-grad-1:rgba(255,84,112,0.22);--persona-grad-2:rgba(167,139,250,0.18);--persona-border:rgba(255,84,112,0.28);--persona-glow:rgba(255,84,112,0.32);--persona-icon-bg-1:#ff5470;--persona-icon-bg-2:#a78bfa;--persona-icon-glow:rgba(255,84,112,0.5)">
           <div class="lp-persona-icon">🏃</div>
           <h3>Pelari & Atlet Urban</h3>
           <p>Latihan di jalan kota Indonesia berarti hadapi PM2.5 tinggi, panas tropis, dan UV ekstrem. AERVINEX memberi data lingkungan kontekstual saat lari, bukan hanya HR.</p>
@@ -1529,7 +1816,7 @@
           </ul>
           <a href="/register.html" class="lp-persona-cta">Mulai untuk pelari →</a>
         </div>
-        <div class="lp-persona" style="--persona-grad-1:rgba(0,229,212,0.08);--persona-grad-2:rgba(6,182,212,0.08);--persona-border:rgba(0,229,212,0.3);background-image:linear-gradient(135deg,rgba(0,229,212,0.12),rgba(6,182,212,0.12)),url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&q=70&auto=format&fit=crop');background-size:cover;background-position:right center;background-blend-mode:overlay">
+        <div class="lp-persona" style="--persona-grad-1:rgba(0,229,212,0.22);--persona-grad-2:rgba(6,182,212,0.18);--persona-border:rgba(0,229,212,0.32);--persona-glow:rgba(0,229,212,0.32);--persona-icon-bg-1:#00e5d4;--persona-icon-bg-2:#06b6d4;--persona-icon-glow:rgba(0,229,212,0.5)">
           <div class="lp-persona-icon">🏙️</div>
           <h3>Warga Urban & Komuter</h3>
           <p>Naik motor, jalan kaki, transportasi umum — paparan polusi & cuaca ekstrem bisa berdampak jangka panjang. AERVINEX bikin Anda <strong>tahu lebih dulu</strong> sebelum gejala muncul.</p>
@@ -2102,6 +2389,82 @@
         x.classList.toggle('active', x.dataset.lang === curLang);
       });
     } catch (e) {}
+
+    // ════════════════════════════════════════════════════════════
+    // HERO CAROUSEL — 5 slides dengan auto-advance, swipe, pause-on-hover
+    // ════════════════════════════════════════════════════════════
+    (function () {
+      var track = document.getElementById('heroTrack');
+      var dots = document.querySelectorAll('.hero-dot');
+      var prevBtn = document.getElementById('heroPrev');
+      var nextBtn = document.getElementById('heroNext');
+      var carousel = document.getElementById('heroCarousel');
+      if (!track || !dots.length) return;
+
+      var current = 0;
+      var total = dots.length;
+      var autoPlayInterval = null;
+      var AUTO_DELAY = 7000;
+      var paused = false;
+
+      function go(idx) {
+        current = ((idx % total) + total) % total;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach(function (d, i) {
+          d.classList.toggle('active', i === current);
+          d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+        });
+      }
+      function next() { go(current + 1); }
+      function prev() { go(current - 1); }
+
+      function startAuto() {
+        if (paused) return;
+        stopAuto();
+        autoPlayInterval = setInterval(next, AUTO_DELAY);
+      }
+      function stopAuto() {
+        if (autoPlayInterval) { clearInterval(autoPlayInterval); autoPlayInterval = null; }
+      }
+
+      dots.forEach(function (d) {
+        d.addEventListener('click', function () {
+          go(parseInt(d.dataset.slide, 10));
+          startAuto();
+        });
+      });
+      prevBtn && prevBtn.addEventListener('click', function () { prev(); startAuto(); });
+      nextBtn && nextBtn.addEventListener('click', function () { next(); startAuto(); });
+
+      // Pause on hover
+      carousel.addEventListener('mouseenter', function () { paused = true; stopAuto(); });
+      carousel.addEventListener('mouseleave', function () { paused = false; startAuto(); });
+
+      // Touch swipe
+      var touchStartX = 0;
+      var touchEndX = 0;
+      track.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      track.addEventListener('touchend', function (e) {
+        touchEndX = e.changedTouches[0].screenX;
+        var diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) next(); else prev();
+          startAuto();
+        }
+      }, { passive: true });
+
+      // Pause when tab hidden
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stopAuto();
+        else if (!paused) startAuto();
+      });
+
+      // Respect reduced motion
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (!reduceMotion.matches) startAuto();
+    })();
   </script>
 </body>
 </html>
