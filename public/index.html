@@ -2391,21 +2391,26 @@
     } catch (e) {}
 
     // ════════════════════════════════════════════════════════════
-    // HERO CAROUSEL — 5 slides dengan auto-advance, swipe, pause-on-hover
+    // HERO CAROUSEL — 5 slides AUTO-MOVE 6 detik
     // ════════════════════════════════════════════════════════════
-    (function () {
+    function initHeroCarousel() {
       var track = document.getElementById('heroTrack');
       var dots = document.querySelectorAll('.hero-dot');
       var prevBtn = document.getElementById('heroPrev');
       var nextBtn = document.getElementById('heroNext');
       var carousel = document.getElementById('heroCarousel');
-      if (!track || !dots.length) return;
+      if (!track || !dots.length) {
+        console.warn('[carousel] elements not ready, retry...');
+        setTimeout(initHeroCarousel, 200);
+        return;
+      }
+      console.info('[carousel] initialized', dots.length, 'slides');
 
       var current = 0;
       var total = dots.length;
       var autoPlayInterval = null;
-      var AUTO_DELAY = 7000;
-      var paused = false;
+      var AUTO_DELAY = 6000; // 6 detik per slide
+      var userPaused = false; // pause only on explicit hover
 
       function go(idx) {
         current = ((idx % total) + total) % total;
@@ -2419,9 +2424,10 @@
       function prev() { go(current - 1); }
 
       function startAuto() {
-        if (paused) return;
         stopAuto();
-        autoPlayInterval = setInterval(next, AUTO_DELAY);
+        autoPlayInterval = setInterval(function () {
+          if (!userPaused && !document.hidden) next();
+        }, AUTO_DELAY);
       }
       function stopAuto() {
         if (autoPlayInterval) { clearInterval(autoPlayInterval); autoPlayInterval = null; }
@@ -2430,41 +2436,48 @@
       dots.forEach(function (d) {
         d.addEventListener('click', function () {
           go(parseInt(d.dataset.slide, 10));
-          startAuto();
+          startAuto(); // restart timer after manual interaction
         });
       });
       prevBtn && prevBtn.addEventListener('click', function () { prev(); startAuto(); });
       nextBtn && nextBtn.addEventListener('click', function () { next(); startAuto(); });
 
-      // Pause on hover
-      carousel.addEventListener('mouseenter', function () { paused = true; stopAuto(); });
-      carousel.addEventListener('mouseleave', function () { paused = false; startAuto(); });
+      // Hover pause (only buttons + dots area, not whole carousel — supaya user
+      // bisa hover slide tanpa pause)
+      var controlArea = document.getElementById('heroDots');
+      if (controlArea) {
+        controlArea.addEventListener('mouseenter', function () { userPaused = true; });
+        controlArea.addEventListener('mouseleave', function () { userPaused = false; });
+      }
 
       // Touch swipe
       var touchStartX = 0;
-      var touchEndX = 0;
       track.addEventListener('touchstart', function (e) {
         touchStartX = e.changedTouches[0].screenX;
       }, { passive: true });
       track.addEventListener('touchend', function (e) {
-        touchEndX = e.changedTouches[0].screenX;
-        var diff = touchStartX - touchEndX;
+        var diff = touchStartX - e.changedTouches[0].screenX;
         if (Math.abs(diff) > 50) {
           if (diff > 0) next(); else prev();
           startAuto();
         }
       }, { passive: true });
 
-      // Pause when tab hidden
+      // Visibility resume
       document.addEventListener('visibilitychange', function () {
-        if (document.hidden) stopAuto();
-        else if (!paused) startAuto();
+        if (!document.hidden) startAuto();
       });
 
-      // Respect reduced motion
-      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      if (!reduceMotion.matches) startAuto();
-    })();
+      // START AUTO IMMEDIATELY — regardless of reduced-motion (user explicit request)
+      startAuto();
+      console.info('[carousel] auto-play started, ' + (AUTO_DELAY/1000) + 's per slide');
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroCarousel);
+    } else {
+      initHeroCarousel();
+    }
   </script>
 </body>
 </html>
