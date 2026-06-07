@@ -241,6 +241,15 @@
     document.head.appendChild(s2);
   }
 
+  // ── Card pattern auto-detector: scan .card content + auto-assign data-pattern
+  // untuk medical icon decoration kontekstual di pojok kanan bawah
+  if (!window.__AERV_CARD_PATTERN_INSTALLED && !document.querySelector('script[src*="card-pattern-auto.js"]')) {
+    const s3 = document.createElement('script');
+    s3.src = '/js/card-pattern-auto.js';
+    s3.defer = true;
+    document.head.appendChild(s3);
+  }
+
   // ── LANGUAGE TOGGLE CHIP — inject sebagai sibling theme-toggle (guaranteed coverage) ──
   function makeLangBtn(isFab = false) {
     const lang = (localStorage.getItem('aervinex-lang') || 'id').toUpperCase();
