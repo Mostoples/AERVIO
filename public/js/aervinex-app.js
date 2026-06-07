@@ -232,6 +232,15 @@
     document.head.appendChild(s);
   }
 
+  // ── Desktop sidepanel: persistent left nav (≥1024px) + hamburger (768-1023px)
+  // Skipped automatically pada landing/auth/onboarding/sample/404 pages
+  if (!window.__AERV_SIDEPANEL_INSTALLED && !document.querySelector('script[src*="desktop-sidepanel.js"]')) {
+    const s2 = document.createElement('script');
+    s2.src = '/js/desktop-sidepanel.js';
+    s2.defer = true;
+    document.head.appendChild(s2);
+  }
+
   // ── LANGUAGE TOGGLE CHIP — inject sebagai sibling theme-toggle (guaranteed coverage) ──
   function makeLangBtn(isFab = false) {
     const lang = (localStorage.getItem('aervinex-lang') || 'id').toUpperCase();

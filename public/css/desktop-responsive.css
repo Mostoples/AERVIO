@@ -1,21 +1,19 @@
 /* ════════════════════════════════════════════════════════════════
-   AERVINEX Desktop Responsive — Bento Grid Strategy
+   AERVINEX Desktop Responsive — Persistent Sidebar + Bento Content
    ────────────────────────────────────────────────────────────────
    Strategy:
-   - Mobile-first base (≤767px): UNCHANGED, sudah optimal
-   - Tablet (768-1023px): widen + 3-col grids
-   - Desktop (≥1024px): CSS Grid 12-column BENTO layout
-     - Konten lebih DENSE (more widgets visible at once)
-     - Bottom-nav tetap di bawah, floating wider
-     - No sidebar nav conversion
-   - Wide (≥1440px): more padding + bigger bento
+   - Mobile (≤767px): bottom-nav, vertical stack — UNCHANGED
+   - Tablet (768-1023px): hamburger toggle sidepanel (via desktop-sidepanel.js)
+   - Desktop ≥1024px: PERSISTENT sidebar (always visible) + bento content
+     Layout pattern like Notion, Linear, Vercel dashboard
    ════════════════════════════════════════════════════════════════ */
 
-/* ───────────── TABLET 768px ───────────── */
+/* ───────────── TABLET 768-1023px ───────────── */
 @media (min-width: 768px) and (max-width: 1023px) {
   .app-shell {
     max-width: 720px !important;
     padding: 36px 28px 110px !important;
+    margin: 0 auto !important;
   }
   .top-bar, .topbar {
     max-width: 720px;
@@ -25,144 +23,75 @@
   .grid-2 { grid-template-columns: repeat(3, 1fr) !important; gap: 12px !important; }
   .action-grid { grid-template-columns: repeat(3, 1fr) !important; }
   .risk-list, .disease-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px; }
-  .bottom-nav { max-width: 560px !important; }
 }
 
 /* ════════════════════════════════════════════════════════════════
-   DESKTOP ≥1024px — BENTO GRID LAYOUT
+   DESKTOP ≥1024px — Persistent Sidebar Layout
+   .aerv-sidepanel (260-280px fixed left) handled by desktop-sidepanel.js CSS
+   Here we structure the MAIN CONTENT area
    ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1024px) {
 
-  /* App shell jadi grid container 12-col bento */
+  /* App shell fills remaining space (sidebar di kiri ditangani sidepanel JS CSS) */
   .app-shell {
-    max-width: 1280px !important;
-    padding: 30px 32px 100px !important;
-    margin: 0 auto !important;
+    max-width: none !important;
+    padding: 30px 36px 60px !important;
+    /* margin-left auto via sidepanel CSS @media query */
+  }
+
+  .top-bar, .topbar {
+    max-width: none !important;
+    padding: 18px 36px !important;
+  }
+
+  /* Standard 2-col grid → 4-col */
+  .grid-2 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+  }
+  .action-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+
+  /* ───── DASHBOARD bento layout ───── */
+  body[data-page="dashboard"] .app-shell {
     display: grid !important;
     grid-template-columns: repeat(12, 1fr);
     column-gap: 18px;
     row-gap: 18px;
     align-items: start;
   }
-
-  /* Top bar tetap full-width inside shell */
-  .top-bar, .topbar {
-    grid-column: 1 / -1 !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 18px 24px !important;
-    background: rgba(20, 30, 44, 0.55);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 20px;
-  }
-  body.theme-light .top-bar,
-  body.theme-light .topbar {
-    background: rgba(255, 255, 255, 0.7);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  /* Bottom nav stays bottom-center, lebih lebar + glassmorphic */
-  .bottom-nav {
-    max-width: 540px !important;
-    padding: 12px 20px !important;
-    bottom: 24px !important;
-    background: rgba(20, 30, 44, 0.75) !important;
-    backdrop-filter: blur(24px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  }
-  body.theme-light .bottom-nav {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border-color: rgba(0, 0, 0, 0.08) !important;
-  }
-  .bottom-nav .nav-item span { font-size: 11px !important; }
-  .bottom-nav .nav-item.fab {
-    width: 56px !important;
-    height: 56px !important;
-    margin-top: -22px !important;
-  }
-
-  /* ───── DASHBOARD bento layout ───── */
-  body[data-page="dashboard"] .app-shell > .greeting {
-    grid-column: 1 / 9;
-    padding: 14px 0;
-  }
+  body[data-page="dashboard"] .app-shell > * { min-width: 0; }
+  body[data-page="dashboard"] .app-shell > .top-bar { grid-column: 1 / -1; }
+  body[data-page="dashboard"] .app-shell > .greeting { grid-column: 1 / 9; }
   body[data-page="dashboard"] .app-shell > .status-pill,
-  body[data-page="dashboard"] .app-shell > #streakBadge {
-    grid-column: 9 / -1;
-  }
-  body[data-page="dashboard"] .app-shell > #smartRecs {
-    grid-column: 1 / -1;
-    margin: 0;
-  }
+  body[data-page="dashboard"] .app-shell > #streakBadge { grid-column: 9 / -1; align-self: center; }
+  body[data-page="dashboard"] .app-shell > #smartRecs { grid-column: 1 / -1; }
   body[data-page="dashboard"] .app-shell > .hero-card {
     grid-column: 1 / 8;
     padding: 28px 32px !important;
-    min-height: 200px;
+    min-height: 220px;
     display: flex; align-items: center;
   }
   body[data-page="dashboard"] .hero-num { font-size: 64px !important; }
-  body[data-page="dashboard"] .hero-card .ring { width: 150px; height: 150px; }
-
-  /* Vital + Lingkungan grid spans full + 4-col */
   body[data-page="dashboard"] .app-shell > .section-title {
     grid-column: 1 / -1;
-    margin: 12px 0 6px;
+    margin: 8px 0 4px;
   }
   body[data-page="dashboard"] .app-shell > .grid-2 {
     grid-column: 1 / -1;
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 16px !important;
   }
-  /* Hero TEPRS + sidebar widget */
   body[data-page="dashboard"] .app-shell > .list-card {
     grid-column: 1 / -1;
     padding: 22px 26px !important;
   }
-
-  /* metric cards punya min-height supaya konten ngerasa balanced */
-  .metric-card {
-    min-height: 150px;
+  body[data-page="dashboard"] .app-shell > #recPanel {
+    grid-column: 1 / -1;
   }
 
-  /* ───── PAGES NON-BENTO (still wide + centered) ───── */
-  body[data-page="profile"] .app-shell,
-  body[data-page="history"] .app-shell,
-  body[data-page="risk-list"] .app-shell,
-  body[data-page="alerts"] .app-shell,
-  body[data-page="achievements"] .app-shell,
-  body[data-page="device"] .app-shell,
-  body[data-page="recovery"] .app-shell,
-  body[data-page="running"] .app-shell,
-  body[data-page="metric-detail"] .app-shell,
-  body[data-page="risk-detail"] .app-shell,
-  body[data-page="session-detail"] .app-shell,
-  body[data-page="edit-profile"] .app-shell,
-  body[data-page="encyclopedia"] .app-shell,
-  body[data-page="assessment"] .app-shell,
-  body[data-page="assessment-history"] .app-shell,
-  body[data-page="help"] .app-shell,
-  body[data-page="privacy"] .app-shell {
-    display: block !important;
-    max-width: 960px !important;
-    padding: 40px 36px 110px !important;
-  }
-
-  /* Risk-list multi-col on desktop */
-  body[data-page="risk-list"] .risk-list,
-  body[data-page="risk-list"] .disease-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px !important;
-  }
-
-  body[data-page="metric-detail"] .app-shell,
-  body[data-page="risk-detail"] .app-shell {
-    max-width: 1100px !important;
-  }
-
-  /* Profile pakai 2-col layout: avatar/info left, sections right */
+  /* ───── PAGES NON-DASHBOARD ───── */
   body[data-page="profile"] .app-shell {
     max-width: 1100px !important;
     display: grid !important;
@@ -172,16 +101,37 @@
     align-items: start;
   }
 
-  /* ───── AUTH pages ───── */
-  body[data-page="login"] .auth-shell,
-  body[data-page="register"] .auth-shell {
-    max-width: 920px !important;
-    padding: 40px !important;
+  body[data-page="risk-list"] .risk-list,
+  body[data-page="risk-list"] .disease-grid,
+  body[data-page="encyclopedia"] .disease-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
   }
 
-  /* ───── Onboarding tetap centered narrow tapi padding besar ───── */
+  body[data-page="metric-detail"] .app-shell,
+  body[data-page="risk-detail"] .app-shell {
+    max-width: 1100px !important;
+  }
+
+  body[data-page="history"] .app-shell,
+  body[data-page="alerts"] .app-shell,
+  body[data-page="achievements"] .app-shell,
+  body[data-page="device"] .app-shell,
+  body[data-page="recovery"] .app-shell,
+  body[data-page="session-detail"] .app-shell,
+  body[data-page="edit-profile"] .app-shell,
+  body[data-page="assessment"] .app-shell,
+  body[data-page="assessment-history"] .app-shell,
+  body[data-page="help"] .app-shell,
+  body[data-page="privacy"] .app-shell {
+    max-width: 1000px !important;
+  }
+
+  /* Onboarding — sidepanel skip (per JS) jadi tidak di-shift */
   body[data-page="onboarding"] .ob-shell {
     max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     padding: 50px 40px 110px !important;
   }
   body[data-page="onboarding"] .ob-cards {
@@ -189,59 +139,57 @@
   }
   body[data-page="onboarding"] .ob-actions {
     max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  /* ───── DOC pages (evidence, ml reports, datasets, xai) ───── */
+  /* Auth pages — sidepanel skip */
+  body[data-page="login"] .auth-shell,
+  body[data-page="register"] .auth-shell {
+    max-width: 920px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 40px !important;
+  }
+
+  /* Doc pages — content max width */
   body[data-page="evidence"] .ev-shell {
-    max-width: 1280px !important;
+    max-width: 1200px !important;
     padding: 40px 36px 100px !important;
   }
-  body[data-page="ml-results-report"] .hero-test,
-  body[data-page="ml-improvement-plan"] .hero,
-  body[data-page="aervinex-roadmap"] .hero,
-  body[data-page="datasets"] .hero,
-  body[data-page="xai-audit"] .hero,
   body[data-page="ml-results-report"] .section,
   body[data-page="ml-improvement-plan"] .section,
   body[data-page="aervinex-roadmap"] .section,
   body[data-page="datasets"] .section,
-  body[data-page="xai-audit"] .section {
-    max-width: 1200px !important;
-    margin: 14px auto !important;
+  body[data-page="xai-audit"] .section,
+  body[data-page="ml-results-report"] .hero-test,
+  body[data-page="ml-improvement-plan"] .hero,
+  body[data-page="aervinex-roadmap"] .hero,
+  body[data-page="datasets"] .hero,
+  body[data-page="xai-audit"] .hero {
+    max-width: 1100px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 
-  /* ───── Community + AI chat ───── */
-  body[data-page="community"] .cm-list,
-  body[data-page="community"] main {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+  /* Community */
   body[data-page="community"] .cm-list {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 14px !important;
   }
-  .ch-messages, .ai-messages {
+
+  /* Community + AI chat fullscreen */
+  body[data-page="community-channel"] .ch-messages,
+  body[data-page="ai-chat"] .ai-messages {
     padding-left: 36px !important;
     padding-right: 36px !important;
     max-width: 880px;
     margin-left: auto !important;
     margin-right: auto !important;
   }
-  .ch-input-bar, .ai-input-bar {
+  body[data-page="community-channel"] .ch-input-bar,
+  body[data-page="ai-chat"] .ai-input-bar {
     max-width: 880px !important;
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-  }
-  .ai-suggestions {
-    max-width: 880px;
-    margin: 0 auto;
-  }
-
-  /* Theme FAB pushed to right corner */
-  .theme-toggle-fab {
-    top: 24px !important;
-    right: 32px !important;
   }
 }
 
@@ -250,31 +198,19 @@
    ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1280px) {
   .app-shell {
-    max-width: 1360px !important;
-    padding: 36px 40px 100px !important;
-    column-gap: 22px;
+    padding: 36px 44px 80px !important;
   }
 
-  /* Dashboard bento jadi lebih spacious */
-  body[data-page="dashboard"] .app-shell > .hero-card {
-    grid-column: 1 / 7;
-    min-height: 240px;
-  }
   body[data-page="dashboard"] .hero-num { font-size: 72px !important; }
-  body[data-page="dashboard"] .app-shell > .grid-2 {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-  body[data-page="dashboard"] .app-shell > #smartRecs {
-    grid-column: 1 / 9;
-  }
+  body[data-page="dashboard"] .app-shell > .hero-card { min-height: 240px; }
 
-  /* Risk-list 4-col */
   body[data-page="risk-list"] .risk-list,
-  body[data-page="risk-list"] .disease-grid {
+  body[data-page="risk-list"] .disease-grid,
+  body[data-page="encyclopedia"] .disease-grid {
     grid-template-columns: repeat(4, 1fr) !important;
   }
 
-  body[data-page="evidence"] .ev-shell { max-width: 1360px !important; }
+  body[data-page="evidence"] .ev-shell { max-width: 1320px !important; }
   body[data-page="profile"] .app-shell { max-width: 1200px !important; }
 }
 
@@ -283,33 +219,25 @@
    ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1440px) {
   .app-shell {
-    max-width: 1440px !important;
-    padding: 40px 48px 100px !important;
+    padding: 40px 56px 80px !important;
   }
 
-  /* Dashboard: bigger bento, lebih banyak konten visible */
-  body[data-page="dashboard"] .app-shell > .grid-2 {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
   body[data-page="risk-list"] .risk-list,
-  body[data-page="risk-list"] .disease-grid {
+  body[data-page="risk-list"] .disease-grid,
+  body[data-page="encyclopedia"] .disease-grid {
     grid-template-columns: repeat(5, 1fr) !important;
   }
 
-  body[data-page="evidence"] .ev-shell { max-width: 1440px !important; }
+  body[data-page="evidence"] .ev-shell { max-width: 1400px !important; }
 }
 
 /* ════════════════════════════════════════════════════════════════
    ULTRA-WIDE ≥1700px
    ════════════════════════════════════════════════════════════════ */
 @media (min-width: 1700px) {
-  .app-shell {
-    max-width: 1560px !important;
-    padding-left: 60px !important;
-    padding-right: 60px !important;
-  }
   body[data-page="risk-list"] .risk-list,
-  body[data-page="risk-list"] .disease-grid {
+  body[data-page="risk-list"] .disease-grid,
+  body[data-page="encyclopedia"] .disease-grid {
     grid-template-columns: repeat(6, 1fr) !important;
   }
 }
@@ -318,10 +246,12 @@
    PRINT
    ════════════════════════════════════════════════════════════════ */
 @media print {
+  .aerv-sidepanel, .aerv-hamburger, .aerv-sp-backdrop,
   .bottom-nav, .bottomnav, .theme-toggle-fab, .topbar, .top-bar { display: none !important; }
   .app-shell {
     max-width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
     display: block !important;
   }
   body { background: white !important; color: black !important; }
