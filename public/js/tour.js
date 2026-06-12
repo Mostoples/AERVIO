@@ -175,7 +175,12 @@
     }
   }
   function back() { if (state.index > 0) { state.index--; logEvent('step_view', { direction: 'back' }); render(); } }
-  function skip() { logEvent('skip'); end(false); }
+  function skip() {
+    logEvent('skip');
+    // Mark as completed even if skipped, so tour won't auto-show again
+    localStorage.setItem(KEY_BASE + '-' + state.tourId, '1');
+    end(false);
+  }
   function end(completed) {
     if (completed) {
       localStorage.setItem(KEY_BASE + '-' + state.tourId, '1');
