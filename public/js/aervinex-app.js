@@ -305,6 +305,24 @@
     else document.addEventListener('DOMContentLoaded', cb);
   }
   whenReady(() => {
+    // Auto-attach handler to manual lang-toggle button if exists
+    const manualLangBtn = document.getElementById('lang-toggle-btn');
+    if (manualLangBtn && window.AervinexI18n) {
+      const updateLangBtn = () => {
+        const lang = (localStorage.getItem('aervinex-lang') || 'id').toUpperCase();
+        const span = manualLangBtn.querySelector('span');
+        if (span) span.textContent = lang;
+      };
+      updateLangBtn();
+      manualLangBtn.addEventListener('click', () => {
+        if (window.AervinexI18n?.toggle) {
+          window.AervinexI18n.toggle();
+          setTimeout(updateLangBtn, 100);
+        }
+      });
+    }
+
+    // Legacy: inject lang toggle for pages without manual button
     injectLangToggle();
     const mo = new MutationObserver(() => injectLangToggle());
     mo.observe(document.body, { childList: true, subtree: true });
