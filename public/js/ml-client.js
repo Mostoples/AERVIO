@@ -237,29 +237,31 @@ window.MLClient = {
   // ── Recommendation builder (mirrors cloud function logic) ────────────
   _buildRecs(teprsClass, rrss, airi, pm25, hour) {
     const recs = [];
+    const t = window.AervinexI18n?.t || (k => k);
+    const tt = window.AervinexI18n?.tt || ((k, v) => k);
 
     const envMsgs = [
-      { icon: '✅', msg: 'Kualitas udara baik. Aman untuk aktivitas outdoor.' },
-      { icon: '⚠️', msg: `PM2.5 ${pm25.toFixed(0)} μg/m³. Pertimbangkan masker saat outdoor.` },
-      { icon: '🟠', msg: 'Polusi tinggi. Batasi aktivitas outdoor, gunakan masker N95.' },
-      { icon: '🔴', msg: 'Kualitas udara berbahaya. Tetap dalam ruangan.' },
+      { icon: '✅', msg: t('Kualitas udara baik. Aman untuk aktivitas outdoor.') },
+      { icon: '⚠️', msg: tt('PM2.5 {pm25} μg/m³. Pertimbangkan masker saat outdoor.', { pm25: pm25.toFixed(0) }) },
+      { icon: '🟠', msg: t('Polusi tinggi. Batasi aktivitas outdoor, gunakan masker N95.') },
+      { icon: '🔴', msg: t('Kualitas udara berbahaya. Tetap dalam ruangan.') },
     ];
     recs.push({ type: 'env', ...envMsgs[Math.min(teprsClass, 3)] });
 
     if (rrss) {
       if (rrss.recovery_score < 40)
-        recs.push({ type: 'recovery', icon: '😴', msg: 'Pemulihan belum optimal. Istirahat atau latihan ringan saja.' });
+        recs.push({ type: 'recovery', icon: '😴', msg: t('Pemulihan belum optimal. Istirahat atau latihan ringan saja.') });
       else if (rrss.recovery_score >= 75)
-        recs.push({ type: 'recovery', icon: '💪', msg: 'Pemulihan baik. Siap untuk latihan intensitas penuh.' });
+        recs.push({ type: 'recovery', icon: '💪', msg: t('Pemulihan baik. Siap untuk latihan intensitas penuh.') });
     }
 
     if (airi?.risk_level === 'HIGH')
-      recs.push({ type: 'injury', icon: '🦵', msg: 'Risiko cedera tinggi. Kurangi intensitas 20%, tambah recovery.' });
+      recs.push({ type: 'injury', icon: '🦵', msg: t('Risiko cedera tinggi. Kurangi intensitas 20%, tambah recovery.') });
 
     if (hour >= 5 && hour <= 8)
-      recs.push({ type: 'timing', icon: '🌅', msg: 'Pagi hari: waktu optimal latihan aerobik dan metabolisme lemak.' });
+      recs.push({ type: 'timing', icon: '🌅', msg: t('Pagi hari: waktu optimal latihan aerobik dan metabolisme lemak.') });
     else if (hour >= 16 && hour <= 19)
-      recs.push({ type: 'timing', icon: '🌇', msg: 'Sore hari: suhu tubuh puncak, cocok untuk intensitas tinggi.' });
+      recs.push({ type: 'timing', icon: '🌇', msg: t('Sore hari: suhu tubuh puncak, cocok untuk intensitas tinggi.') });
 
     return recs;
   },

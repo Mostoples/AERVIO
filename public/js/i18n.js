@@ -434,6 +434,8 @@
     'Aman': 'Safe',
     'Back': 'Back',
     'Baik': 'Good',
+    'Waspada': 'Caution',
+    'Berisiko': 'At Risk',
     'dari': 'of',
     'DONE': 'DONE',
     'Gap:': 'Gap:',
@@ -3493,6 +3495,13 @@
     'Bahaya': 'Dangerous',
     'Sangat Panas': 'Very Hot',
     'Panas': 'Hot',
+    'Lambatkan pace {pctSlower}% vs target normal.': 'Slow down pace {pctSlower}% vs normal target.',
+    'Hindari paparan sinar matahari langsung.': 'Avoid direct sun exposure.',
+    '⚠️ Sebaiknya tunda latihan outdoor!': '⚠️ Consider postponing outdoor training!',
+    'Gunakan masker N95 di luar ruangan.': 'Use N95 mask outdoors.',
+    'Pertimbangkan masker saat napas berat.': 'Consider mask during heavy breathing.',
+    'Kondisi lingkungan optimal untuk berlari.': 'Optimal environmental conditions for running.',
+    'Pantau kondisi selama berlari.': 'Monitor conditions during run.',
     'Peringatan': 'Warning',
 
     // ── MISC LABELS & UI ─────────────────────────────────────

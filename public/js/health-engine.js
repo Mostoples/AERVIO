@@ -114,14 +114,15 @@ window.HealthEngine = {
 
   // ── ENVIRONMENTAL TRAINING RECOMMENDATION ────────────────────────────────
   getTrainingRecommendation(css, pm25, coreTemp, heatStress, rsi) {
+    const t = window.AervinexI18n?.t || (k => k);
     const risk = Math.max(css, pm25/35*100, heatStress, rsi);
     if (risk < 30 && pm25 < 10 && coreTemp < 37.5)
-      return { level: 'high',    icon: '🟢', title: 'High Intensity OK',      msg: 'Semua kondisi optimal. Aman untuk latihan intensitas tinggi.', color: 'var(--safe)' };
+      return { level: 'high',    icon: '🟢', title: t('High Intensity OK'),      msg: t('Semua kondisi optimal. Aman untuk latihan intensitas tinggi.'), color: 'var(--safe)' };
     if (risk < 55 || (pm25 >= 10 && pm25 < 25) || (coreTemp >= 37.5 && coreTemp < 38.5))
-      return { level: 'moderate',icon: '🟡', title: 'Turunkan Intensitas',    msg: 'Kondisi cukup, pertahankan intensitas sedang dan perhatikan hidrasi.', color: 'var(--warn)' };
+      return { level: 'moderate',icon: '🟡', title: t('Turunkan Intensitas'),    msg: t('Kondisi cukup, pertahankan intensitas sedang dan perhatikan hidrasi.'), color: 'var(--warn)' };
     if (risk < 75 || pm25 >= 25 || coreTemp >= 38.5)
-      return { level: 'low',     icon: '🟠', title: 'Intensitas Ringan Saja', msg: 'Kondisi kurang ideal. Jalan santai atau pemanasan ringan saja.', color: 'var(--warn)' };
-    return { level: 'rest',      icon: '🔴', title: 'Istirahat / Dalam Ruangan', msg: 'Kondisi berbahaya. Hindari aktivitas luar ruangan sekarang.', color: 'var(--danger)' };
+      return { level: 'low',     icon: '🟠', title: t('Intensitas Ringan Saja'), msg: t('Kondisi kurang ideal. Jalan santai atau pemanasan ringan saja.'), color: 'var(--warn)' };
+    return { level: 'rest',      icon: '🔴', title: t('Istirahat / Dalam Ruangan'), msg: t('Kondisi berbahaya. Hindari aktivitas luar ruangan sekarang.'), color: 'var(--danger)' };
   },
 
   // ── AUTONOMIC BALANCE SCORE (0-100) ──────────────────────────────────────

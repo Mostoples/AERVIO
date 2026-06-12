@@ -275,6 +275,7 @@
 
   // ── CRAD — Composite Risk Analyzer Dashboard (F7) ────
   function renderCRAD(raw, analysis) {
+    const t = window.AervinexI18n?.t || (k => k);
     const ml = analysis.ml;
     if (!ml) return;
 
@@ -291,21 +292,21 @@
     const cardiacRisk  = rrss ? (100 - rrss.recovery_score) : Math.round(100 - analysis.hrvSc);
     const cardiacColor = cardiacRisk < 30 ? 'var(--safe)' : cardiacRisk < 60 ? 'var(--warn)' : 'var(--danger)';
     const cardiacCls   = cardiacRisk < 30 ? 'crad-safe'   : cardiacRisk < 60 ? 'crad-warn'   : 'crad-danger';
-    const cardiacLabel = cardiacRisk < 30 ? 'Baik'        : cardiacRisk < 60 ? 'Waspada'     : 'Berisiko';
+    const cardiacLabel = cardiacRisk < 30 ? t('Baik')        : cardiacRisk < 60 ? t('Waspada')     : t('Berisiko');
     setCRADCard('cardiac', Math.round(cardiacRisk), cardiacLabel, cardiacRisk, cardiacColor, cardiacCls);
 
     // RESPIRATORY card — RSI
     const rsiScore  = analysis.rsi;
     const rsiColor  = rsiScore < 30 ? 'var(--safe)' : rsiScore < 60 ? 'var(--warn)' : 'var(--danger)';
     const rsiCls    = rsiScore < 30 ? 'crad-safe'   : rsiScore < 60 ? 'crad-warn'   : 'crad-danger';
-    const rsiLabel  = rsiScore < 30 ? 'Normal'      : rsiScore < 60 ? 'Sedang'      : 'Tinggi';
+    const rsiLabel  = rsiScore < 30 ? t('Normal')      : rsiScore < 60 ? t('Sedang')      : t('Tinggi');
     setCRADCard('resp', rsiScore, rsiLabel, rsiScore, rsiColor, rsiCls);
 
     // THERMAL card — HSI
     const hsiScore  = analysis.hsi;
     const hsiColor  = hsiScore < 30 ? 'var(--safe)' : hsiScore < 60 ? 'var(--warn)' : 'var(--danger)';
     const hsiCls    = hsiScore < 30 ? 'crad-safe'   : hsiScore < 60 ? 'crad-warn'   : 'crad-danger';
-    const hsiLabel  = hsiScore < 30 ? 'Aman'        : hsiScore < 60 ? 'Panas'       : 'Berbahaya';
+    const hsiLabel  = hsiScore < 30 ? t('Aman')        : hsiScore < 60 ? t('Panas')       : t('Berbahaya');
     setCRADCard('thermal', hsiScore, hsiLabel, hsiScore, hsiColor, hsiCls);
 
     // TEPRS Trend sparkline

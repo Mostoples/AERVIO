@@ -42,16 +42,17 @@ window.EPO = {
   // Returns   : { pctSlower, zoneCapHRPct, label, level, color }
   // ──────────────────────────────────────────────────────────────────────
   getAdjustment(heatIndex, pm25 = 0) {
-    let pctSlower = 0, level = 0, label = 'Normal', color = 'var(--safe)';
+    const t = window.AervinexI18n?.t || (k => k);
+    let pctSlower = 0, level = 0, label = t('Normal'), color = 'var(--safe)';
 
     if (heatIndex >= 46) {
-      pctSlower = 20; level = 4; label = 'Ekstrem Berbahaya'; color = 'var(--danger)';
+      pctSlower = 20; level = 4; label = t('Ekstrem Berbahaya'); color = 'var(--danger)';
     } else if (heatIndex >= 39) {
-      pctSlower = 12; level = 3; label = 'Bahaya';            color = 'var(--danger)';
+      pctSlower = 12; level = 3; label = t('Bahaya');            color = 'var(--danger)';
     } else if (heatIndex >= 32) {
-      pctSlower = 7;  level = 2; label = 'Sangat Panas';      color = 'var(--warn)';
+      pctSlower = 7;  level = 2; label = t('Sangat Panas');      color = 'var(--warn)';
     } else if (heatIndex >= 27) {
-      pctSlower = 3;  level = 1; label = 'Panas';             color = 'var(--warn)';
+      pctSlower = 3;  level = 1; label = t('Panas');             color = 'var(--warn)';
     }
 
     // Air-quality penalty (PM2.5 impairs O₂ delivery)
@@ -84,13 +85,15 @@ window.EPO = {
   // Recommendation text for EPO panel
   // ──────────────────────────────────────────────────────────────────────
   getRecommendation(adj, pm25) {
+    const t = window.AervinexI18n?.t || (k => k);
+    const tt = window.AervinexI18n?.tt || ((k, v) => k);
     const parts = [];
-    if (adj.pctSlower > 0) parts.push(`Lambatkan pace ${adj.pctSlower}% vs target normal.`);
-    if (adj.level >= 3)    parts.push('Hindari paparan sinar matahari langsung.');
-    if (adj.level >= 4)    parts.push('⚠️ Sebaiknya tunda latihan outdoor!');
-    if (pm25 > 35)         parts.push('Gunakan masker N95 di luar ruangan.');
-    else if (pm25 > 15)    parts.push('Pertimbangkan masker saat napas berat.');
-    if (adj.level === 0 && pm25 <= 15) parts.push('Kondisi lingkungan optimal untuk berlari.');
-    return parts.join(' ') || 'Pantau kondisi selama berlari.';
+    if (adj.pctSlower > 0) parts.push(tt('Lambatkan pace {pctSlower}% vs target normal.', { pctSlower: adj.pctSlower }));
+    if (adj.level >= 3)    parts.push(t('Hindari paparan sinar matahari langsung.'));
+    if (adj.level >= 4)    parts.push(t('⚠️ Sebaiknya tunda latihan outdoor!'));
+    if (pm25 > 35)         parts.push(t('Gunakan masker N95 di luar ruangan.'));
+    else if (pm25 > 15)    parts.push(t('Pertimbangkan masker saat napas berat.'));
+    if (adj.level === 0 && pm25 <= 15) parts.push(t('Kondisi lingkungan optimal untuk berlari.'));
+    return parts.join(' ') || t('Pantau kondisi selama berlari.');
   },
 };
