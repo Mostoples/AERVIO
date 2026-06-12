@@ -148,6 +148,7 @@
       sp.style.borderRadius = (step.radius || 18) + 'px';
 
       const tt = state.tooltip;
+      const t = (k) => window.AervinexI18n?.t(k) || k;
       tt.innerHTML = `
         <div class="tour-arrow"></div>
         <span class="tour-step-badge">${state.index + 1} / ${state.steps.length}</span>
@@ -156,8 +157,8 @@
         <div class="tour-actions">
           <div class="tour-progress">${state.steps.map((_, i) => `<span class="tour-dot ${i === state.index ? 'active' : i < state.index ? 'done' : ''}"></span>`).join('')}</div>
           <div class="tour-btns">
-            ${state.index > 0 ? '<button class="tour-btn back" data-tour="back">Back</button>' : '<button class="tour-btn skip" data-tour="skip">Skip</button>'}
-            <button class="tour-btn next" data-tour="next">${state.index === state.steps.length - 1 ? 'Selesai ✓' : 'Lanjut →'}</button>
+            ${state.index > 0 ? `<button class="tour-btn back" data-tour="back">${t('Back')}</button>` : `<button class="tour-btn skip" data-tour="skip">${t('Skip')}</button>`}
+            <button class="tour-btn next" data-tour="next">${state.index === state.steps.length - 1 ? t('Selesai ✓') : t('Lanjut →')}</button>
           </div>
         </div>
       `;
@@ -225,53 +226,57 @@
     // ── DASHBOARD TOUR ────────────────────────────────────
     startDashboardTour(force = false) {
       if (!force && isCompletedFor('dashboard')) return;
+      const t = (k) => window.AervinexI18n?.t(k) || k;
       this.start([
-        { target: '.greeting',                title: 'Selamat datang di AERVINEX!',     text: 'Mari saya pandu fitur utama. Tour ini cuma 10 step — Anda bisa skip kapan saja.' },
-        { target: '.hero-card',               title: 'TEPRS · Skor Risiko Lingkungan', text: 'Total Environment-induced Physiological Risk Score — ML kalibrasi dari PM2.5, suhu, UV, kondisi tubuh. Tap kartu untuk detail faktor.' },
-        { target: '.grid-2:first-of-type',    title: 'Vital Signs',                     text: 'Heart Rate, SpO₂, Respiratory, Hidrasi — sensor onboard. Tap kartu untuk drill-in chart 24 jam + insight.', placement: 'top' },
-        { target: '.grid-2:nth-of-type(2)',   title: 'Lingkungan',                      text: 'UV Index, PM2.5, Heat Index — dikalibrasi stasiun BMKG/IQAir terdekat via GPS.', placement: 'top' },
-        { target: '.aura-coral.list-card',    title: 'Deteksi Risiko Penyakit',         text: '5 kondisi real-time: asma, heatstroke, dehidrasi, aritmia, sunburn. Tap row untuk faktor kontribusi + mitigasi.', placement: 'top' },
-        { target: '#recPanel',                title: 'Rekomendasi AI',                  text: 'Saran kontekstual: pindah area, minum air, kurangi intensitas. Update tiap 2 detik berdasar sensor.', placement: 'top' },
-        { target: '.quick-actions',           title: 'Aksi Cepat',                      text: 'Mulai Run, Recovery, atau lihat History dengan satu tap.', placement: 'top' },
-        { target: '.bottom-nav',              title: 'Bottom Navigation',               text: 'Home · Stats · ▶ Start (FAB) · Recovery · Profile.', placement: 'top' },
-        { target: '.theme-toggle',            title: 'Theme: 3 mode',                   text: 'Tap untuk cycle Dark → Light → Glass ✨ — tersimpan otomatis.' },
-        { target: 'a[href="/profile.html"][aria-label="Profil"]', title: 'Profil & Settings', text: 'Edit profil, device, privasi, FAQ. Tour Dashboard selesai!' },
-      ], { tourId: 'dashboard', onComplete: (c) => { if (c) AervinexToast?.('Tour Dashboard selesai · tour halaman lain akan muncul saat Anda buka', 'success', 4000); } });
+        { target: '.greeting',                title: t('Selamat datang di AERVINEX!'),     text: t('Mari saya pandu fitur utama. Tour ini cuma 10 step — Anda bisa skip kapan saja.') },
+        { target: '.hero-card',               title: t('TEPRS · Skor Risiko Lingkungan'), text: t('Total Environment-induced Physiological Risk Score — ML kalibrasi dari PM2.5, suhu, UV, kondisi tubuh. Tap kartu untuk detail faktor.') },
+        { target: '.grid-2:first-of-type',    title: t('Vital Signs'),                     text: t('Heart Rate, SpO₂, Respiratory, Hidrasi — sensor onboard. Tap kartu untuk drill-in chart 24 jam + insight.'), placement: 'top' },
+        { target: '.grid-2:nth-of-type(2)',   title: t('Lingkungan'),                      text: t('UV Index, PM2.5, Heat Index — dikalibrasi stasiun BMKG/IQAir terdekat via GPS.'), placement: 'top' },
+        { target: '.aura-coral.list-card',    title: t('Deteksi Risiko Penyakit'),         text: t('5 kondisi real-time: asma, heatstroke, dehidrasi, aritmia, sunburn. Tap row untuk faktor kontribusi + mitigasi.'), placement: 'top' },
+        { target: '#recPanel',                title: t('Rekomendasi AI'),                  text: t('Saran kontekstual: pindah area, minum air, kurangi intensitas. Update tiap 2 detik berdasar sensor.'), placement: 'top' },
+        { target: '.quick-actions',           title: t('Aksi Cepat'),                      text: t('Mulai Run, Recovery, atau lihat History dengan satu tap.'), placement: 'top' },
+        { target: '.bottom-nav',              title: t('Bottom Navigation'),               text: t('Home · Stats · ▶ Start (FAB) · Recovery · Profile.'), placement: 'top' },
+        { target: '.theme-toggle',            title: t('Theme: 3 mode'),                   text: t('Tap untuk cycle Dark → Light → Glass ✨ — tersimpan otomatis.') },
+        { target: 'a[href="/profile.html"][aria-label="Profil"]', title: t('Profil & Settings'), text: t('Edit profil, device, privasi, FAQ. Tour Dashboard selesai!') },
+      ], { tourId: 'dashboard', onComplete: (c) => { if (c) AervinexToast?.(t('Tour Dashboard selesai · tour halaman lain akan muncul saat Anda buka'), 'success', 4000); } });
     },
 
     // ── RUNNING TOUR ──────────────────────────────────────
     startRunningTour(force = false) {
       if (!force && isCompletedFor('running')) return;
+      const t = (k) => window.AervinexI18n?.t(k) || k;
       this.start([
-        { target: '.run-map-card', title: 'Smart Route Map', text: 'GPS rute real-time + overlay PM2.5 (chip kanan atas). Marker pengguna update tiap 1.5s.' },
-        { target: '.hero-card', title: 'Active Session', text: 'Distance, time, pace — semua live tracking. Pace dihitung dari GPS distance / elapsed time.', placement: 'bottom' },
-        { target: '.grid-2', title: 'Live Metrics', text: 'Heart Rate (zone), Heat Index (EPO adjust), Power Output, AIRI Injury Risk — semua ML-driven.', placement: 'top' },
-        { target: '.aura-cyan.card:not(.run-map-card):not(.hero-card)', title: 'RPAE Zone Timer', text: 'Waktu di zona Z1/Z2/Z3 dihitung otomatis. Target adaptif sesuai EPO + heat index.', placement: 'top' },
-        { target: '.action-grid', title: 'Kontrol Sesi', text: 'Pause atau Stop & Save. Stop akan auto-save ke history + hitung RRSS reward.', placement: 'top' },
-        { target: '.bottom-nav', title: 'Navigation', text: 'Selesai sesi? Tap Home untuk kembali ke dashboard. Tour Running selesai!', placement: 'top' },
-      ], { tourId: 'running', onComplete: (c) => { if (c) AervinexToast?.('Tour Running selesai · safe running!', 'success'); } });
+        { target: '.run-map-card', title: t('Smart Route Map'), text: t('GPS rute real-time + overlay PM2.5 (chip kanan atas). Marker pengguna update tiap 1.5s.') },
+        { target: '.hero-card', title: t('Active Session'), text: t('Distance, time, pace — semua live tracking. Pace dihitung dari GPS distance / elapsed time.'), placement: 'bottom' },
+        { target: '.grid-2', title: t('Live Metrics'), text: t('Heart Rate (zone), Heat Index (EPO adjust), Power Output, AIRI Injury Risk — semua ML-driven.'), placement: 'top' },
+        { target: '.aura-cyan.card:not(.run-map-card):not(.hero-card)', title: t('RPAE Zone Timer'), text: t('Waktu di zona Z1/Z2/Z3 dihitung otomatis. Target adaptif sesuai EPO + heat index.'), placement: 'top' },
+        { target: '.action-grid', title: t('Kontrol Sesi'), text: t('Pause atau Stop & Save. Stop akan auto-save ke history + hitung RRSS reward.'), placement: 'top' },
+        { target: '.bottom-nav', title: t('Navigation'), text: t('Selesai sesi? Tap Home untuk kembali ke dashboard. Tour Running selesai!'), placement: 'top' },
+      ], { tourId: 'running', onComplete: (c) => { if (c) AervinexToast?.(t('Tour Running selesai · safe running!'), 'success'); } });
     },
 
     // ── RECOVERY TOUR ─────────────────────────────────────
     startRecoveryTour(force = false) {
       if (!force && isCompletedFor('recovery')) return;
+      const t = (k) => window.AervinexI18n?.t(k) || k;
       this.start([
-        { target: '.hero-card', title: 'RRSS · Recovery Readiness Score', text: 'ML XGBoost yang menggabungkan HRV (RMSSD, SDNN, LF/HF), resting HR, dan stres autonomic. Skor 0-100.', placement: 'bottom' },
-        { target: '.grid-2', title: 'HRV Breakdown', text: 'RMSSD (vagal tone), SDNN (global ANS), LF/HF (sympathetic balance), Resting HR. Tap kartu untuk detail.', placement: 'top' },
-        { target: '.list-card', title: 'Rekomendasi Personal', text: 'AI memberi saran spesifik: latihan intensitas tinggi besok, tidur 7+ jam, hidrasi prep. Berdasar trend HRV 7 hari.', placement: 'top' },
-        { target: '.bottom-nav', title: 'Done', text: 'Recovery dipantau 24 jam. Tour Recovery selesai!', placement: 'top' },
-      ], { tourId: 'recovery', onComplete: (c) => { if (c) AervinexToast?.('Tour Recovery selesai!', 'success'); } });
+        { target: '.hero-card', title: t('RRSS · Recovery Readiness Score'), text: t('ML XGBoost yang menggabungkan HRV (RMSSD, SDNN, LF/HF), resting HR, dan stres autonomic. Skor 0-100.'), placement: 'bottom' },
+        { target: '.grid-2', title: t('HRV Breakdown'), text: t('RMSSD (vagal tone), SDNN (global ANS), LF/HF (sympathetic balance), Resting HR. Tap kartu untuk detail.'), placement: 'top' },
+        { target: '.list-card', title: t('Rekomendasi Personal'), text: t('AI memberi saran spesifik: latihan intensitas tinggi besok, tidur 7+ jam, hidrasi prep. Berdasar trend HRV 7 hari.'), placement: 'top' },
+        { target: '.bottom-nav', title: t('Done'), text: t('Recovery dipantau 24 jam. Tour Recovery selesai!'), placement: 'top' },
+      ], { tourId: 'recovery', onComplete: (c) => { if (c) AervinexToast?.(t('Tour Recovery selesai!'), 'success'); } });
     },
 
     // ── HISTORY TOUR ──────────────────────────────────────
     startHistoryTour(force = false) {
       if (!force && isCompletedFor('history')) return;
+      const t = (k) => window.AervinexI18n?.t(k) || k;
       this.start([
-        { target: '.chart-card', title: 'TEPRS & HR Trend', text: 'Sliding window chart — titik tertua hilang, titik baru muncul tiap 1.8s. Bukan animasi palsu — data ML real.' },
-        { target: '.tab-nav', title: 'Time Range', text: 'Switch 7d / 30d / 1y. Dataset regenerate dengan jitter berbeda — 1y lebih volatile.', placement: 'bottom' },
-        { target: '.aura-cyan.list-card', title: 'Sesi Terbaru', text: 'Tap row untuk detail: map rute, splits per km, HR chart, calories, environment context.', placement: 'top' },
-        { target: '.bottom-nav', title: 'Done', text: 'History tersinkronisasi cloud · valid sampai 90 hari. Tour History selesai!', placement: 'top' },
-      ], { tourId: 'history', onComplete: (c) => { if (c) AervinexToast?.('Tour History selesai!', 'success'); } });
+        { target: '.chart-card', title: t('TEPRS & HR Trend'), text: t('Sliding window chart — titik tertua hilang, titik baru muncul tiap 1.8s. Bukan animasi palsu — data ML real.') },
+        { target: '.tab-nav', title: t('Time Range'), text: t('Switch 7d / 30d / 1y. Dataset regenerate dengan jitter berbeda — 1y lebih volatile.'), placement: 'bottom' },
+        { target: '.aura-cyan.list-card', title: t('Sesi Terbaru'), text: t('Tap row untuk detail: map rute, splits per km, HR chart, calories, environment context.'), placement: 'top' },
+        { target: '.bottom-nav', title: t('Done'), text: t('History tersinkronisasi cloud · valid sampai 90 hari. Tour History selesai!'), placement: 'top' },
+      ], { tourId: 'history', onComplete: (c) => { if (c) AervinexToast?.(t('Tour History selesai!'), 'success'); } });
     },
   };
 })();
