@@ -7,6 +7,17 @@
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
+  // ── AUTO-LOAD i18n.js if not already loaded ───────────────────────────
+  (function ensureI18n() {
+    if (window.AervinexI18n) return; // Already loaded
+    if (document.querySelector('script[src*="i18n.js"]')) return; // Script tag exists
+
+    const script = document.createElement('script');
+    script.src = '/js/i18n.js?v=31';
+    script.async = false; // Load synchronously for reliability
+    document.head.appendChild(script);
+  })();
+
   // ── PWA: register manifest + service worker ─────────────────────────────
   (function pwaSetup() {
     // Inject manifest link kalau belum ada
@@ -308,38 +319,33 @@
     // Auto-attach handler to manual lang-toggle button if exists
     const manualLangBtn = document.getElementById('lang-toggle-btn');
     if (manualLangBtn) {
-      console.log('[i18n] Manual lang button found, attaching handler...');
       const updateLangBtn = () => {
         const lang = (localStorage.getItem('aervinex-lang') || 'id').toUpperCase();
         const span = manualLangBtn.querySelector('span');
-        if (span) {
-          span.textContent = lang;
-          console.log('[i18n] Updated button to:', lang);
-        }
+        if (span) span.textContent = lang;
       };
 
       // Initial update
       setTimeout(updateLangBtn, 100);
 
       manualLangBtn.addEventListener('click', () => {
-        console.log('[i18n] Button clicked, AervinexI18n available:', !!window.AervinexI18n);
         if (window.AervinexI18n?.toggle) {
-          console.log('[i18n] Toggling language...');
           window.AervinexI18n.toggle();
           setTimeout(updateLangBtn, 150);
-        } else {
-          console.error('[i18n] AervinexI18n.toggle not available!');
         }
       });
-      console.log('[i18n] Handler attached successfully');
-    } else {
-      console.warn('[i18n] Manual lang button #lang-toggle-btn not found');
     }
 
-    // DISABLED: Legacy injection (now using manual HTML button)
-    // injectLangToggle();
-    // const mo = new MutationObserver(() => injectLangToggle());
-    // mo.observe(document.body, { childList: true, subtree: true });
+    // Auto-inject for pages without manual button (covers all pages)
+    if (!manualLangBtn) {
+      injectLangToggle();
+      const mo = new MutationObserver(() => {
+        if (!document.getElementById('lang-toggle-btn')) {
+          injectLangToggle();
+        }
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    }
   });
 
   // ── ACHIEVEMENT / BADGE SYSTEM ──────────────────────────────────────────
