@@ -87,60 +87,64 @@
   const renderers = {
 
     welcome(host) {
+      const t = window.AervinexI18n?.t || (k => k);
+      const tt = window.AervinexI18n?.tt || ((k, v) => k);
       const fname = state.profile.name || (window.AERVINEXAuth?.currentUser?.displayName || '');
       host.innerHTML = `
         <div class="ob-step ob-welcome">
           <div class="ob-emoji">👋</div>
-          <h2>Selamat datang${fname ? ', ' + fname : ''}!</h2>
-          <p class="ob-sub">Kami akan ajukan beberapa pertanyaan singkat (~60 detik) untuk mempersonalisasi AERVINEX sesuai tubuh, gaya hidup, dan tujuan Anda. Semua data tersimpan aman di akun Anda.</p>
+          <h2>${tt('Selamat datang{fname}!', { fname: fname ? ', ' + fname : '' })}</h2>
+          <p class="ob-sub">${t('Kami akan ajukan beberapa pertanyaan singkat (~60 detik) untuk mempersonalisasi AERVINEX sesuai tubuh, gaya hidup, dan tujuan Anda. Semua data tersimpan aman di akun Anda.')}</p>
           <ul class="ob-bullets">
-            <li><span class="ob-check">✓</span> Risiko penyakit yang dipantau disesuaikan dengan kondisi Anda</li>
-            <li><span class="ob-check">✓</span> Alert dikalibrasi berdasarkan umur & komorbiditas</li>
-            <li><span class="ob-check">✓</span> Rekomendasi aktivitas adaptive untuk pelari / urban</li>
-            <li><span class="ob-check">✓</span> Data dapat di-export kapan saja</li>
+            <li><span class="ob-check">✓</span> ${t('Risiko penyakit yang dipantau disesuaikan dengan kondisi Anda')}</li>
+            <li><span class="ob-check">✓</span> ${t('Alert dikalibrasi berdasarkan umur & komorbiditas')}</li>
+            <li><span class="ob-check">✓</span> ${t('Rekomendasi aktivitas adaptive untuk pelari / urban')}</li>
+            <li><span class="ob-check">✓</span> ${t('Data dapat di-export kapan saja')}</li>
           </ul>
           <div class="ob-trust">
-            <span>🔒 Disimpan terenkripsi</span>
-            <span>🌐 Hanya untuk akun Anda</span>
-            <span>📤 Bisa dihapus</span>
+            <span>🔒 ${t('Disimpan terenkripsi')}</span>
+            <span>🌐 ${t('Hanya untuk akun Anda')}</span>
+            <span>📤 ${t('Bisa dihapus')}</span>
           </div>
         </div>
       `;
     },
 
     profile(host) {
+      const t = window.AervinexI18n?.t || (k => k);
+      const genderOpts = ['Pria','Wanita','Lainnya'];
       host.innerHTML = `
         <div class="ob-step">
-          <h2>Tentang Anda</h2>
-          <p class="ob-sub">Data dasar untuk kalibrasi model — umur, jenis kelamin, dan komposisi tubuh memengaruhi threshold risiko fisiologis.</p>
+          <h2>${t('Tentang Anda')}</h2>
+          <p class="ob-sub">${t('Data dasar untuk kalibrasi model — umur, jenis kelamin, dan komposisi tubuh memengaruhi threshold risiko fisiologis.')}</p>
           <div class="ob-form">
             <label class="ob-field">
-              <span>Nama panggilan</span>
-              <input type="text" id="ob-name" value="${escapeHTML(state.profile.name)}" placeholder="Mis. Andi" maxlength="40"/>
+              <span>${t('Nama panggilan')}</span>
+              <input type="text" id="ob-name" value="${escapeHTML(state.profile.name)}" placeholder="${t('Mis. Andi')}" maxlength="40"/>
             </label>
             <label class="ob-field">
-              <span>Umur (tahun)</span>
+              <span>${t('Umur (tahun)')}</span>
               <input type="number" id="ob-age" value="${state.profile.age}" min="13" max="100"/>
             </label>
             <div class="ob-field">
-              <span>Jenis kelamin</span>
+              <span>${t('Jenis kelamin')}</span>
               <div class="ob-segments">
-                ${['Pria','Wanita','Lainnya'].map(g => `
-                  <button type="button" class="ob-seg ${state.profile.gender===g?'active':''}" data-gender="${g}">${g}</button>
+                ${genderOpts.map(g => `
+                  <button type="button" class="ob-seg ${state.profile.gender===g?'active':''}" data-gender="${g}">${t(g)}</button>
                 `).join('')}
               </div>
             </div>
             <label class="ob-field">
-              <span>Berat (kg)</span>
+              <span>${t('Berat (kg)')}</span>
               <input type="number" id="ob-weight" value="${state.profile.weight}" min="30" max="200" step="0.5"/>
             </label>
             <label class="ob-field">
-              <span>Tinggi (cm)</span>
+              <span>${t('Tinggi (cm)')}</span>
               <input type="number" id="ob-height" value="${state.profile.height}" min="120" max="220"/>
             </label>
             <label class="ob-field">
-              <span>Kota tinggal</span>
-              <input type="text" id="ob-city" value="${escapeHTML(state.profile.city)}" placeholder="Mis. Jakarta, Surabaya" maxlength="60"/>
+              <span>${t('Kota tinggal')}</span>
+              <input type="text" id="ob-city" value="${escapeHTML(state.profile.city)}" placeholder="${t('Mis. Jakarta, Surabaya')}" maxlength="60"/>
             </label>
           </div>
         </div>
@@ -155,18 +159,19 @@
     },
 
     goals(host) {
+      const t = window.AervinexI18n?.t || (k => k);
       const GOALS = [
-        { id: 'urban-safety', icon: '🏙️', title: 'Lindungi diri di kota', desc: 'Polusi, panas, UV saat komuting' },
-        { id: 'runner-train', icon: '🏃', title: 'Latihan lari yang aman', desc: 'Zona HR, recovery, EPO pace adapt' },
-        { id: 'health-monitor', icon: '❤️', title: 'Monitor kesehatan harian', desc: 'HR, SpO₂, HRV, stres, sleep' },
-        { id: 'chronic-mgmt', icon: '🩺', title: 'Kelola kondisi kronis', desc: 'Asma, hipertensi, diabetes risk' },
-        { id: 'fitness-improve', icon: '💪', title: 'Tingkatkan VO₂max & fitness', desc: 'Cardiorespiratory progression' },
-        { id: 'family-safe', icon: '👨‍👩‍👧', title: 'Pantau keluarga', desc: 'Anak, orang tua, alert real-time' },
+        { id: 'urban-safety', icon: '🏙️', title: t('Lindungi diri di kota'), desc: t('Polusi, panas, UV saat komuting') },
+        { id: 'runner-train', icon: '🏃', title: t('Latihan lari yang aman'), desc: t('Zona HR, recovery, EPO pace adapt') },
+        { id: 'health-monitor', icon: '❤️', title: t('Monitor kesehatan harian'), desc: t('HR, SpO₂, HRV, stres, sleep') },
+        { id: 'chronic-mgmt', icon: '🩺', title: t('Kelola kondisi kronis'), desc: t('Asma, hipertensi, diabetes risk') },
+        { id: 'fitness-improve', icon: '💪', title: t('Tingkatkan VO₂max & fitness'), desc: t('Cardiorespiratory progression') },
+        { id: 'family-safe', icon: '👨‍👩‍👧', title: t('Pantau keluarga'), desc: t('Anak, orang tua, alert real-time') },
       ];
       host.innerHTML = `
         <div class="ob-step">
-          <h2>Apa tujuan utama Anda?</h2>
-          <p class="ob-sub">Pilih satu atau beberapa. Kami akan susun homepage, alert priority, dan rekomendasi sesuai pilihan Anda.</p>
+          <h2>${t('Apa tujuan utama Anda?')}</h2>
+          <p class="ob-sub">${t('Pilih satu atau beberapa. Kami akan susun homepage, alert priority, dan rekomendasi sesuai pilihan Anda.')}</p>
           <div class="ob-cards">
             ${GOALS.map(g => `
               <button type="button" class="ob-card ${state.goals.includes(g.id)?'selected':''}" data-goal="${g.id}">
@@ -190,21 +195,22 @@
     },
 
     conditions(host) {
+      const t = window.AervinexI18n?.t || (k => k);
       const CONDS = [
-        { id: 'none', icon: '✅', label: 'Tidak ada', exclusive: true },
-        { id: 'asma', icon: '🌬️', label: 'Asma' },
-        { id: 'hipertensi', icon: '❤️', label: 'Hipertensi' },
-        { id: 'diabetes', icon: '🩸', label: 'Diabetes' },
-        { id: 'jantung', icon: '💓', label: 'Penyakit jantung' },
-        { id: 'copd', icon: '🫁', label: 'COPD/PPOK' },
-        { id: 'alergi', icon: '🤧', label: 'Alergi musiman' },
-        { id: 'kehamilan', icon: '🤰', label: 'Hamil' },
-        { id: 'lainnya', icon: '⋯', label: 'Lainnya' },
+        { id: 'none', icon: '✅', label: t('Tidak ada'), exclusive: true },
+        { id: 'asma', icon: '🌬️', label: t('Asma') },
+        { id: 'hipertensi', icon: '❤️', label: t('Hipertensi') },
+        { id: 'diabetes', icon: '🩸', label: t('Diabetes') },
+        { id: 'jantung', icon: '💓', label: t('Penyakit jantung') },
+        { id: 'copd', icon: '🫁', label: t('COPD/PPOK') },
+        { id: 'alergi', icon: '🤧', label: t('Alergi musiman') },
+        { id: 'kehamilan', icon: '🤰', label: t('Hamil') },
+        { id: 'lainnya', icon: '⋯', label: t('Lainnya') },
       ];
       host.innerHTML = `
         <div class="ob-step">
-          <h2>Kondisi kesehatan</h2>
-          <p class="ob-sub">Opsional. Membantu kami sesuaikan threshold alert (mis. asma → PM2.5 lebih ketat). Pilih semua yang relevan, atau "Tidak ada".</p>
+          <h2>${t('Kondisi kesehatan')}</h2>
+          <p class="ob-sub">${t('Opsional. Membantu kami sesuaikan threshold alert (mis. asma → PM2.5 lebih ketat). Pilih semua yang relevan, atau "Tidak ada".')}</p>
           <div class="ob-chips">
             ${CONDS.map(c => `
               <button type="button" class="ob-chip ${state.conditions.includes(c.id)?'selected':''}" data-cond="${c.id}" data-exclusive="${c.exclusive?1:0}">
@@ -213,7 +219,7 @@
             `).join('')}
           </div>
           <div class="ob-info-note">
-            💡 Data ini hanya digunakan untuk personalisasi di akun Anda. Tidak dibagikan ke pihak ketiga.
+            💡 ${t('Data ini hanya digunakan untuk personalisasi di akun Anda. Tidak dibagikan ke pihak ketiga.')}
           </div>
         </div>
       `;
@@ -235,18 +241,19 @@
     },
 
     priorities(host) {
+      const t = window.AervinexI18n?.t || (k => k);
       const PRIO = [
-        { id: 'air', icon: '💨', title: 'Kualitas udara', desc: 'PM2.5, PM10, NO₂, CO' },
-        { id: 'heat', icon: '🌡️', title: 'Suhu & heat index', desc: 'Heat stress, dehidrasi' },
-        { id: 'uv', icon: '☀️', title: 'Sinar UV', desc: 'Sunburn, photokeratitis' },
-        { id: 'cardio', icon: '💗', title: 'Jantung & HRV', desc: 'AFib, takikardia, stres' },
-        { id: 'respiratory', icon: '🫁', title: 'Pernapasan', desc: 'SpO₂, RR, asma, pneumonia' },
-        { id: 'mental', icon: '🧠', title: 'Mental & sleep', desc: 'Anxiety, burnout, insomnia' },
+        { id: 'air', icon: '💨', title: t('Kualitas udara'), desc: t('PM2.5, PM10, NO₂, CO') },
+        { id: 'heat', icon: '🌡️', title: t('Suhu & heat index'), desc: t('Heat stress, dehidrasi') },
+        { id: 'uv', icon: '☀️', title: t('Sinar UV'), desc: t('Sunburn, photokeratitis') },
+        { id: 'cardio', icon: '💗', title: t('Jantung & HRV'), desc: t('AFib, takikardia, stres') },
+        { id: 'respiratory', icon: '🫁', title: t('Pernapasan'), desc: t('SpO₂, RR, asma, pneumonia') },
+        { id: 'mental', icon: '🧠', title: t('Mental & sleep'), desc: t('Anxiety, burnout, insomnia') },
       ];
       host.innerHTML = `
         <div class="ob-step">
-          <h2>Apa yang paling penting dipantau?</h2>
-          <p class="ob-sub">Pilih 2-3 kategori utama. Card prioritas akan diletakkan di atas dashboard Anda.</p>
+          <h2>${t('Apa yang paling penting dipantau?')}</h2>
+          <p class="ob-sub">${t('Pilih 2-3 kategori utama. Card prioritas akan diletakkan di atas dashboard Anda.')}</p>
           <div class="ob-cards">
             ${PRIO.map(p => `
               <button type="button" class="ob-card compact ${state.priorities.includes(p.id)?'selected':''}" data-prio="${p.id}">
@@ -270,16 +277,17 @@
     },
 
     permissions(host) {
+      const t = window.AervinexI18n?.t || (k => k);
       host.innerHTML = `
         <div class="ob-step">
-          <h2>Izin perangkat</h2>
-          <p class="ob-sub">Bisa diatur ulang kapan saja di Profil. Tanpa izin ini, beberapa fitur akan dinonaktifkan.</p>
+          <h2>${t('Izin perangkat')}</h2>
+          <p class="ob-sub">${t('Bisa diatur ulang kapan saja di Profil. Tanpa izin ini, beberapa fitur akan dinonaktifkan.')}</p>
           <div class="ob-perms">
             <label class="ob-perm">
               <div class="ob-perm-icon">📍</div>
               <div class="ob-perm-text">
-                <strong>Lokasi (GPS)</strong>
-                <span>Untuk overlay kualitas udara stasiun terdekat & rute lari aman.</span>
+                <strong>${t('Lokasi (GPS)')}</strong>
+                <span>${t('Untuk overlay kualitas udara stasiun terdekat & rute lari aman.')}</span>
               </div>
               <input type="checkbox" class="ob-toggle" id="perm-location" ${state.permissions.location?'checked':''}/>
               <span class="ob-toggle-track"></span>
@@ -287,8 +295,8 @@
             <label class="ob-perm">
               <div class="ob-perm-icon">🔔</div>
               <div class="ob-perm-text">
-                <strong>Notifikasi push</strong>
-                <span>Alert real-time saat polusi/heat/UV berbahaya atau anomali detak jantung.</span>
+                <strong>${t('Notifikasi push')}</strong>
+                <span>${t('Alert real-time saat polusi/heat/UV berbahaya atau anomali detak jantung.')}</span>
               </div>
               <input type="checkbox" class="ob-toggle" id="perm-notif" ${state.permissions.notifications?'checked':''}/>
               <span class="ob-toggle-track"></span>
@@ -296,8 +304,8 @@
             <label class="ob-perm">
               <div class="ob-perm-icon">⌚</div>
               <div class="ob-perm-text">
-                <strong>Wearable Bluetooth</strong>
-                <span>Pairing smartwatch AERVINEX atau watch lain (Garmin/Apple/Fitbit).</span>
+                <strong>${t('Wearable Bluetooth')}</strong>
+                <span>${t('Pairing smartwatch AERVINEX atau watch lain (Garmin/Apple/Fitbit).')}</span>
               </div>
               <input type="checkbox" class="ob-toggle" id="perm-wear" ${state.permissions.wearable?'checked':''}/>
               <span class="ob-toggle-track"></span>
@@ -305,8 +313,8 @@
             <label class="ob-perm">
               <div class="ob-perm-icon">📊</div>
               <div class="ob-perm-text">
-                <strong>Riset anonim (opsional)</strong>
-                <span>Kontribusikan data terdeidentifikasi untuk perbaikan model. Bisa dicabut kapan saja.</span>
+                <strong>${t('Riset anonim (opsional)')}</strong>
+                <span>${t('Kontribusikan data terdeidentifikasi untuk perbaikan model. Bisa dicabut kapan saja.')}</span>
               </div>
               <input type="checkbox" class="ob-toggle" id="perm-data" ${state.permissions.dataConsent?'checked':''}/>
               <span class="ob-toggle-track"></span>
@@ -325,9 +333,10 @@
     },
 
     done(host) {
-      const goalLabels = state.goals.length ? state.goals.length + ' tujuan' : 'belum dipilih';
-      const priLabels = state.priorities.length ? state.priorities.length + ' kategori' : 'belum dipilih';
-      const condLabels = state.conditions.length && !state.conditions.includes('none') ? state.conditions.length + ' kondisi' : 'tanpa komorbid';
+      const t = window.AervinexI18n?.t || (k => k);
+      const goalLabels = state.goals.length ? state.goals.length + ' ' + t('tujuan') : t('belum dipilih');
+      const priLabels = state.priorities.length ? state.priorities.length + ' ' + t('kategori') : t('belum dipilih');
+      const condLabels = state.conditions.length && !state.conditions.includes('none') ? state.conditions.length + ' ' + t('kondisi') : t('tanpa komorbid');
       host.innerHTML = `
         <div class="ob-step ob-done">
           <div class="ob-success-ring">
@@ -337,16 +346,16 @@
               <path d="M28 42l9 9 16-18" fill="none" stroke="#00e5d4" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" style="stroke-dasharray:60;stroke-dashoffset:0;animation:obDraw 1.2s ease-out"/>
             </svg>
           </div>
-          <h2>Personalisasi selesai!</h2>
-          <p class="ob-sub">AERVINEX siap melindungi Anda. Berikut profil yang tersimpan:</p>
+          <h2>${t('Personalisasi selesai!')}</h2>
+          <p class="ob-sub">${t('AERVINEX siap melindungi Anda. Berikut profil yang tersimpan:')}</p>
           <div class="ob-summary">
-            <div class="ob-summary-row"><span>👤 Nama</span><strong>${escapeHTML(state.profile.name||'-')}</strong></div>
-            <div class="ob-summary-row"><span>🎂 Umur</span><strong>${state.profile.age} thn</strong></div>
-            <div class="ob-summary-row"><span>🎯 Tujuan</span><strong>${goalLabels}</strong></div>
-            <div class="ob-summary-row"><span>🩺 Kondisi</span><strong>${condLabels}</strong></div>
-            <div class="ob-summary-row"><span>📊 Prioritas</span><strong>${priLabels}</strong></div>
+            <div class="ob-summary-row"><span>👤 ${t('Nama')}</span><strong>${escapeHTML(state.profile.name||'-')}</strong></div>
+            <div class="ob-summary-row"><span>🎂 ${t('Umur')}</span><strong>${state.profile.age} ${t('thn')}</strong></div>
+            <div class="ob-summary-row"><span>🎯 ${t('Tujuan')}</span><strong>${goalLabels}</strong></div>
+            <div class="ob-summary-row"><span>🩺 ${t('Kondisi')}</span><strong>${condLabels}</strong></div>
+            <div class="ob-summary-row"><span>📊 ${t('Prioritas')}</span><strong>${priLabels}</strong></div>
           </div>
-          <p class="ob-sub" style="margin-top:14px;font-size:12.5px;opacity:0.7">Dashboard Anda akan otomatis disesuaikan. Anda bisa ubah preferensi kapan saja di menu Profil.</p>
+          <p class="ob-sub" style="margin-top:14px;font-size:12.5px;opacity:0.7">${t('Dashboard Anda akan otomatis disesuaikan. Anda bisa ubah preferensi kapan saja di menu Profil.')}</p>
         </div>
       `;
     },
@@ -438,7 +447,8 @@
     const bar = document.getElementById('ob-bar-fill');
     if (bar) bar.style.width = pct + '%';
     const counter = document.getElementById('ob-counter');
-    if (counter) counter.textContent = `Langkah ${state.step + 1} dari ${STEPS.length}`;
+    const tt = window.AervinexI18n?.tt || ((k, v) => k);
+    if (counter) counter.textContent = tt('Langkah {step} dari {total}', { step: state.step + 1, total: STEPS.length });
   }
 
   function updateButtons() {
@@ -446,10 +456,10 @@
     const next = document.getElementById('ob-next');
     if (!prev || !next) return;
     prev.disabled = state.step === 0;
+    const t = window.AervinexI18n?.t || (k => k);
     const isLast = state.step === STEPS.length - 1;
-    next.textContent = isLast ? 'Masuk Dashboard' : (state.step === 0 ? 'Mulai' : 'Lanjut');
     next.querySelector('span')?.remove();
-    const txt = isLast ? 'Masuk Dashboard' : (state.step === 0 ? 'Mulai' : 'Lanjut');
+    const txt = isLast ? t('Masuk Dashboard') : (state.step === 0 ? t('Mulai') : t('Lanjut'));
     next.innerHTML = `<span>${txt}</span><svg viewBox="0 0 24 24" class="ico"><path d="M5 12h14M13 5l7 7-7 7"/></svg>`;
   }
 
@@ -460,8 +470,9 @@
       return;
     }
     if (state.step === STEPS.length - 1) {
+      const t = window.AervinexI18n?.t || (k => k);
       const next = document.getElementById('ob-next');
-      next.disabled = true; next.innerHTML = '<span>Menyimpan…</span>';
+      next.disabled = true; next.innerHTML = `<span>${t('Menyimpan…')}</span>`;
       await commitProfile();
       location.href = '/dashboard.html';
       return;
@@ -483,7 +494,8 @@
   }
 
   function skipAll() {
-    if (!confirm('Lewati personalisasi? Anda bisa lakukan ulang kapan saja di Profil.')) return;
+    const t = window.AervinexI18n?.t || (k => k);
+    if (!confirm(t('Lewati personalisasi? Anda bisa lakukan ulang kapan saja di Profil.'))) return;
     location.href = '/dashboard.html';
   }
 
