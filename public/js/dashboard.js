@@ -31,7 +31,8 @@
       envData.aqi  = aqi.aqi  || envData.pm25 * 4;
     }
 
-    const geoTag         = geo.source === 'gps' ? '📍 GPS Aktual' : '📍 Lokasi Default';
+    const t = window.AervinexI18n?.t || (k => k);
+    const geoTag         = geo.source === 'gps' ? t('📍 GPS Aktual') : t('📍 Lokasi Default');
     const stName         = aqi?.city   ?? 'Open-Meteo';
     const distTag        = aqi?.distKm != null ? ` · ${aqi.distKm} km` : '';
     envData.source       = stName + distTag;
@@ -43,16 +44,17 @@
   function renderEnvBar() {
     const bar = document.getElementById('db-env-bar');
     if (!bar) return;
+    const t = window.AervinexI18n?.t || (k => k);
     const pm25s = Utils.getPM25Status(envData.pm25);
     const uvs   = Utils.getUVStatus(envData.uvi);
     bar.innerHTML = `
-      <span class="env-item"><span>🌡️</span><span class="env-val">${Utils.fmt(envData.temp)}°C</span><span class="env-lbl">Suhu</span></span>
+      <span class="env-item"><span>🌡️</span><span class="env-val">${Utils.fmt(envData.temp)}°C</span><span class="env-lbl">${t('Suhu')}</span></span>
       <div class="env-divider"></div>
-      <span class="env-item"><span>💧</span><span class="env-val">${envData.humidity}%</span><span class="env-lbl">Lembab</span></span>
+      <span class="env-item"><span>💧</span><span class="env-val">${envData.humidity}%</span><span class="env-lbl">${t('Lembab')}</span></span>
       <div class="env-divider"></div>
-      <span class="env-item"><span>💨</span><span class="env-val" style="color:${pm25s.color}">${Utils.fmt(envData.pm25,1)}</span><span class="env-lbl">PM2.5 μg/m³</span></span>
+      <span class="env-item"><span>💨</span><span class="env-val" style="color:${pm25s.color}">${Utils.fmt(envData.pm25,1)}</span><span class="env-lbl">${t('PM2.5 μg/m³')}</span></span>
       <div class="env-divider"></div>
-      <span class="env-item"><span>☀️</span><span class="env-val" style="color:${uvs.color}">${envData.uvi}</span><span class="env-lbl">UV Index</span></span>
+      <span class="env-item"><span>☀️</span><span class="env-val" style="color:${uvs.color}">${envData.uvi}</span><span class="env-lbl">${t('UV Index')}</span></span>
       <div class="env-source">${envData.geoLabel || '📡'} · Stasiun: ${envData.source}</div>`;
   }
 
@@ -195,21 +197,23 @@
     const list   = document.getElementById('db-alerts');
     const count  = document.getElementById('db-alert-count');
     if (!list) return;
+    const t  = window.AervinexI18n?.t || (k => k);
+    const tt = window.AervinexI18n?.tt || ((k, v) => k);
     const alerts = [];
     const now    = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
 
-    if (raw.hr > 0.85 * (220 - userAge)) alerts.push({ type:'danger', icon:'❤️', title:'Detak Jantung Tinggi', msg:`HR ${raw.hr} bpm — mendekati zona bahaya.`, time: now });
-    if (raw.spo2 < 94)    alerts.push({ type:'danger', icon:'🩸', title:'SpO₂ Rendah',       msg:`SpO₂ ${raw.spo2}% — risiko hipoksia.`, time: now });
-    if (raw.hydration < 80) alerts.push({ type:'warn', icon:'💧', title:'Dehidrasi Menengah', msg:`Hidrasi ${Math.round(raw.hydration)}% — minum sekarang.`, time: now });
-    if (raw.coreTemp > 38.5) alerts.push({ type:'danger', icon:'🌡️', title:'Suhu Inti Tinggi', msg:`Core temp ${raw.coreTemp}°C — risiko heatstroke.`, time: now });
-    if (analysis.stress > 70) alerts.push({ type:'warn', icon:'🧠', title:'Stres Tinggi',     msg:`Stres index ${analysis.stress}/100 — istirahat disarankan.`, time: now });
+    if (raw.hr > 0.85 * (220 - userAge)) alerts.push({ type:'danger', icon:'❤️', title:t('Detak Jantung Tinggi'), msg:tt('HR {hr} bpm — mendekati zona bahaya.', { hr: raw.hr }), time: now });
+    if (raw.spo2 < 94)    alerts.push({ type:'danger', icon:'🩸', title:t('SpO₂ Rendah'),       msg:tt('SpO₂ {spo2}% — risiko hipoksia.', { spo2: raw.spo2 }), time: now });
+    if (raw.hydration < 80) alerts.push({ type:'warn', icon:'💧', title:t('Dehidrasi Menengah'), msg:tt('Hidrasi {hydration}% — minum sekarang.', { hydration: Math.round(raw.hydration) }), time: now });
+    if (raw.coreTemp > 38.5) alerts.push({ type:'danger', icon:'🌡️', title:t('Suhu Inti Tinggi'), msg:tt('Core temp {coreTemp}°C — risiko heatstroke.', { coreTemp: raw.coreTemp }), time: now });
+    if (analysis.stress > 70) alerts.push({ type:'warn', icon:'🧠', title:t('Stres Tinggi'),     msg:tt('Stres index {stress}/100 — istirahat disarankan.', { stress: analysis.stress }), time: now });
 
     // TUHAM-based environmental alerts
     const tuham = Utils.getTUHAM(envData.pm25, envData.uvi, raw.coreTemp);
-    if (tuham.pm25.aarc >= 2) alerts.push({ type:'danger', icon:'💨', title:`PM2.5 ${tuham.pm25.label}`, msg:`${envData.pm25} μg/m³ — ${tuham.pm25.whoNote}`, time: now });
-    else if (tuham.pm25.aarc === 1) alerts.push({ type:'warn', icon:'💨', title:`PM2.5 ${tuham.pm25.label}`, msg:`${envData.pm25} μg/m³ — ${tuham.pm25.whoNote}`, time: now });
-    if (tuham.uvi.aarc >= 2) alerts.push({ type:'danger', icon:'☀️', title:`UV ${tuham.uvi.label}`, msg:`UV Index ${envData.uvi} — hindari outdoor jam 10–14.`, time: now });
-    else if (tuham.uvi.aarc === 1) alerts.push({ type:'warn', icon:'☀️', title:`UV ${tuham.uvi.label}`, msg:`UV Index ${envData.uvi} — gunakan sunscreen.`, time: now });
+    if (tuham.pm25.aarc >= 2) alerts.push({ type:'danger', icon:'💨', title:tt('PM2.5 {pm25}', { pm25: tuham.pm25.label }), msg:tt('{pm25val} μg/m³ — {whoNote}', { pm25val: envData.pm25, whoNote: tuham.pm25.whoNote }), time: now });
+    else if (tuham.pm25.aarc === 1) alerts.push({ type:'warn', icon:'💨', title:tt('PM2.5 {pm25}', { pm25: tuham.pm25.label }), msg:tt('{pm25val} μg/m³ — {whoNote}', { pm25val: envData.pm25, whoNote: tuham.pm25.whoNote }), time: now });
+    if (tuham.uvi.aarc >= 2) alerts.push({ type:'danger', icon:'☀️', title:tt('UV {uvi}', { uvi: tuham.uvi.label }), msg:tt('UV Index {uviVal} — hindari outdoor jam 10–14.', { uviVal: envData.uvi }), time: now });
+    else if (tuham.uvi.aarc === 1) alerts.push({ type:'warn', icon:'☀️', title:tt('UV {uvi}', { uvi: tuham.uvi.label }), msg:tt('UV Index {uviVal} — gunakan sunscreen.', { uviVal: envData.uvi }), time: now });
 
     // AARC escalation (F3) — only escalate on level change to avoid spam
     const aarcLevel = Math.max(
@@ -220,15 +224,15 @@
     );
     if (aarcLevel > _lastAarcLevel && aarcLevel >= 1) {
       const ctx = alerts.find(a => a.type === 'danger') || alerts[0] || {};
-      App.escalate(aarcLevel, { title: ctx.title || 'Peringatan Kesehatan', msg: ctx.msg || '', icon: ctx.icon || '⚠️' });
+      App.escalate(aarcLevel, { title: ctx.title || t('Peringatan Kesehatan'), msg: ctx.msg || '', icon: ctx.icon || '⚠️' });
     }
     _lastAarcLevel = aarcLevel;
 
-    count.textContent = alerts.length === 0 ? '✅ Aman' : `${alerts.length} peringatan`;
+    count.textContent = alerts.length === 0 ? t('✅ Aman') : tt('{count} peringatan', { count: alerts.length });
     count.className   = 'metric-badge ' + (alerts.length === 0 ? 'b-safe' : alerts.some(a=>a.type==='danger') ? 'b-danger' : 'b-warn');
 
     if (alerts.length === 0) {
-      list.innerHTML = `<div class="alert-item alert-safe"><span class="alert-icon">✅</span><div class="alert-txt"><div class="alert-title-t">Semua Aman</div><div class="alert-msg">Semua metrik kesehatan dalam batas normal.</div></div></div>`;
+      list.innerHTML = `<div class="alert-item alert-safe"><span class="alert-icon">✅</span><div class="alert-txt"><div class="alert-title-t">${t('Semua Aman')}</div><div class="alert-msg">${t('Semua metrik kesehatan dalam batas normal.')}</div></div></div>`;
       return;
     }
     list.innerHTML = alerts.map(a => `
