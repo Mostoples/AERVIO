@@ -60,11 +60,6 @@
         </svg>
         <span>Lanjutkan dengan Google</span>
       </button>
-
-      <button type="button" class="btn-block ghost" id="btn-guest">
-        <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><path d="M9 11l3 2 3-2" opacity="0.4"/></svg>
-        <span>Masuk sebagai Guest / Debug</span>
-      </button>
     </section>
 
     <p class="auth-foot">
@@ -82,91 +77,174 @@
   <script src="js/aervinex-app.js"></script>
   <script>
     (function () {
-      const $ = (s) => document.querySelector(s);
-      const errBox = $('#error-box');
-      const showError = (msg) => { errBox.textContent = msg; errBox.classList.add('show'); };
-      const clearError = () => errBox.classList.remove('show');
+      'use strict';
 
-      async function routeAfterAuth(user) {
-        if (!user) return;
-        let onboarded = localStorage.getItem('aervinex-onboarded') === '1';
-        if (!onboarded) {
-          try {
-            const snap = await db.collection('users').doc(user.uid).get();
-            onboarded = snap.exists && snap.data()?.onboarding?.completed === true;
-            if (onboarded) localStorage.setItem('aervinex-onboarded', '1');
-          } catch {}
-        }
-        location.replace(onboarded ? '/dashboard.html' : '/onboarding.html');
+      // Wait for all dependencies to be ready
+      function waitForDependencies() {
+        return new Promise((resolve) => {
+          const checkReady = () => {
+            if (typeof firebase !== 'undefined' &&
+                typeof auth !== 'undefined' &&
+                typeof db !== 'undefined' &&
+                typeof AERVINEXAuth !== 'undefined') {
+              resolve();
+            } else {
+              setTimeout(checkReady, 50);
+            }
+          };
+          checkReady();
+        });
       }
 
-      // If already logged in, route appropriately
-      auth.onAuthStateChanged(routeAfterAuth);
-
-      // Show confirmation toast if user just clicked verification link
-      try {
-        const params = new URLSearchParams(location.search);
-        if (params.get('verified') === '1' && typeof AervinexToast === 'function') {
-          AervinexToast('Email terverifikasi. Silakan masuk.', 'success', 3000);
-        }
-      } catch {}
-
-      $('#login-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        clearError();
-        const email = $('#email').value.trim();
-        const password = $('#password').value;
-        if (!email || !password) return showError('Email dan password wajib diisi.');
-        const btn = $('#btn-login');
-        btn.disabled = true;
+      // Initialize login functionality
+      async function initLogin() {
         try {
-          await AERVINEXAuth.loginEmail(email, password);
-          // Soft email-verification reminder (non-blocking)
-          if (auth.currentUser && !auth.currentUser.emailVerified && !auth.currentUser.isAnonymous) {
-            if (typeof AervinexToast === 'function') {
-              AervinexToast('Email belum diverifikasi. Cek inbox Anda.', 'warn', 4000);
+          await waitForDependencies();
+          console.log('[Login] Dependencies loaded successfully');
+
+          const $ = (s) => document.querySelector(s);
+          const errBox = $('#error-box');
+          const showError = (msg) => {
+            if (errBox) {
+              errBox.textContent = msg;
+              errBox.classList.add('show');
             }
+            console.error('[Login Error]', msg);
+          };
+          const clearError = () => {
+            if (errBox) errBox.classList.remove('show');
+          };
+
+          async function routeAfterAuth(user) {
+            if (!user) return;
+            let onboarded = localStorage.getItem('aervinex-onboarded') === '1';
+            if (!onboarded) {
+              try {
+                const snap = await db.collection('users').doc(user.uid).get();
+                onboarded = snap.exists && snap.data()?.onboarding?.completed === true;
+                if (onboarded) localStorage.setItem('aervinex-onboarded', '1');
+              } catch (err) {
+                console.warn('[Login] Error checking onboarding status:', err);
+              }
+            }
+            location.replace(onboarded ? '/dashboard.html' : '/onboarding.html');
           }
-          await routeAfterAuth(auth.currentUser);
-        } catch (ex) {
-          if (AERVINEXAuth.isRateLimitError(ex.code)) {
-            showError('Terlalu banyak percobaan login. Tunggu beberapa menit, atau reset password.');
-          } else {
-            showError(AERVINEXAuth.friendlyError(ex.code));
+
+          // If already logged in, route appropriately
+          auth.onAuthStateChanged((user) => {
+            if (user) {
+              console.log('[Login] User already logged in, redirecting...');
+              routeAfterAuth(user);
+            }
+          });
+
+          // Show confirmation toast if user just clicked verification link
+          try {
+            const params = new URLSearchParams(location.search);
+            if (params.get('verified') === '1' && typeof AervinexToast === 'function') {
+              AervinexToast('Email terverifikasi. Silakan masuk.', 'success', 3000);
+            }
+          } catch (err) {
+            console.warn('[Login] Error parsing URL params:', err);
           }
-        } finally { btn.disabled = false; }
-      });
 
-      $('#btn-google').addEventListener('click', async () => {
-        clearError();
-        try {
-          await AERVINEXAuth.signInWithGoogle();
-          await routeAfterAuth(auth.currentUser);
-        } catch (ex) {
-          showError(AERVINEXAuth.friendlyError(ex.code));
-        }
-      });
+          // Login form handler
+          const loginForm = $('#login-form');
+          if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              clearError();
+              const email = $('#email')?.value?.trim();
+              const password = $('#password')?.value;
 
-      $('#btn-guest').addEventListener('click', async () => {
-        clearError();
-        try {
-          await AERVINEXAuth.signInAsGuest();
-          await routeAfterAuth(auth.currentUser);
-        } catch (ex) {
-          showError(AERVINEXAuth.friendlyError(ex.code));
-        }
-      });
+              if (!email || !password) {
+                return showError('Email dan password wajib diisi.');
+              }
 
-      $('#btn-forgot').addEventListener('click', async () => {
-        const email = $('#email').value.trim();
-        if (!email) return showError('Isi email dulu, lalu klik "Lupa password?" untuk kirim link reset.');
-        try {
-          await AERVINEXAuth.sendPasswordReset(email);
-          AervinexToast('Link reset password dikirim ke ' + email, 'success');
-        } catch (ex) {
-          showError(AERVINEXAuth.friendlyError(ex.code));
+              const btn = $('#btn-login');
+              if (btn) btn.disabled = true;
+
+              try {
+                console.log('[Login] Attempting email login...');
+                await AERVINEXAuth.loginEmail(email, password);
+
+                // Soft email-verification reminder (non-blocking)
+                if (auth.currentUser && !auth.currentUser.emailVerified && !auth.currentUser.isAnonymous) {
+                  if (typeof AervinexToast === 'function') {
+                    AervinexToast('Email belum diverifikasi. Cek inbox Anda.', 'warn', 4000);
+                  }
+                }
+
+                console.log('[Login] Login successful');
+                await routeAfterAuth(auth.currentUser);
+              } catch (ex) {
+                console.error('[Login] Login failed:', ex);
+                if (AERVINEXAuth.isRateLimitError(ex.code)) {
+                  showError('Terlalu banyak percobaan login. Tunggu beberapa menit, atau reset password.');
+                } else {
+                  showError(AERVINEXAuth.friendlyError(ex.code));
+                }
+              } finally {
+                if (btn) btn.disabled = false;
+              }
+            });
+          }
+
+          // Google login handler
+          const btnGoogle = $('#btn-google');
+          if (btnGoogle) {
+            btnGoogle.addEventListener('click', async () => {
+              clearError();
+              try {
+                console.log('[Login] Attempting Google login...');
+                await AERVINEXAuth.signInWithGoogle();
+                await routeAfterAuth(auth.currentUser);
+              } catch (ex) {
+                console.error('[Login] Google login failed:', ex);
+                showError(AERVINEXAuth.friendlyError(ex.code));
+              }
+            });
+          }
+
+          // Forgot password handler
+          const btnForgot = $('#btn-forgot');
+          if (btnForgot) {
+            btnForgot.addEventListener('click', async () => {
+              const email = $('#email')?.value?.trim();
+              if (!email) {
+                return showError('Isi email dulu, lalu klik "Lupa password?" untuk kirim link reset.');
+              }
+              try {
+                console.log('[Login] Sending password reset email...');
+                await AERVINEXAuth.sendPasswordReset(email);
+                if (typeof AervinexToast === 'function') {
+                  AervinexToast('Link reset password dikirim ke ' + email, 'success');
+                }
+              } catch (ex) {
+                console.error('[Login] Password reset failed:', ex);
+                showError(AERVINEXAuth.friendlyError(ex.code));
+              }
+            });
+          }
+
+          console.log('[Login] Login page initialized successfully');
+
+        } catch (err) {
+          console.error('[Login] Failed to initialize login page:', err);
+          const errBox = document.querySelector('#error-box');
+          if (errBox) {
+            errBox.textContent = 'Gagal memuat halaman login. Refresh halaman ini.';
+            errBox.classList.add('show');
+          }
         }
-      });
+      }
+
+      // Start initialization when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLogin);
+      } else {
+        initLogin();
+      }
     })();
   </script>
 </body>

@@ -54,7 +54,7 @@
   // Auto-load icon-lib.js jika belum ada (memastikan emoji-to-SVG migration konsisten)
   if (!window.AervinexIcons && !document.querySelector('script[src*="icon-lib"]')) {
     const s = document.createElement('script');
-    s.src = '/js/icon-lib.js';
+    s.src = '/js/icon-lib.js?v=1.0.1'; // Cache busting version
     s.async = false;
     document.head.appendChild(s);
   }
@@ -227,7 +227,7 @@
   // ── i18n: auto-load comprehensive dictionary from /js/i18n.js ───────────
   if (!window.AervinexI18n && !document.querySelector('script[src*="i18n.js"]')) {
     const s = document.createElement('script');
-    s.src = '/js/i18n.js';
+    s.src = '/js/i18n.js?v=1.0.1'; // Cache busting version
     s.async = false;
     document.head.appendChild(s);
   }
@@ -236,7 +236,7 @@
   // Skipped automatically pada landing/auth/onboarding/sample/404 pages
   if (!window.__AERV_SIDEPANEL_INSTALLED && !document.querySelector('script[src*="desktop-sidepanel.js"]')) {
     const s2 = document.createElement('script');
-    s2.src = '/js/desktop-sidepanel.js';
+    s2.src = '/js/desktop-sidepanel.js?v=1.0.1'; // Cache busting version
     s2.defer = true;
     document.head.appendChild(s2);
   }
@@ -245,7 +245,7 @@
   // untuk medical icon decoration kontekstual di pojok kanan bawah
   if (!window.__AERV_CARD_PATTERN_INSTALLED && !document.querySelector('script[src*="card-pattern-auto.js"]')) {
     const s3 = document.createElement('script');
-    s3.src = '/js/card-pattern-auto.js';
+    s3.src = '/js/card-pattern-auto.js?v=1.0.1'; // Cache busting version
     s3.defer = true;
     document.head.appendChild(s3);
   }

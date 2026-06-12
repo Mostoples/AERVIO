@@ -4,7 +4,7 @@
      - CSS / JS / fonts  → stale-while-revalidate (instant paint, background refresh).
      - SVG / icons / manifest → cache-first w/ background refresh.
      - Firebase API hosts → bypass (always network). */
-const VERSION = 'aervinex-v29';
+const VERSION = 'aervinex-v30';
 const RUNTIME = 'aervinex-runtime-v1';
 const SHELL = [
   '/',
@@ -156,8 +156,9 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
 
-  // Never intercept Firebase / Firestore / auth — they need fresh tokens
+  // Never intercept Firebase / Firestore / auth / Google APIs — they need fresh tokens
   if (url.hostname.includes('googleapis') ||
+      url.hostname.includes('google.com') ||
       url.hostname.includes('firebaseio') ||
       url.hostname.includes('firebaseapp') ||
       url.hostname.includes('gstatic.com') && url.pathname.includes('/firebasejs/')) {

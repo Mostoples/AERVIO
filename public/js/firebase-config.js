@@ -7,9 +7,17 @@ const firebaseConfig = {
   appId: "1:1032158217152:web:3f3b436fe7c50023077e25"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+try {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+    console.log('[Firebase] Initialized successfully');
+  }
 
-window.auth = firebase.auth();
-window.db   = firebase.firestore();
+  window.auth = firebase.auth();
+  window.db   = firebase.firestore();
+
+  console.log('[Firebase] Auth and Firestore ready');
+} catch (error) {
+  console.error('[Firebase] Initialization failed:', error);
+  alert('Gagal menginisialisasi Firebase. Pastikan Anda terkoneksi ke internet dan refresh halaman.');
+}

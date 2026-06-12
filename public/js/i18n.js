@@ -3378,6 +3378,12 @@
     nodes.forEach(n => restore ? restoreNode(n) : translateNode(n));
   }
 
+  // Helper: convert attribute name to valid dataset property name
+  // e.g., "aria-label" -> "ariaLabel", "data-tooltip" -> "dataTooltip"
+  function attrToDatasetKey(attr) {
+    return attr.replace(/-./g, x => x[1].toUpperCase());
+  }
+
   // Translate attributes (placeholder, aria-label, title, alt, data-tooltip)
   function translateAttrs(restore = false) {
     const lang = getLang();
@@ -3386,14 +3392,16 @@
         const val = el.getAttribute(attr);
         if (!val) return;
         const trimmed = val.trim();
+        const dataKey = 'orig' + attrToDatasetKey(attr).charAt(0).toUpperCase() + attrToDatasetKey(attr).slice(1);
+
         if (restore) {
-          const orig = el.dataset['orig_' + attr];
+          const orig = el.dataset[dataKey];
           if (orig) el.setAttribute(attr, orig);
         } else {
           const hasTranslation = (lang === 'en' && DICT[trimmed]) ||
                                  (EXT_DICTS[lang] && EXT_DICTS[lang][trimmed]);
           if (hasTranslation) {
-            if (!el.dataset['orig_' + attr]) el.dataset['orig_' + attr] = trimmed;
+            if (!el.dataset[dataKey]) el.dataset[dataKey] = trimmed;
             el.setAttribute(attr, t(trimmed));
           }
         }
