@@ -45,7 +45,8 @@
       if (!sessionStorage.getItem('aervinex-install-shown')) {
         sessionStorage.setItem('aervinex-install-shown', '1');
         setTimeout(() => {
-          if (window.AervinexToast) AervinexToast('💾 Install AERVINEX di home screen Anda — tap menu browser → "Add to Home"', 'info', 6000);
+          const t = window.AervinexI18n?.t || (k => k);
+          if (window.AervinexToast) AervinexToast(t('💾 Install AERVINEX di home screen Anda — tap menu browser → "Add to Home"'), 'info', 6000);
         }, 8000);
       }
     });
@@ -136,7 +137,8 @@
         const next = MODES[(MODES.indexOf(current) + 1) % MODES.length];
         apply(next);
         localStorage.setItem(KEY, next);
-        if (window.AervinexToast) AervinexToast('Theme: ' + next.toUpperCase(), 'info', 1500);
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        if (window.AervinexToast) AervinexToast(tt('Theme: {theme}', { theme: next.toUpperCase() }), 'info', 1500);
       });
     });
   }
@@ -334,7 +336,8 @@
       localStorage.setItem('aervinex-badges', JSON.stringify(list));
       AervinexHaptic.success();
       if (window.AervinexToast && !opts.silent) {
-        AervinexToast('🏆 Badge unlocked: ' + b.title, 'success', 5000);
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        AervinexToast(tt('🏆 Badge unlocked: {title}', { title: b.title }), 'success', 5000);
       }
       return true;
     },
@@ -407,7 +410,8 @@
         const transform = indicator.style.transform;
         if (transform.includes('rotate(36')) {
           AervinexHaptic.medium();
-          if (window.AervinexToast) AervinexToast('Refreshing...', 'info', 1500);
+          const t = window.AervinexI18n?.t || (k => k);
+          if (window.AervinexToast) AervinexToast(t('Refreshing...'), 'info', 1500);
           setTimeout(() => location.reload(), 400);
         } else {
           indicator.style.transform = 'translate(-50%, -100%)';
@@ -513,10 +517,13 @@
         doc.text('aervinex.web.app · Research-grade, From Detection to Action', 40, 814);
 
         doc.save(`aervinex-health-report-${new Date().toISOString().split('T')[0]}.pdf`);
-        if (window.AervinexToast) AervinexToast('Health report PDF tersimpan', 'success');
+        const t = window.AervinexI18n?.t || (k => k);
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        if (window.AervinexToast) AervinexToast(t('Health report PDF tersimpan'), 'success');
         if (window.AervinexHaptic) AervinexHaptic.success();
       } catch (err) {
-        if (window.AervinexToast) AervinexToast('Gagal generate PDF: ' + err.message, 'error');
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        if (window.AervinexToast) AervinexToast(tt('Gagal generate PDF: {error}', { error: err.message }), 'error');
       }
     },
   };
@@ -526,7 +533,8 @@
     isSupported() { return 'bluetooth' in navigator; },
     async scan() {
       if (!this.isSupported()) {
-        if (window.AervinexToast) AervinexToast('Web Bluetooth tidak didukung di browser ini. Gunakan Chrome/Edge desktop atau Android.', 'warn', 5000);
+        const t = window.AervinexI18n?.t || (k => k);
+        if (window.AervinexToast) AervinexToast(t('Web Bluetooth tidak didukung di browser ini. Gunakan Chrome/Edge desktop atau Android.'), 'warn', 5000);
         return null;
       }
       try {
@@ -534,7 +542,8 @@
           acceptAllDevices: true,
           optionalServices: ['heart_rate', 'battery_service', 'device_information'],
         });
-        if (window.AervinexToast) AervinexToast(`Pair sukses: ${device.name || device.id}`, 'success', 4000);
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        if (window.AervinexToast) AervinexToast(tt('Pair sukses: {device}', { device: device.name || device.id }), 'success', 4000);
         if (window.AervinexHaptic) AervinexHaptic.success();
         // Save to Firestore
         if (window.db && window.AERVINEXAuth?.currentUser) {
@@ -548,7 +557,8 @@
         return device;
       } catch (err) {
         if (err.name === 'NotFoundError') return null; // user cancelled, no toast
-        if (window.AervinexToast) AervinexToast('Pair gagal: ' + err.message, 'error');
+        const tt = window.AervinexI18n?.tt || ((k, v) => k);
+        if (window.AervinexToast) AervinexToast(tt('Pair gagal: {error}', { error: err.message }), 'error');
         return null;
       }
     },
