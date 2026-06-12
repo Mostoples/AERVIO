@@ -118,7 +118,15 @@
   <script src="js/tour.js"></script>
   <script>
     AERVINEXAuth.requireAuth().then(() => {
-      setTimeout(() => AervinexTour.startRecoveryTour(), 1500);
+      setTimeout(() => {
+        const replayTour = sessionStorage.getItem('aervinex-replay-tour');
+        if (replayTour === 'recovery') {
+          sessionStorage.removeItem('aervinex-replay-tour');
+          AervinexTour.startRecoveryTour(true);
+        } else {
+          AervinexTour.startRecoveryTour();
+        }
+      }, 1500);
     });
 
     // ── ML-driven RRSS (Recovery Readiness Score) ──

@@ -273,8 +273,16 @@
       const displayName = user.displayName || (user.isAnonymous ? 'Guest' : (user.email || 'User').split('@')[0]);
       document.getElementById('userName').textContent = displayName;
       AervinexSetGreetDate();
-      // First-time tour — auto-launch if not completed
-      setTimeout(() => AervinexTour.startDashboardTour(), 1200);
+      // First-time tour — auto-launch if not completed, or force if user requested replay
+      setTimeout(() => {
+        const replayTour = sessionStorage.getItem('aervinex-replay-tour');
+        if (replayTour === 'dashboard') {
+          sessionStorage.removeItem('aervinex-replay-tour');
+          AervinexTour.startDashboardTour(true); // force = true
+        } else {
+          AervinexTour.startDashboardTour(); // normal auto-start (skips if completed)
+        }
+      }, 1200);
       // Streak badge in greeting
       setTimeout(() => {
         if (window.AervinexStreak) {

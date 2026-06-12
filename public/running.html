@@ -150,7 +150,15 @@
   <script src="js/tour.js"></script>
   <script>
     AERVINEXAuth.requireAuth().then(() => {
-      setTimeout(() => AervinexTour.startRunningTour(), 1500);
+      setTimeout(() => {
+        const replayTour = sessionStorage.getItem('aervinex-replay-tour');
+        if (replayTour === 'running') {
+          sessionStorage.removeItem('aervinex-replay-tour');
+          AervinexTour.startRunningTour(true);
+        } else {
+          AervinexTour.startRunningTour();
+        }
+      }, 1500);
     });
 
     // ── Smart Route Map (Leaflet) + REAL GPS tracking when available + voice cues ──

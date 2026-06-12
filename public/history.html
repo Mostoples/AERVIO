@@ -113,7 +113,15 @@
   <script src="js/tour.js"></script>
   <script>
     AERVINEXAuth.requireAuth().then(() => {
-      setTimeout(() => AervinexTour.startHistoryTour(), 1500);
+      setTimeout(() => {
+        const replayTour = sessionStorage.getItem('aervinex-replay-tour');
+        if (replayTour === 'history') {
+          sessionStorage.removeItem('aervinex-replay-tour');
+          AervinexTour.startHistoryTour(true);
+        } else {
+          AervinexTour.startHistoryTour();
+        }
+      }, 1500);
     });
 
     // ── Live animated chart with sliding window + interpolated transitions ──
