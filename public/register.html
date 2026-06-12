@@ -66,11 +66,6 @@
         </svg>
         <span>Daftar dengan Google</span>
       </button>
-
-      <button type="button" class="btn-block ghost" id="btn-guest">
-        <svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/><path d="M9 11l3 2 3-2" opacity="0.4"/></svg>
-        <span>Coba dulu sebagai Guest</span>
-      </button>
     </section>
 
     <p class="auth-foot">
@@ -184,16 +179,6 @@
         clearError();
         try {
           await AERVINEXAuth.signInWithGoogle();
-          await routeAfterAuth(auth.currentUser);
-        } catch (ex) {
-          showError(AERVINEXAuth.friendlyError(ex.code));
-        }
-      });
-
-      $('#btn-guest').addEventListener('click', async () => {
-        clearError();
-        try {
-          await AERVINEXAuth.signInAsGuest();
           await routeAfterAuth(auth.currentUser);
         } catch (ex) {
           showError(AERVINEXAuth.friendlyError(ex.code));
