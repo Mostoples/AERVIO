@@ -3,6 +3,7 @@
    Reusable across all SPA pages. Loaded alongside style.css.
    ========================================================= */
 @import url('./a11y-tokens.css');
+@import url('./mobile-responsive.css');
 @import url('./desktop-responsive.css');
 
 :root {

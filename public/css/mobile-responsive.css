@@ -1,0 +1,757 @@
+/* ════════════════════════════════════════════════════════════════
+   AERVINEX Mobile-First Responsive — Comprehensive Fix
+   ────────────────────────────────────────────────────────────────
+   Strategy:
+   - Mobile-first (base styles for 320px+)
+   - Progressive enhancement for larger screens
+   - Fix overflow, spacing, font sizes for mobile
+   ════════════════════════════════════════════════════════════════ */
+
+/* ═════════════════ MOBILE BASE (320px+) ═════════════════ */
+/* These apply to all screens, overridden by larger breakpoints */
+
+body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Prevent horizontal scroll */
+.app-shell,
+.auth-shell,
+.ob-shell,
+.ev-shell {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive tables */
+.table-wrap,
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  min-width: 100%;
+}
+
+/* Cards */
+.card {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Grids: stack on mobile */
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* ═════════════════ SMALL MOBILE (≤374px) ═════════════════ */
+@media (max-width: 374px) {
+  /* Very small phones like iPhone SE 1st gen */
+
+  body {
+    font-size: 14px;
+  }
+
+  .app-shell {
+    padding: 14px 12px 100px !important;
+  }
+
+  .top-bar,
+  .topbar {
+    padding: 12px 12px !important;
+  }
+
+  .page-title-block h2,
+  .topbar h2 {
+    font-size: 16px !important;
+  }
+
+  .page-title-block p,
+  .topbar p {
+    font-size: 11px !important;
+  }
+
+  /* Smaller buttons */
+  .btn-pill,
+  .btn-block {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+  }
+
+  .btn-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Smaller cards */
+  .card {
+    padding: 14px !important;
+  }
+
+  .hero-card {
+    padding: 18px !important;
+  }
+
+  .hero-num {
+    font-size: 36px !important;
+  }
+
+  /* Bottom nav */
+  .bottom-nav,
+  .bottomnav {
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom)) !important;
+    gap: 4px !important;
+  }
+
+  .nav-item {
+    font-size: 10px !important;
+    padding: 6px 8px !important;
+  }
+
+  .nav-item.fab {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+/* ═════════════════ MOBILE (375px-599px) ═════════════════ */
+@media (min-width: 375px) and (max-width: 599px) {
+  /* Standard mobile phones */
+
+  .app-shell {
+    padding: 18px 16px 100px !important;
+  }
+
+  /* 2-column grid for certain elements */
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Quick actions: 2 columns */
+  body[data-page="dashboard"] .action-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+/* ═════════════════ MOBILE LANDSCAPE & SMALL TABLET (600px-767px) ═════════════════ */
+@media (min-width: 600px) and (max-width: 767px) {
+  .app-shell {
+    padding: 24px 20px 100px !important;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* 2-column grids */
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .action-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Risk/disease grids */
+  .risk-list,
+  .disease-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+}
+
+/* ═════════════════ SPECIFIC PAGE FIXES ═════════════════ */
+
+/* ─── DASHBOARD ─── */
+@media (max-width: 767px) {
+  body[data-page="dashboard"] .greeting {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 14px;
+  }
+
+  body[data-page="dashboard"] .hero-card {
+    padding: 22px 18px !important;
+    min-height: auto;
+  }
+
+  body[data-page="dashboard"] .hero-num {
+    font-size: 42px !important;
+  }
+
+  body[data-page="dashboard"] .hero-card .ring {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  body[data-page="dashboard"] .section-title {
+    font-size: 14px !important;
+    margin: 16px 0 10px !important;
+  }
+}
+
+/* ─── RUNNING PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="running"] #map,
+  body[data-page="running"] .map-container {
+    height: 260px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    border-radius: 0 !important;
+  }
+
+  body[data-page="running"] .run-map-card {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  body[data-page="running"] .hero-card {
+    padding: 18px !important;
+  }
+
+  body[data-page="running"] .action-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* ─── HISTORY PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="history"] .chart-card {
+    padding: 16px 12px !important;
+  }
+
+  body[data-page="history"] .chart-card canvas {
+    max-height: 220px !important;
+  }
+
+  body[data-page="history"] .tab-nav {
+    gap: 6px !important;
+    padding: 0 !important;
+  }
+
+  body[data-page="history"] .tab-btn {
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+  }
+}
+
+/* ─── RECOVERY PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="recovery"] .hero-card {
+    padding: 20px 16px !important;
+  }
+
+  body[data-page="recovery"] .hero-num {
+    font-size: 48px !important;
+  }
+
+  body[data-page="recovery"] .grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ─── PROFILE PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="profile"] .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+
+  body[data-page="profile"] .avatar {
+    margin: 0 auto;
+  }
+
+  body[data-page="profile"] .profile-stats {
+    justify-content: center;
+  }
+
+  body[data-page="profile"] .list-card {
+    padding: 12px !important;
+  }
+
+  body[data-page="profile"] .list-item {
+    padding: 12px 10px !important;
+  }
+}
+
+/* ─── ASSESSMENT PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="assessment"] .assessment-options {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  body[data-page="assessment"] .option-card {
+    padding: 16px !important;
+  }
+}
+
+/* ─── RISK DETAIL & METRIC DETAIL ─── */
+@media (max-width: 767px) {
+  body[data-page="risk-detail"] .app-shell,
+  body[data-page="metric-detail"] .app-shell {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-page="risk-detail"] .risk-factors,
+  body[data-page="metric-detail"] .metric-insights {
+    margin-top: 16px;
+  }
+}
+
+/* ─── ALERTS PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="alerts"] .alert-item {
+    padding: 14px !important;
+  }
+
+  body[data-page="alerts"] .alert-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+
+/* ─── DEVICE PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="device"] .device-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  body[data-page="device"] .device-icon {
+    margin: 0 auto 12px;
+  }
+}
+
+/* ─── EDIT PROFILE PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="edit-profile"] .form-row {
+    display: block !important;
+  }
+
+  body[data-page="edit-profile"] .form-group {
+    margin-bottom: 16px;
+  }
+}
+
+/* ─── AUTH PAGES (Login/Register) ─── */
+@media (max-width: 767px) {
+  body[data-page="login"] .auth-shell,
+  body[data-page="register"] .auth-shell {
+    display: block !important;
+    grid-template-columns: 1fr !important;
+    padding: 24px 18px 40px !important;
+    margin: 0 !important;
+    min-height: 100vh;
+  }
+
+  body[data-page="login"] .auth-brand,
+  body[data-page="register"] .auth-brand {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  body[data-page="login"] .auth-brand::after,
+  body[data-page="register"] .auth-brand::after {
+    display: none !important;
+  }
+
+  body[data-page="login"] .card,
+  body[data-page="register"] .card {
+    padding: 22px !important;
+  }
+
+  .auth-title {
+    font-size: 22px !important;
+  }
+
+  .auth-sub {
+    font-size: 13px !important;
+  }
+}
+
+/* ─── ONBOARDING PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="onboarding"] .ob-shell {
+    padding: 18px 16px 100px !important;
+  }
+
+  body[data-page="onboarding"] .ob-content {
+    padding: 20px 16px !important;
+  }
+
+  body[data-page="onboarding"] .ob-step h2 {
+    font-size: 20px !important;
+  }
+
+  body[data-page="onboarding"] .ob-cards {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  body[data-page="onboarding"] .ob-form {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  body[data-page="onboarding"] .ob-actions {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
+
+/* ─── HELP PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="help"] .faq-item {
+    padding: 12px 0 !important;
+  }
+
+  body[data-page="help"] .faq-q {
+    font-size: 13px !important;
+  }
+
+  body[data-page="help"] .faq-a {
+    font-size: 12px !important;
+  }
+}
+
+/* ─── EVIDENCE PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="evidence"] .ev-shell {
+    padding: 18px 16px 80px !important;
+  }
+
+  body[data-page="evidence"] .ev-hero {
+    padding: 24px 18px !important;
+  }
+
+  body[data-page="evidence"] .ev-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body[data-page="evidence"] .ev-table {
+    font-size: 12px !important;
+  }
+
+  body[data-page="evidence"] .ev-table td,
+  body[data-page="evidence"] .ev-table th {
+    padding: 8px 10px !important;
+  }
+}
+
+/* ─── COMMUNITY PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="community"] .cm-list,
+  body[data-page="community"] #channelList {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  body[data-page="community"] .cm-hero {
+    padding: 20px 16px !important;
+  }
+
+  body[data-page="community"] .cm-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px !important;
+  }
+
+  body[data-page="community"] .cm-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/* ─── AI CHAT PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="ai-chat"] .ai-messages {
+    padding: 16px 14px 120px !important;
+  }
+
+  body[data-page="ai-chat"] .ai-message {
+    max-width: 100% !important;
+  }
+
+  body[data-page="ai-chat"] .ai-input-bar {
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body[data-page="ai-chat"] .ai-input-bar textarea {
+    font-size: 14px !important;
+  }
+}
+
+/* ─── SUBSCRIPTION PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="subscription"] .plans-grid,
+  body[data-page="subscription"] .lp-pricing {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  body[data-page="subscription"] .plan-card {
+    padding: 20px 16px !important;
+  }
+}
+
+/* ─── CHALLENGES PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="challenges"] .challenges-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  body[data-page="challenges"] .challenge-card {
+    padding: 16px !important;
+  }
+}
+
+/* ─── ACHIEVEMENTS PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="achievements"] .achievements-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  body[data-page="achievements"] .badge-card {
+    padding: 14px 12px !important;
+  }
+
+  body[data-page="achievements"] .badge-icon {
+    font-size: 32px !important;
+  }
+}
+
+/* ─── SESSION DETAIL PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="session-detail"] #map {
+    height: 240px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    border-radius: 0 !important;
+  }
+
+  body[data-page="session-detail"] .splits-list {
+    font-size: 12px !important;
+  }
+}
+
+/* ─── LIVE DATA PAGE ─── */
+@media (max-width: 767px) {
+  body[data-page="live-data"] .live-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  body[data-page="live-data"] .live-card {
+    padding: 14px 12px !important;
+  }
+}
+
+/* ═════════════════ COMMON RESPONSIVE UTILITIES ═════════════════ */
+
+/* Font size adjustments for small screens */
+@media (max-width: 767px) {
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 18px !important; }
+  h4 { font-size: 16px !important; }
+  h5 { font-size: 14px !important; }
+
+  .section-title {
+    font-size: 15px !important;
+  }
+
+  /* Metric cards */
+  .metric-card {
+    padding: 14px !important;
+  }
+
+  .metric-label {
+    font-size: 11px !important;
+  }
+
+  .metric-value {
+    font-size: 24px !important;
+  }
+
+  .metric-unit {
+    font-size: 13px !important;
+  }
+
+  /* List items */
+  .list-item {
+    padding: 12px !important;
+    font-size: 13px !important;
+  }
+
+  /* Pills & badges */
+  .status-pill,
+  .badge-pill {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+
+  /* Search bars */
+  .search-wrap {
+    padding: 0 !important;
+  }
+
+  .search-input {
+    padding: 10px 14px !important;
+  }
+
+  .search-input input {
+    font-size: 14px !important;
+  }
+
+  /* Filter bars */
+  .filter-bar {
+    padding: 12px 16px !important;
+    gap: 8px !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-chip {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Modals */
+  .modal {
+    padding: 16px !important;
+  }
+
+  .modal-content {
+    max-width: calc(100vw - 32px) !important;
+    padding: 20px 16px !important;
+  }
+
+  .modal-title {
+    font-size: 18px !important;
+  }
+}
+
+/* Horizontal scroll indicators */
+@media (max-width: 767px) {
+  .filter-bar::-webkit-scrollbar,
+  .cm-tabs::-webkit-scrollbar,
+  .tab-nav::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .filter-bar::-webkit-scrollbar-thumb,
+  .cm-tabs::-webkit-scrollbar-thumb,
+  .tab-nav::-webkit-scrollbar-thumb {
+    background: var(--text-dim, rgba(255,255,255,0.2));
+    border-radius: 3px;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 767px) {
+  .btn,
+  .btn-pill,
+  .btn-block,
+  .btn-icon,
+  .nav-item,
+  .list-item,
+  .card[onclick],
+  button,
+  a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .list-item {
+    min-height: 52px;
+  }
+}
+
+/* ═════════════════ ORIENTATION: LANDSCAPE ═════════════════ */
+@media (max-width: 767px) and (orientation: landscape) {
+  /* Reduce vertical padding in landscape */
+  .app-shell {
+    padding-top: 12px !important;
+    padding-bottom: 80px !important;
+  }
+
+  .top-bar,
+  .topbar {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .hero-card {
+    padding: 16px !important;
+  }
+
+  /* Shorter bottom nav */
+  .bottom-nav,
+  .bottomnav {
+    padding: 6px 12px !important;
+  }
+
+  .nav-item {
+    padding: 6px 10px !important;
+  }
+}
+
+/* ═════════════════ SAFE AREA INSETS (iPhone notch, etc.) ═════════════════ */
+@media (max-width: 767px) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .top-bar,
+  .topbar {
+    padding-top: calc(12px + env(safe-area-inset-top)) !important;
+  }
+
+  .bottom-nav,
+  .bottomnav {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .theme-toggle-fab {
+    top: calc(16px + env(safe-area-inset-top)) !important;
+    right: calc(16px + env(safe-area-inset-right)) !important;
+  }
+}
