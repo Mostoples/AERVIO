@@ -151,7 +151,13 @@
   function triggerPhaseCues(phase) {
     if (phase === lastPhase) return;
     lastPhase = phase;
-    const msgs = { warmup:'🏃 Fase Warm-Up dimulai — pemanasan pelan.', steady:'💪 Fase Steady — pertahankan pace target.', push:'🔥 Fase Push — tingkatkan kecepatan!', cooldown:'🌬️ Fase Cooldown — turunkan kecepatan.' };
+    const t = window.AervinexI18n?.t || (k => k);
+    const msgs = {
+      warmup:   t('🏃 Fase Warm-Up dimulai — pemanasan pelan.'),
+      steady:   t('💪 Fase Steady — pertahankan pace target.'),
+      push:     t('🔥 Fase Push — tingkatkan kecepatan!'),
+      cooldown: t('🌬️ Fase Cooldown — turunkan kecepatan.')
+    };
     if (msgs[phase]) App.toast(msgs[phase], phase === 'push' ? 'warn' : 'info', 5000);
   }
 
@@ -184,13 +190,21 @@
     });
     const nameEl = document.getElementById('run-phase-name');
     if (nameEl) {
-      nameEl.textContent = { warmup:'Warm-Up 🔵', steady:'Steady ✅', push:'Push 🔥', cooldown:'Cooldown 🌬️' }[phase] || '--';
+      const t = window.AervinexI18n?.t || (k => k);
+      const tt = window.AervinexI18n?.tt || ((k, v) => k);
+      nameEl.textContent = { warmup:t('Warm-Up 🔵'), steady:t('Steady ✅'), push:t('Push 🔥'), cooldown:t('Cooldown 🌬️') }[phase] || '--';
       nameEl.className   = `phase-name ph-${phase}`;
     }
     const pctEl = document.getElementById('run-phase-pct');
-    if (pctEl) pctEl.textContent = Utils.fmt(distance/targetDist*100,0) + '% selesai';
+    if (pctEl) {
+      const tt = window.AervinexI18n?.tt || ((k, v) => k);
+      pctEl.textContent = tt('{progress}% selesai', { progress: Utils.fmt(distance/targetDist*100,0) });
+    }
     const distRemEl = document.getElementById('run-dist-rem');
-    if (distRemEl) distRemEl.textContent = Utils.fmt(Math.max(0, targetDist - distance),2) + ' km lagi';
+    if (distRemEl) {
+      const tt = window.AervinexI18n?.tt || ((k, v) => k);
+      distRemEl.textContent = tt('{remaining} km lagi', { remaining: Utils.fmt(Math.max(0, targetDist - distance),2) });
+    }
   }
 
   function renderGait(imu, analysis) {
@@ -213,17 +227,19 @@
   function renderRunAlerts(raw, analysis, imu) {
     const list = document.getElementById('run-alerts');
     if (!list) return;
+    const tt = window.AervinexI18n?.tt || ((k, v) => k);
+    const t = window.AervinexI18n?.t || (k => k);
     const alerts = [];
-    if (raw.hr > 0.88 * mhr)          alerts.push({ t:'danger', msg:`❤️ HR ${raw.hr} bpm — TURUNKAN PACE!` });
-    if (raw.spo2 < 93)                 alerts.push({ t:'danger', msg:`🩸 SpO₂ ${raw.spo2}% — BERHENTI, cari bantuan!` });
-    if (raw.hydration < 75)            alerts.push({ t:'warn',   msg:`💧 Hidrasi ${Math.round(raw.hydration)}% — MINUM SEKARANG!` });
-    if (raw.coreTemp > 38.5)           alerts.push({ t:'danger', msg:`🌡️ Core ${raw.coreTemp}°C — Risiko Heatstroke!` });
-    if (analysis.lactat > 80)          alerts.push({ t:'warn',   msg:`⚡ Near Lactate Threshold — kurangi kecepatan.` });
-    if (imu && imu.asymmetry > 8)      alerts.push({ t:'warn',   msg:`⚖️ Asimetri gait ${Utils.fmt(imu.asymmetry,1)}% — cek kelelahan.` });
-    if (envData.pm25 > 25)             alerts.push({ t:'warn',   msg:`💨 PM2.5 ${envData.pm25} μg/m³ — pertimbangkan rerouting.` });
-    if (analysis.nmf > 65)             alerts.push({ t:'warn',   msg:`🦵 Neuromuscular fatigue ${analysis.nmf}/100 — turunkan pace.` });
+    if (raw.hr > 0.88 * mhr)          alerts.push({ t:'danger', msg:tt('❤️ HR {hr} bpm — TURUNKAN PACE!', { hr: raw.hr }) });
+    if (raw.spo2 < 93)                 alerts.push({ t:'danger', msg:tt('🩸 SpO₂ {spo2}% — BERHENTI, cari bantuan!', { spo2: raw.spo2 }) });
+    if (raw.hydration < 75)            alerts.push({ t:'warn',   msg:tt('💧 Hidrasi {hydration}% — MINUM SEKARANG!', { hydration: Math.round(raw.hydration) }) });
+    if (raw.coreTemp > 38.5)           alerts.push({ t:'danger', msg:tt('🌡️ Core {coreTemp}°C — Risiko Heatstroke!', { coreTemp: raw.coreTemp }) });
+    if (analysis.lactat > 80)          alerts.push({ t:'warn',   msg:t('⚡ Near Lactate Threshold — kurangi kecepatan.') });
+    if (imu && imu.asymmetry > 8)      alerts.push({ t:'warn',   msg:tt('⚖️ Asimetri gait {asymmetry}% — cek kelelahan.', { asymmetry: Utils.fmt(imu.asymmetry,1) }) });
+    if (envData.pm25 > 25)             alerts.push({ t:'warn',   msg:tt('💨 PM2.5 {pm25} μg/m³ — pertimbangkan rerouting.', { pm25: envData.pm25 }) });
+    if (analysis.nmf > 65)             alerts.push({ t:'warn',   msg:tt('🦵 Neuromuscular fatigue {nmf}/100 — turunkan pace.', { nmf: analysis.nmf }) });
     list.innerHTML = alerts.length === 0
-      ? '<div class="alert-item alert-safe"><span class="alert-icon">✅</span><div class="alert-txt"><div class="alert-title-t">Semua Aman</div></div></div>'
+      ? `<div class="alert-item alert-safe"><span class="alert-icon">✅</span><div class="alert-txt"><div class="alert-title-t">${t('Semua Aman')}</div></div></div>`
       : alerts.map(a => `<div class="alert-item alert-${a.t}"><span class="alert-icon">${a.t==='danger'?'🚨':'⚠️'}</span><div class="alert-txt"><div class="alert-title-t">${a.msg}</div></div></div>`).join('');
   }
 
@@ -331,25 +347,28 @@
     document.getElementById('run-summary').classList.add('hidden');
 
     tickInterval = setInterval(tick, 3000);
-    App.toast('Sesi lari dimulai! 🏃', 'success', 3000);
+    const t = window.AervinexI18n?.t || (k => k);
+    App.toast(t('Sesi lari dimulai! 🏃'), 'success', 3000);
   }
 
   function pauseSession() {
+    const t = window.AervinexI18n?.t || (k => k);
     if (state === 'active') {
       state = 'paused';
       SensorSim.state.activityLevel = 0;
       document.getElementById('btn-run-pause').textContent = '▶️';
-      document.getElementById('btn-run-pause').title = 'Lanjutkan';
+      document.getElementById('btn-run-pause').title = t('Lanjutkan');
     } else if (state === 'paused') {
       state = 'active';
       SensorSim.state.activityLevel = 0.75;
       document.getElementById('btn-run-pause').textContent = '⏸️';
-      document.getElementById('btn-run-pause').title = 'Jeda';
+      document.getElementById('btn-run-pause').title = t('Jeda');
     }
   }
 
   function stopSession() {
-    if (!confirm('Hentikan sesi lari?')) return;
+    const t = window.AervinexI18n?.t || (k => k);
+    if (!confirm(t('Hentikan sesi lari?'))) return;
     endSession();
   }
 
@@ -374,7 +393,8 @@
     setText('sum-steps', SensorSim.imu.stepCount);
     setText('sum-cad',   SensorSim.imu.cadence);
 
-    App.toast('Sesi selesai! 🎉 Data disimpan.', 'success', 5000);
+    const t = window.AervinexI18n?.t || (k => k);
+    App.toast(t('Sesi selesai! 🎉 Data disimpan.'), 'success', 5000);
 
     // Save to Firestore
     if (AERVINEXAuth.currentUser) {
