@@ -3502,6 +3502,59 @@
     'Pertimbangkan masker saat napas berat.': 'Consider mask during heavy breathing.',
     'Kondisi lingkungan optimal untuk berlari.': 'Optimal environmental conditions for running.',
     'Pantau kondisi selama berlari.': 'Monitor conditions during run.',
+
+    // ── FORM LABELS & PROFILE ─────────────────────────────────────────
+    'Data dasar & target aktivitas': 'Basic data & activity goals',
+    'Umur': 'Age',
+    'Gender': 'Gender',
+    'Pilih...': 'Select...',
+    'Pria': 'Male',
+    'Wanita': 'Female',
+    'Berat (kg)': 'Weight (kg)',
+    'Tinggi (cm)': 'Height (cm)',
+    'Tipe Aktivitas Utama': 'Main Activity Type',
+    'Target Lari Mingguan (km)': 'Weekly Running Target (km)',
+    'Zona Berbahaya': 'Danger Zone',
+    'Simpan Perubahan': 'Save Changes',
+    'Hapus Akun & Semua Data': 'Delete Account & All Data',
+    'Hapus Permanen': 'Delete Permanently',
+    'Kirim Laporan': 'Send Report',
+    'Profil': 'Profile',
+    'Langganan': 'Subscription',
+    'Kelola plan Free / Pro / Family': 'Manage Free / Pro / Family plan',
+    'Tantangan mingguan & monthly': 'Weekly & monthly challenges',
+    'Nama, umur, berat, target': 'Name, age, weight, target',
+    'Badge collection · streak · milestones': 'Badge collection · streak · milestones',
+    'Trend skor longitudinal per kondisi': 'Longitudinal score trend per condition',
+    'Library 35 kondisi · referensi medis': 'Library of 35 conditions · medical reference',
+    'Scan BLE device sekitar Anda': 'Scan nearby BLE devices',
+    'Untuk dibawa konsultasi dokter': 'To bring to doctor consultation',
+    'Lapor Adverse Event': 'Report Adverse Event',
+    'False alarm · misclassification · cedera kulit': 'False alarm · misclassification · skin injury',
+
+    // ── CALIBRATION ──────────────────────────────────────────────────
+    'Kalibrasi Sensor': 'Sensor Calibration',
+    'Atur baseline untuk akurasi optimal': 'Set baseline for optimal accuracy',
+    'Wizard Kalibrasi': 'Calibration Wizard',
+    'Mulai Kalibrasi': 'Start Calibration',
+    '1. Resting Heart Rate': '1. Resting Heart Rate',
+    'Resting HR (bpm)': 'Resting HR (bpm)',
+    '2. Skin Temp Baseline': '2. Skin Temp Baseline',
+    'Skin Temp Baseline (°C)': 'Skin Temp Baseline (°C)',
+    '3. Review & Simpan': '3. Review & Save',
+    'Simpan Kalibrasi': 'Save Calibration',
+    'Baseline HR + Skin Temp · refresh tiap 30 hari': 'Baseline HR + Skin Temp · refresh every 30 days',
+
+    // ── ACCESSIBILITY & UI ───────────────────────────────────────────
+    'Ganti tema': 'Switch theme',
+    'Lewati ke konten utama': 'Skip to main content',
+
+    // ── PLACEHOLDERS ─────────────────────────────────────────────────
+    'Cari penyakit, gejala, atau topik...': 'Search disease, symptoms, or topic...',
+    'Cari pertanyaan...': 'Search question...',
+    'Cari nama kondisi atau gejala...': 'Search condition name or symptom...',
+    'Minimal 8 karakter': 'Minimum 8 characters',
+
     'Peringatan': 'Warning',
 
     // ── MISC LABELS & UI ─────────────────────────────────────
