@@ -92,6 +92,17 @@
     'Semua Artikel': 'All Articles',
     'Kategori Pelajari': 'Learn by Category',
     'Onboarding Tour Analytics': 'Onboarding Tour Analytics',
+    'Ensiklopedia': 'Encyclopedia',
+    'Riset & Studi': 'Research & Studies',
+    'Mulai sesi lari & monitoring real-time': 'Start running session & real-time monitoring',
+    'Pemulihan & rekomendasi istirahat': 'Recovery & rest recommendations',
+    'Statistik & riwayat aktivitas': 'Statistics & activity history',
+    'Forum & grup diskusi pengguna': 'User forum & discussion groups',
+    'Panduan lengkap kesehatan & risiko lingkungan': 'Complete guide to health & environmental risks',
+    'Evaluasi risiko kesehatan mandiri': 'Self-assessment of health risks',
+    'Asisten AI untuk konsultasi kesehatan': 'AI assistant for health consultation',
+    'Publikasi ilmiah & validasi model': 'Scientific publications & model validation',
+    'Perkembangan & fitur mendatang': 'Development & upcoming features',
 
     // ── Vital signs metrics ──────────────────────────
     'Heart Rate': 'Heart Rate',

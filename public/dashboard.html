@@ -219,65 +219,79 @@
       <!-- diisi via JS -->
     </section>
 
-    <section class="quick-actions">
-      <h3 class="section-title">Aksi Cepat</h3>
-      <div class="action-grid" id="quickActions">
-        <a href="/running.html" class="btn-pill primary" data-qa-icon="run">
-          <span class="qa-icon"></span>
-          <span>Start Run</span>
-        </a>
-        <a href="/recovery.html" class="btn-pill" data-qa-icon="heart">
-          <span class="qa-icon"></span>
-          <span>Recovery</span>
-        </a>
-        <a href="/history.html" class="btn-pill" data-qa-icon="chart-line">
-          <span class="qa-icon"></span>
-          <span>History</span>
-        </a>
-        <a href="/community.html" class="btn-pill" data-qa-icon="users">
-          <span class="qa-icon">👥</span>
-          <span>Komunitas</span>
-        </a>
-        <a href="/ai-chat.html" class="btn-pill" data-qa-icon="bot" style="background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(0,229,212,0.10));border:1px solid rgba(167,139,250,0.3)">
-          <span class="qa-icon">🤖</span>
-          <span>Aervi AI</span>
-        </a>
-      </div>
-    </section>
-
-    <h3 class="section-title">Fitur Lainnya</h3>
+    <h3 class="section-title" data-i18n="Aksi Cepat">Aksi Cepat</h3>
     <section class="grid-2">
+      <a class="card metric-card aura-cyan" href="/running.html" data-pattern="run" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M8 5v14l11-7z"/></svg></div>
+          <span class="metric-trend">GO</span>
+        </div>
+        <p class="metric-label" data-i18n="Start Run">Start Run</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Mulai sesi lari & monitoring real-time">Mulai sesi lari & monitoring real-time</p>
+      </a>
+      <a class="card metric-card aura-coral" href="/recovery.html" data-pattern="heart" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg></div>
+          <span class="metric-trend">HR</span>
+        </div>
+        <p class="metric-label" data-i18n="Recovery">Recovery</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Pemulihan & rekomendasi istirahat">Pemulihan & rekomendasi istirahat</p>
+      </a>
+      <a class="card metric-card aura-green" href="/history.html" data-pattern="chart" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+          <span class="metric-trend">📊</span>
+        </div>
+        <p class="metric-label" data-i18n="History">History</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Statistik & riwayat aktivitas">Statistik & riwayat aktivitas</p>
+      </a>
+      <a class="card metric-card aura-violet" href="/community.html" data-pattern="users" style="text-decoration:none;color:inherit">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><circle cx="9" cy="7" r="4"/><circle cx="17" cy="9" r="3"/><path d="M2 21a7 7 0 0114 0M14 21a5 5 0 0110 0"/></svg></div>
+          <span class="metric-trend">👥</span>
+        </div>
+        <p class="metric-label" data-i18n="Komunitas">Komunitas</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Forum & grup diskusi pengguna">Forum & grup diskusi pengguna</p>
+      </a>
       <a class="card metric-card aura-blue" href="/encyclopedia.html" data-pattern="book" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14z"/></svg></div>
-          <span class="metric-trend">NEW</span>
+          <span class="metric-trend">📚</span>
         </div>
-        <p class="metric-label">Ensiklopedia</p>
-        <p style="font-size:11px;opacity:0.75;margin-top:4px">Panduan lengkap kesehatan & risiko lingkungan</p>
+        <p class="metric-label" data-i18n="Ensiklopedia">Ensiklopedia</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Panduan lengkap kesehatan & risiko lingkungan">Panduan lengkap kesehatan & risiko lingkungan</p>
       </a>
-      <a class="card metric-card aura-green" href="/assessment.html" data-pattern="check" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-amber" href="/assessment.html" data-pattern="check" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <span class="metric-trend">SELF</span>
+          <span class="metric-trend">✓</span>
         </div>
-        <p class="metric-label">Self Assessment</p>
-        <p style="font-size:11px;opacity:0.75;margin-top:4px">Evaluasi risiko kesehatan mandiri</p>
+        <p class="metric-label" data-i18n="Self Assessment">Self Assessment</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Evaluasi risiko kesehatan mandiri">Evaluasi risiko kesehatan mandiri</p>
       </a>
-      <a class="card metric-card aura-violet" href="/evidence.html" data-pattern="lab" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-pink" href="/ai-chat.html" data-pattern="bot" style="text-decoration:none;color:inherit;background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(0,229,212,0.10));border:1px solid rgba(167,139,250,0.3)">
+        <div class="metric-head">
+          <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><rect x="3" y="7" width="18" height="14" rx="3"/><circle cx="9" cy="14" r="1.5"/><circle cx="15" cy="14" r="1.5"/><path d="M12 3v4"/></svg></div>
+          <span class="metric-trend">🤖</span>
+        </div>
+        <p class="metric-label" data-i18n="Aervi AI">Aervi AI</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Asisten AI untuk konsultasi kesehatan">Asisten AI untuk konsultasi kesehatan</p>
+      </a>
+      <a class="card metric-card aura-indigo" href="/evidence.html" data-pattern="lab" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><path d="M9 3v6L4 19a2 2 0 002 3h12a2 2 0 002-3l-5-10V3"/><line x1="7" y1="3" x2="17" y2="3"/></svg></div>
-          <span class="metric-trend">LAB</span>
+          <span class="metric-trend">🧪</span>
         </div>
-        <p class="metric-label">Riset & Studi</p>
-        <p style="font-size:11px;opacity:0.75;margin-top:4px">Publikasi ilmiah & validasi model</p>
+        <p class="metric-label" data-i18n="Riset & Studi">Riset & Studi</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Publikasi ilmiah & validasi model">Publikasi ilmiah & validasi model</p>
       </a>
-      <a class="card metric-card aura-amber" href="/aervinex-roadmap.html" data-pattern="map" style="text-decoration:none;color:inherit">
+      <a class="card metric-card aura-teal" href="/aervinex-roadmap.html" data-pattern="map" style="text-decoration:none;color:inherit">
         <div class="metric-head">
           <div class="metric-icon"><svg viewBox="0 0 24 24" class="ico"><polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21 1 6"/><line x1="8" y1="3" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="21"/></svg></div>
-          <span class="metric-trend">INFO</span>
+          <span class="metric-trend">🗺️</span>
         </div>
-        <p class="metric-label">Roadmap</p>
-        <p style="font-size:11px;opacity:0.75;margin-top:4px">Perkembangan & fitur mendatang</p>
+        <p class="metric-label" data-i18n="Roadmap">Roadmap</p>
+        <p style="font-size:11px;opacity:0.75;margin-top:4px" data-i18n="Perkembangan & fitur mendatang">Perkembangan & fitur mendatang</p>
       </a>
     </section>
 
@@ -297,8 +311,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
-  <script src="js/i18n.js?v=31"></script>
-  <script src="js/aervinex-app.js?v=31"></script>
+  <script src="js/i18n.js?v=32"></script>
+  <script src="js/aervinex-app.js?v=32"></script>
   <script src="js/utils.js"></script>
   <script src="js/ml-client.js"></script>
   <script src="js/icon-lib.js"></script>
@@ -333,18 +347,6 @@
       setTimeout(() => window.AervinexSmartRecs?.render(), 800);
       setInterval(() => window.AervinexSmartRecs?.render(), 30000);
     });
-
-    // Inject animated icons ke Quick Actions
-    function injectQuickActionIcons() {
-      if (!window.AervinexIcons?.get) { setTimeout(injectQuickActionIcons, 80); return; }
-      document.querySelectorAll('#quickActions [data-qa-icon]').forEach(btn => {
-        const wrap = btn.querySelector('.qa-icon');
-        if (!wrap || wrap.querySelector('svg')) return;
-        wrap.style.cssText = 'display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;flex-shrink:0';
-        wrap.innerHTML = window.AervinexIcons.get(btn.dataset.qaIcon);
-      });
-    }
-    injectQuickActionIcons();
 
     // ── Live metric simulation ────────────────────────────────
     (function () {
