@@ -340,7 +340,8 @@
     if (!manualLangBtn) {
       injectLangToggle();
       const mo = new MutationObserver(() => {
-        if (!document.getElementById('lang-toggle-btn')) {
+        // Only re-inject if NO language toggle exists at all
+        if (!document.querySelector('.aerv-lang-toggle')) {
           injectLangToggle();
         }
       });
